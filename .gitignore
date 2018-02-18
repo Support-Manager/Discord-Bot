@@ -1,0 +1,4 @@
+tests
+bot/secrets.json
+*.pyc
+.idea

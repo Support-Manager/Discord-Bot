@@ -1,0 +1,19 @@
+{
+  "config":
+  {
+    "prefix":
+    {
+      "min-len": 1,
+      "max-len": 3
+    }
+  },
+
+  "ticket":
+  {
+    "title":
+    {
+      "min-len": 5,
+      "max-len": 100
+    }
+  }
+}
