@@ -30,7 +30,20 @@ async def _prefix(ctx, pfx: str = ""):
     else:
         server = Server()
         server.sid = ctx.guild.id
+        graph.pull(server)
         server.prefix = pfx
         graph.push(server)
 
         await ctx.send(f"Okay, your new prefix is: `{pfx}`.")
+
+
+@configure.command(name='channel')
+async def _channel(ctx, channel: discord.TextChannel):
+    """ This is to set the server's support channel. """
+
+    server = Server()
+    server.sid = ctx.guild.id
+    server.channel = channel.id
+    graph.merge(server)
+
+    await ctx.send(f"Okay, I'll send ticket events in {channel.mention} :white_check_mark:")

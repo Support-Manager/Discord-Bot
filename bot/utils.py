@@ -1,3 +1,4 @@
+import discord
 from neo4j_connection import *
 import json
 import logging
@@ -18,6 +19,8 @@ graph = Graph(password=secrets['neo4j'])
 with open('default.json', 'r', encoding='utf-8') as d:
     default = json.load(d)
 
+embed_color = 0x37ceb2
+
 
 async def dynamic_prefix(bot, msg):
     server = Server()
@@ -35,7 +38,7 @@ def merge_server(guild):
 
         server.sid = guild.id
         server.prefix = default['prefix']
-        server.default_confidence = default['confidence']
+        server.default_scope = default['scope']
 
         graph.create(server)
 
@@ -53,3 +56,32 @@ def merge_user(user):
         graph.create(u)
 
     return u
+
+
+def ticket_embed(bot, t: Ticket):
+    author = bot.get_user(t.author.uid)
+    server = bot.get_guild(t.server.sid)
+
+    emb = discord.Embed(
+        title=t.title,
+        description=t.description,
+        color=embed_color
+    )
+    emb.add_field(
+        name="ID",
+        value=t.tid
+    )
+    emb.add_field(
+        name="Server",
+        value=server
+    )
+    emb.add_field(
+        name="Scope",
+        value=t.scope
+    )
+    emb.set_author(
+        name=f"{author.name}#{author.discriminator}",
+        icon_url=author.avatar_url
+    )
+
+    return emb

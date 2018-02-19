@@ -1,4 +1,3 @@
-from discord.ext import commands
 from bot.utils import *
 from ._setup import bot, config
 
@@ -12,8 +11,9 @@ async def ticket(ctx):
     pass
 
 
+# TODO: Rework/Rethink error system. (Throw exceptions)
 @ticket.command(name='create')
-async def _create(ctx, title: str, description: str=None, confidence: str=default['confidence']):
+async def _create(ctx, title: str, description: str=None, scope: str=default['scope']):
     t = Ticket()
 
     min_len = config['title']['min-len']
@@ -30,7 +30,12 @@ async def _create(ctx, title: str, description: str=None, confidence: str=defaul
         t.title = title
 
         t.description = description
-        t.confidence = confidence  # TODO: check confidence
+
+        if scope in config['scopes']:
+            t.scope = scope
+        else:
+            await ctx.send("Given scope doesn't exist.")
+
         t.closed = False
 
         author = merge_user(ctx.author)
@@ -51,8 +56,26 @@ async def _create(ctx, title: str, description: str=None, confidence: str=defaul
                        f"ID: `{t.tid}`")
 
         channel_id = server.channel
-        if channel_id is not None and confidence != 'public':
+        if channel_id is not None and scope != 'public':
             channel = bot.get_channel(channel_id)
 
-            await channel.send(f"{ctx.author.mention} just created a ticket.\n"
-                               f"ID: `{t.tid}`")  # TODO: invoke "ticket show"
+            await channel.send("New ticket:", embed=ticket_embed(bot, t))
+
+
+@ticket.command(name="show")
+async def _show(ctx, tid: int):
+    t = Ticket.select(graph, tid).first()
+
+    if t is None:
+        await ctx.send("Given ticket can't be found.")
+        return None
+
+    elif t.closed:
+        await ctx.send("This ticket is closed.")
+        return None
+
+    # TODO: check scope (permissions)
+
+    emb = ticket_embed(bot, t)
+
+    await ctx.send(embed=emb)
