@@ -14,7 +14,6 @@
     {
       "min-len": 5,
       "max-len": 100
-    },
-    "scopes": ["private", "local", "public"]
+    }
   }
 }

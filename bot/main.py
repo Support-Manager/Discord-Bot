@@ -9,12 +9,14 @@ async def on_ready():
     logger.info(f"Logged in as: {bot.user.name}")
 
     for guild in bot.guilds:
-        merge_server(guild)
+        merge_guild(guild)
+
+    await bot.change_presence(activity=discord.Game(name="/help"))
 
 
 @bot.event
 async def on_guild_join(guild):
-    merge_server(guild)
+    merge_guild(guild)
 
 
 bot.load_extension('commands')
