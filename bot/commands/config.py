@@ -1,22 +1,23 @@
 from discord.ext import commands
 from bot.utils import *
-from ._setup import bot, config
+from ._setup import bot
 from bot import converters
 
-config = config['config']
+PREFIX_MIN_LEN = 1
+PREFIX_MAX_LEN = 3
 
 
 @bot.group(name='config', aliases=['set', 'configure'])
 @commands.guild_only()
 @commands.has_permissions(administrator=True)
-async def configure(ctx):
+async def config(ctx):
     """ This is for admins to configure the bot's behaviour on their guild. """
 
     if ctx.invoked_subcommand is None:
         await ctx.send("What would you like to configure?")  # TODO: create guided configuration
 
 
-@configure.error
+@config.error
 async def config_error(ctx, error):
     if isinstance(error, commands.NoPrivateMessage):
         await ctx.send("Configuration is only available on servers.")
@@ -25,18 +26,15 @@ async def config_error(ctx, error):
         logger.error(error)
 
 
-@configure.command(name='prefix')
+@config.command(name='prefix')
 async def _prefix(ctx, pfx: str = ""):
     """ This is to change the guild's cmd prefix. """
 
-    min_len = config['prefix']['min-len']
-    max_len = config['prefix']['max-len']
+    if len(pfx) > PREFIX_MAX_LEN:
+        await ctx.send(f"Prefix can't be longer than {PREFIX_MAX_LEN} characters.")
 
-    if len(pfx) > max_len:
-        await ctx.send(f"Prefix can't be longer than {max_len} characters.")
-
-    elif len(pfx) < min_len:
-        await ctx.send(f"Prefix must be at least {min_len} character.")
+    elif len(pfx) < PREFIX_MIN_LEN:
+        await ctx.send(f"Prefix must be at least {PREFIX_MIN_LEN} character.")
 
     else:
         guild = Guild()
@@ -48,7 +46,7 @@ async def _prefix(ctx, pfx: str = ""):
         await ctx.send(f"Okay, your new prefix is: `{pfx}`.")
 
 
-@configure.command(name='channel')
+@config.command(name='channel')
 async def _channel(ctx, channel: discord.TextChannel):
     """ This is to set the guild's support channel. """
 
@@ -59,7 +57,7 @@ async def _channel(ctx, channel: discord.TextChannel):
     await ctx.send(f"Okay, I'll send ticket events in {channel.mention} :white_check_mark:")
 
 
-@configure.command(name='role', aliases=['supprole', 'supporters'])
+@config.command(name='role', aliases=['supprole', 'supporters'])
 async def _role(ctx, role: discord.Role):
     """ This is to set the guild's support role. """
 
@@ -77,7 +75,7 @@ async def _config_error(ctx, error):
         await ctx.send("You have to mention it.")
 
 
-@configure.command(name='scope')
+@config.command(name='scope')
 async def _default_scope(ctx, scope: converters.Scope):
     guild = Guild.select(graph, ctx.guild.id).first()
 

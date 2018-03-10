@@ -20,7 +20,7 @@ graph = Graph(password=secrets['neo4j'])
 with open('default.json', 'r', encoding='utf-8') as d:
     default = json.load(d)
 
-embed_color = 0x37ceb2
+EMBED_COLOR = 0x37ceb2
 
 
 async def dynamic_prefix(bot, msg):
@@ -69,7 +69,7 @@ def ticket_embed(bot, t: Ticket):
     emb = discord.Embed(
         title=t.title,
         description=t.description,
-        color=embed_color
+        color=EMBED_COLOR
     )
     emb.add_field(
         name="ID",

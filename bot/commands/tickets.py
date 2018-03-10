@@ -8,7 +8,7 @@ async def tickets(ctx, user: discord.User=None):
 
     tickets_emb = discord.Embed(
         title="Active support tickets",
-        color=embed_color
+        color=EMBED_COLOR
     )
 
     if user is not None:

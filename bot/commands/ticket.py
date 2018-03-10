@@ -1,9 +1,10 @@
 from bot.utils import *
-from ._setup import bot, config
+from ._setup import bot
 from discord.ext import commands
 from bot import converters
 
-config = config['ticket']
+TITLE_MIN_LEN = 5
+TITLE_MAX_LEN = 100
 
 
 @bot.group(name='ticket')
@@ -21,15 +22,12 @@ async def _create(ctx, title: str, description: str=None, scope: converters.Scop
 
     t = Ticket()
 
-    min_len = config['title']['min-len']
-    max_len = config['title']['max-len']
-
-    if len(title) > max_len:
-        await ctx.send(f"Title too long: (max. `{max_len}` characters | `{len(title)}` given)\n"
+    if len(title) > TITLE_MAX_LEN:
+        await ctx.send(f"Title too long: (max. `{TITLE_MAX_LEN}` characters | `{len(title)}` given)\n"
                        f"Try to keep the title short and on-point. Use the description to get into detail.")
 
-    elif len(title) < min_len:
-        await ctx.send(f"Title too short: (min. `{min_len}` characters | `{len(title)}` given)")
+    elif len(title) < TITLE_MIN_LEN:
+        await ctx.send(f"Title too short: (min. `{TITLE_MIN_LEN}` characters | `{len(title)}` given)")
 
     else:
         utc = time.time()
