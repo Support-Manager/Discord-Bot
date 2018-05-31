@@ -1,0 +1,11 @@
+help:
+  EN: |
+    A list of all commands that you're able to use with this bot.
+    You can also type `{prefix}help [command]` to get the help of a specific command.
+  DE: |
+    Eine Liste aller Befehle, die du mit diesem Bot verwenden kannst.
+    Du kannst auch `{prefix}help [Befehl]` eingeben, um die Hilfe für einen bestimmten Befehl zu erhalten.
+
+config:
+  EN: Content will follow.
+  DE: Inhalt wird folgen.

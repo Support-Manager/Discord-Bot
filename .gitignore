@@ -1,5 +1,5 @@
 tests
-bot/secrets.json
+bot/properties/secrets.json
 *.pyc
 .idea
 venv

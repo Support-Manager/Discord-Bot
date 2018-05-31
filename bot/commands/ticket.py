@@ -1,15 +1,14 @@
 from bot.utils import *
 from ._setup import bot
 from discord.ext import commands
-from bot import converters
-
-TITLE_MIN_LEN = 5
-TITLE_MAX_LEN = 100
+from bot import converters, errors
 
 
 @bot.group(name='ticket')
 async def ticket(ctx):
     """ Allows to perform different actions with a ticket. """
+
+    # TODO: implement action on when it's invoked without subcommands
 
     pass
 
@@ -20,29 +19,29 @@ async def ticket(ctx):
 async def _create(ctx, title: str, description: str=None, scope: converters.Scope=None):
     """ This is to create a support ticket. """
 
+    guild = ctx.db_guild
+
     t = Ticket()
 
-    if len(title) > TITLE_MAX_LEN:
-        await ctx.send(f"Title too long: (max. `{TITLE_MAX_LEN}` characters | `{len(title)}` given)\n"
-                       f"Try to keep the title short and on-point. Use the description to get into detail.")
+    if len(title) > CONFIG["title_max_len"]:
+        await ctx.send(ctx.translate("title too long").format(CONFIG["title_max_len"], len(title)))
 
-    elif len(title) < TITLE_MIN_LEN:
-        await ctx.send(f"Title too short: (min. `{TITLE_MIN_LEN}` characters | `{len(title)}` given)")
+    elif len(title) < CONFIG["title_min_len"]:
+        await ctx.send(ctx.translate("title too short").format(CONFIG["title_min_len"], len(title)))
 
     else:
         utc = time.time()
 
-        t.title = title
+        t.title = escaped(title)
 
-        t.description = description
+        t.description = escaped(description)
 
         t.state = "open"
         t.updated = utc
 
-        author = merge_user(ctx.author)
+        author = get_user(ctx.author)
         t.created_by.add(author, properties={'UTC': utc})
 
-        guild = merge_guild(ctx.guild)
         t.located_on.add(guild)
 
         if scope is None:
@@ -58,16 +57,26 @@ async def _create(ctx, title: str, description: str=None, scope: converters.Scop
 
         graph.create(t)
 
-        await ctx.send(f"Ticket created :white_check_mark: \n"
-                       f"ID: `{t.id}`")
+        try:
+            await ctx.author.send(ctx.translate("your ticket has been created"))
+            dm_allowed = True
+        except commands.BotMissingPermissions:
+            dm_allowed = False
 
-        await notify_supporters(ctx, "New ticket:", t)
+        msg = ctx.translate("ticket created").format(t.id)
+
+        if not dm_allowed:
+            msg += '\n' + ctx.translate("please allow receiving dms")
+
+        await ctx.send(msg)
+
+        await notify_supporters(ctx, ctx.translate('new ticket'), t)
 
 
 @_create.error
 async def _creation_error(ctx, error):
     if isinstance(error, commands.NoPrivateMessage):
-        await ctx.send("Tickets can't be created via DM.")
+        await ctx.send(ctx.translate("tickets can't be created via dm"))
 
     elif isinstance(error, commands.BadArgument):
         await ctx.send(error)
@@ -84,23 +93,24 @@ async def _show(ctx, t: converters.Ticket):
         pass
 
     elif t.scope != 'public' and t.guild.id != ctx.guild.id:
-        await ctx.send("Given ticket is not located on this server.")
+        await ctx.send(ctx.translate('this is a local ticket of another guild'))
         return None
 
     elif t.scope == 'private':
         if t.guild.support_role not in [role.id for role in ctx.author.roles]:
-            ctx.send("This ticket is private. :lock:")
+            ctx.send(ctx.translate('this is a private ticket'))
             return None
 
-    emb = ticket_embed(bot, t)
+    emb = ticket_embed(ctx, t)
 
     await ctx.send(embed=emb)
+    # TODO: extend to show responses
 
 
 @_show.error
 async def _show_error(ctx, error):
     if isinstance(error, commands.MissingRequiredArgument):
-        await ctx.send('Which ticket do you wanna see?:')
+        await ctx.send(ctx.translate('which ticket do you wanna see'))
 
         def check(m):
             return m.author == ctx.author
@@ -110,9 +120,9 @@ async def _show_error(ctx, error):
         try:
             ticket_id = int(msg.content)
         except ValueError:
-            ticket_id = msg.content
+            return 0
 
-        await ctx.invoke(_show, ticket_id)
+        await ctx.invoke(_show, await converters.Ticket().convert(ctx, ticket_id))
 
     elif isinstance(error, commands.BadArgument):
         await ctx.send(error)
@@ -122,33 +132,44 @@ async def _show_error(ctx, error):
 
 
 @ticket.command(name='close')
-async def _close(ctx, t: converters.Ticket):  # TODO: add optional closing response
+async def _close(ctx, t: converters.Ticket, response=None):
     """ This is to close a specific support ticket. """
 
     if is_author_or_supporter(ctx, t):
+        language = get_guild(ctx.guild).language
+
         if t.state == 'closed':
-            await ctx.send("This ticket is already closed.")
+            await ctx.send(ctx.translate('this ticket is already closed'))
             return None
 
         utc = time.time()
 
         t.state = 'closed'
 
-        user = merge_user(ctx.author)
+        user = get_user(ctx.author)
         t.closed_by.add(user, properties={'UTC': utc})
 
         t.updated = utc
 
         graph.push(t)
 
-        await ctx.send("Ticket closed. :white_check_mark:")
+        conf_msg = ctx.translate('ticket closed')
+        close_msg = ctx.translate('[user] just closed ticket [ticket]').format(ctx.author.mention, t.id)
 
-        await notify_supporters(ctx, f"{ctx.author.mention} just closed ticket #{t.id}.", t, embed=False)
+        if response is not None:
+            close_msg += f"\n```{escaped(response)}```"
 
-        # TODO: notify ticket author
+        send_success = await notify_author(ctx, close_msg, t)
+
+        if send_success == 1:
+            conf_msg += ctx.translate("ticket author doesn't allow dms")
+
+        await ctx.send(conf_msg)
+
+        await notify_supporters(ctx, close_msg, t, embed=False)
 
     else:
-        raise commands.MissingPermissions
+        raise errors.MissingPermissions
 
 
 @ticket.command(name='reopen')
@@ -156,34 +177,36 @@ async def _reopen(ctx, t: converters.Ticket):
     """ This is to reopen a specific support ticket. """
 
     if is_author_or_supporter(ctx, t):
+        language = get_guild(ctx.guild).language
+
         if t.state != 'closed':
-            await ctx.send("This ticket is not closed.")
+            await ctx.send(ctx.translate("this ticket is not closed"))
             return None
 
         utc = time.time()
 
         t.state = 'reopened'
 
-        user = merge_user(ctx.author)
+        user = get_user(ctx.author)
         t.reopened_by.add(user, properties={'UTC': utc})
 
         t.updated = utc
 
         graph.push(t)
 
-        await ctx.send("Ticket reopened. :white_check_mark:")
+        await ctx.send(ctx.translate("ticket reopened"))
 
-        await notify_supporters(ctx, f"{ctx.author.mention} just reopened a ticket:", t)
+        await notify_supporters(ctx, ctx.translate("[user] reopened a ticket").format(ctx.author.mention), t)
 
     else:
-        raise commands.MissingPermissions
+        raise errors.MissingPermissions
 
 
 @_close.error
 @_reopen.error
 async def _close_reopen_error(ctx, error):
-    if isinstance(error, commands.MissingPermissions):
-        await ctx.send("You have to be supporter or the ticket author for this.")
+    if isinstance(error.__cause__, errors.MissingPermissions):
+        await ctx.send(ctx.translate("you have to be supporter or ticket author for this"))
 
     else:
         logger.error(error)

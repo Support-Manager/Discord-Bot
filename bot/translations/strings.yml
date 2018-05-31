@@ -1,0 +1,235 @@
+'title too long':
+  EN: |
+    Title too long: (max. `{0}` characters | `{1}` given)
+    Try to keep the title short and on-point! You should use the description to get into detail.
+  DE: |
+    Titel zu lang: (max. `{0}` Zeichen | `{1}` gegeben)
+    Versuche den Titel kurz zu halten und auf den Punkt zu bringen! Du solltest die Beschreibung für die Details nutzen.
+
+'title too short':
+  EN: "Title too short: (min. `{0}` characters | `{1}` given)"
+  DE: "Titel zu kurz: (min. `{0}` Zeichen | `{1}` gegeben)"
+
+'your ticket has been created':
+  EN: "Your ticket has been created. I'll inform you here about updates."
+  DE: "Dein Ticket wurde erstellt. Ich werde dich hier über Neuigkeiten informieren."
+
+'ticket created':
+  EN: "Ticket created. :white_check_mark:\nID: {0}"
+  DE: "Ticket erstellt. :white_check_mark:\nID: {0}"
+
+'please allow receiving dms':
+  EN: "Please allow receiving DMs to get informed about updates!"
+  DE: "Bitte aktiviere das Empfangen von Direkt-Nachrichten, um über Neuigkeiten informiert zu werden!"
+
+'new ticket':
+  EN: "New ticket:"
+  DE: "Neues Ticket:"
+
+tickets can't be created via dm:
+  EN: "Tickets can't be created via DM."
+  DE: "Tickets können nicht per DM erstellt werden."
+
+'this is a local ticket of another guild':
+  EN: "This is a local ticket of another guild. You aren't allowed to access it here."
+  DE: "Dies ist ein lokales Ticket eines anderen Servers. Du darfst hier nicht darauf zugreifen."
+
+'this is a private ticket':
+  EN: "This is a private ticket. :lock: You need to be supporter, admin or ticket author to access it."
+  DE: "Dieses Ticket ist privat. :lock: Du musst ein Supporter, Admin oder Ticket-Autor sein, um darauf zuzugreifen."
+
+'which ticket do you wanna see':
+  EN: "Which ticket do you wanna see?:"
+  DE: "Welches Ticket willst du sehen?:"
+
+'this ticket is already closed':
+  EN: "This ticket is already closed."
+  DE: "Dieses Ticket ist schon geschlossen."
+
+'ticket closed':
+  EN: "Ticket closed. :white_check_mark:"
+  DE: "Ticket geschlossen. :white_check_mark:"
+
+'[user] just closed ticket [ticket]':
+  EN: "{0} just closed ticket #{1}"
+  DE: "{0} hat gerade Ticket #{1} geschlossen"
+
+ticket author doesn't allow dms:
+  EN: " (But the ticket author doesn't allow DMs.)"
+  DE: " (Aber der Ticket-Autor erlaubt keine Direkt-Nachrichten.)"
+
+'this ticket is not closed':
+  EN: "This ticket is not closed."
+  DE: "Dieses Ticket ist nicht geschlossen."
+
+'ticket reopened':
+  EN: "Ticket reopened. :white_check_mark:"
+  DE: "Ticket neu geöffnet. :white_check_mark:"
+
+'[user] just reopened a ticket':
+  EN: "{0} just reopened a ticket:"
+  DE: "{0} hat gerade ein Ticket neu geöffnet:"
+
+'you have to be supporter or ticket author for this':
+  EN: "You have to be supporter or the ticket author for this."
+  DE: "Du musst dafür Supporter oder Ticket-Autor sein."
+
+active support tickets:
+  EN: "Active support tickets"
+  DE: "Aktive Support-Tickets"
+
+'all open tickets of the given user':
+  EN: "All open tickets of the given user."
+  DE: "Alle offenen Tickets des gegebenen Benutzers."
+
+'all open tickets of this guild':
+  EN: "All open tickets of this guild."
+  DE: "Alle offenen Tickets dieses Servers."
+
+'there are no active support tickets':
+  EN: "There are no active support tickets."
+  DE: "Es sind keine aktiven Support-Tickets vorhanden."
+
+'to see all properties of a ticket use the ticket show command':
+  EN: "To see all properties of a ticket use the 'ticket show' command."
+  DE: "Um alle Eigenschaften eines Tickets zu sehen, nutze den 'ticket show' Befehl."
+
+'guided configuration':
+  EN: "Guided configuration"
+  DE: "Begleitete Konfiguration"
+
+'this will guid you through all configurations':
+  EN: "This will guid you through all configurations for your server."
+  DE: "Dies wird dich durch alle Konfigurationen für deinen Server führen."
+
+'configuration dialog closed':
+  EN: "Configuration dialog closed."
+  DE: "Konfiguration beendet."
+
+'type the new prefix':
+  EN: "Type the new prefix:"
+  DE: "Gib den neuen Präfix ein:"
+
+'which channel do you wanna use as support channel':
+  EN: "Which channel do you wanna use as support channel?:"
+  DE: "Welchen Kanal möchtest du als Support-Kanal nutzen?:"
+
+'which role do you wanna use as support role':
+  EN: "Which role do you wanna use as support role?:"
+  DE: "Welche Rolle möchtest du als Support-Rolle nutzen?:"
+
+'choose a scope as default':
+  EN: "Choose a scope as default!"
+  DE: "Wähle eine Reichweite als Standard!"
+
+'choose the language of the server':
+  EN: "Choose the language of the server!"
+  DE: "Wähle die Sprache des Servers!"
+
+'invalid input':
+  EN: "Invalid input."
+  DE: "Ungültige Eingabe."
+
+'type [pfx]abort to close this dialog':
+  EN: "\n(Type `{0}abort` to close this dialog.)"
+  DE: "\n(Tippe `{0}abort`, um diesen Dialog zu beenden.)"
+
+'configuration is only available on servers':
+  EN: "Configuration is only available on servers."
+  DE: "Konfiguration ist nur auf Servern verfügbar."
+
+'you have to be admin for that':
+  EN: "You have to be admin for that."
+  DE: "Dafür musst du Admin sein."
+
+prefix can't be longer than [max] characters:
+  EN: "Prefix can't be longer than {0} characters."
+  DE: "Präfix kann nicht länger als {0} Zeichen sein."
+
+'prefix must be at least [min] character':
+  EN: "Prefix must be at least {0} character."
+  DE: "Präfix muss mindestens {0} Zeichen lang sein."
+
+'the new prefix is [pfx]':
+  EN: "Okay, the new prefix is: `{0}`."
+  DE: "Okay, der neue Präfix ist: `{0}`."
+
+i'll send ticket events in [channel]:
+  EN: "Okay, I'll send ticket events in {0}. :white_check_mark:"
+  DE: "Okay, ich werde Ticket-Ereignisse in {0} senden. :white_check_mark:"
+
+i'll now notify [role] on ticket events:
+  EN: "Okay, I'll now notify `{0}` on ticket events :white_check_mark:"
+  DE: "Okay, ich werde jetzt `{0}` bei Ticket-Ereignissen benachrichtigen."
+
+'role not found':
+  EN: "Role not found."
+  DE: "Rolle nicht gefunden."
+
+'all tickets will be default [scope]':
+  EN: "Okay, all tickets will be default `{0}`."
+  DE: "Okay, alle Tickets werden standardmäßig `{0}` sein."
+
+'[language] is the default language on this server now':
+  EN: "Okay. `{0}` is the default language on this server now."
+  DE: "Okay. `{0}` ist jetzt die Standardsprache auf diesem Server."
+
+'commands':
+  EN: "Commands"
+  DE: "Befehle"
+
+'an overview of all features of the bot':
+  EN: "An overview of all features of the bot."
+  DE: "Eine Übersicht aller Features dieses Bots."
+
+'requested on [guild]':
+  EN: "Requested on \"{0}\"."
+  DE: "Angefordert auf \"{0}\"."
+
+'help sent via dm':
+  EN: "Help sent via DM. :white_check_mark:"
+  DE: "Hilfe per DM gesendet. :white_check_mark:"
+
+'command not found':
+  EN: "Command not found."
+  DE: "Befehl nicht gefunden."
+
+'please enable receiving dms and try again':
+  EN: "Please enable receiving DMs and try again."
+  DE: "Bitte erlaube das Empfangen von DMs und versuche es erneut."
+
+'this ticket is closed':
+  EN: "This ticket is closed."
+  DE: "Dieses Ticket ist geschlossen."
+
+'response created':
+  EN: "Response created. :white_check_mark:\nID: {0}"
+  DE: "Antwort erstellt. :white_check_mark:\nID: {0}"
+
+'[user] just responded to your ticket [ticket]':
+  EN: "{0}#{1} just responded to your ticket #{2}."
+  DE: "`{0}#{1}` hat gerade auf dein ticket #{2} geantwortet."
+
+'the related ticket is local of another guild':
+  EN: "The related ticket is a local ticket of another guild. You aren't allowed to access it here."
+  DE: "Das verknüpfte Ticket ist ein lokales Ticket eines anderen Servers. Du darfst hier nicht darauf zugreifen."
+
+'the related ticket is private':
+  EN: "The related ticket is private. You need to be supporter, admin or ticket author to access it."
+  DE: "Das verknüpfte Ticket ist privat.Du musst Supporter, Admin oder Ticket-Autor sein, um darauf zuzugreifen."
+
+'created on':
+  EN: "Created on"
+  DE: "Erstellt am"
+
+'updated on':
+  EN: "Updated on"
+  DE: "Aktualisiert am"
+
+'refers to ticket':
+  EN: "Refers to ticket"
+  DE: "Gehört zu Ticket"
+
+'use :x: to close the dialog':
+  EN: "Use :x: to close the dialog."
+  DE: "Nutze :x:, um dieses Fenster zu schließen."

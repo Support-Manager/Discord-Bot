@@ -1,3 +1,1 @@
-import json
-
 bot = None

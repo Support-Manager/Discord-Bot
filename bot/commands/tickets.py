@@ -6,13 +6,15 @@ from ._setup import bot
 async def tickets(ctx, user: discord.User=None):
     """ Shows a list of tickets on the server/of a specific user. """
 
+    guild = get_guild(ctx.guild)
+
     tickets_emb = discord.Embed(
-        title="Active support tickets",
+        title=ctx.translate("active support tickets"),
         color=EMBED_COLOR
     )
 
     if user is not None:
-        tickets_emb.description = "All open tickets of the given user."
+        tickets_emb.description = ctx.translate("all open tickets of the given user")
         tickets_emb.set_author(
             name=f"{user.name}#{user.discriminator}",
             icon_url=user.avatar_url
@@ -23,9 +25,7 @@ async def tickets(ctx, user: discord.User=None):
         ticket_list = list(db_user.tickets)
 
     else:
-        tickets_emb.description = "All open tickets of this guild."
-
-        guild = Guild.select(graph, ctx.guild.id).first()
+        tickets_emb.description = ctx.translate("all open tickets of this guild")
 
         ticket_list = list(guild.tickets)
 
@@ -34,7 +34,7 @@ async def tickets(ctx, user: discord.User=None):
     ticket_list.reverse()
 
     if len(ticket_list) == 0:
-        await ctx.send("There are no active support tickets.")
+        await ctx.send(ctx.translate("there are no active support tickets"))
         return None
 
     for ticket in ticket_list:
@@ -45,7 +45,7 @@ async def tickets(ctx, user: discord.User=None):
         )
 
     tickets_emb.set_footer(
-        text="To see all properties of a ticket use the 'ticket show' command."
+        text=ctx.translate("to see all properties of a ticket use the ticket show command")
     )
 
     await ctx.send(embed=tickets_emb)
