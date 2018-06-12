@@ -58,7 +58,7 @@ async def _create(ctx, title: str, description: str=None, scope: converters.Scop
         graph.create(t)
 
         try:
-            await ctx.author.send(ctx.translate("your ticket has been created"))
+            await ctx.author.send(ctx.translate("your ticket has been created").format(t.id))
             dm_allowed = True
         except commands.BotMissingPermissions:
             dm_allowed = False
@@ -101,10 +101,15 @@ async def _show(ctx, t: converters.Ticket):
             ctx.send(ctx.translate('this is a private ticket'))
             return None
 
+    """
     emb = ticket_embed(ctx, t)
 
     await ctx.send(embed=emb)
     # TODO: extend to show responses
+    """
+
+    viewer = TicketViewer(ctx, t)
+    await viewer.run()
 
 
 @_show.error

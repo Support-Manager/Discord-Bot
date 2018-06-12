@@ -11,8 +11,8 @@
   DE: "Titel zu kurz: (min. `{0}` Zeichen | `{1}` gegeben)"
 
 'your ticket has been created':
-  EN: "Your ticket has been created. I'll inform you here about updates."
-  DE: "Dein Ticket wurde erstellt. Ich werde dich hier über Neuigkeiten informieren."
+  EN: "Your ticket (`#{0}`) has been created. I'll inform you here about updates."
+  DE: "Dein Ticket (`#{0}`) wurde erstellt. Ich werde dich hier über Neuigkeiten informieren."
 
 'ticket created':
   EN: "Ticket created. :white_check_mark:\nID: {0}"
@@ -233,3 +233,19 @@ i'll now notify [role] on ticket events:
 'use :x: to close the dialog':
   EN: "Use :x: to close the dialog."
   DE: "Nutze :x:, um dieses Fenster zu schließen."
+
+'you are not allowed to perform this action':
+  EN: "You are not allowed to perform this action. :no_entry:"
+  DE: "Du bist nicht dazu berechtigt, diese Aktion durchzuführen. :no_entry:"
+
+'this response is deleted':
+  EN: "This response is deleted."
+  DE: "Diese Antwort ist gelöscht."
+
+'response deleted':
+  EN: "Response deleted. :white_check_mark:"
+  DE: "Antwort gelöscht. :white_check_mark:"
+
+'page':
+ EN: "Page"
+ DE: "Seite"

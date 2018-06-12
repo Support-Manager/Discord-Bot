@@ -11,9 +11,6 @@ async def config(ctx):
     """ This is for admins to configure the bot's behaviour on their guild. """
 
     if ctx.invoked_subcommand is None:
-        guild = get_guild(ctx.guild)
-        language = guild.language
-
         options = [cmd.name for cmd in config.commands]
         title = ctx.translate('guided configuration')
         description = ctx.translate('this will guid you through all configurations')
@@ -88,8 +85,6 @@ async def config(ctx):
 
 @config.error
 async def config_error(ctx, error):
-    language = get_guild(ctx.guild).language
-
     if isinstance(error, commands.NoPrivateMessage):
         await ctx.send(ctx.translate("configuration is only available on servers"))
 
@@ -105,8 +100,7 @@ async def config_error(ctx, error):
 async def _prefix(ctx, pfx: str = ""):
     """ This is to change the guild's cmd prefix. """
 
-    guild = get_guild(ctx.guild)
-    language = guild.language
+    guild = ctx.db_guild
 
     min_len = CONFIG['prefix_min_len']
     max_len = CONFIG['prefix_max_len']

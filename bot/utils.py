@@ -5,6 +5,7 @@ import logging
 import sys
 import time
 import asyncio
+from copy import deepcopy
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -53,6 +54,7 @@ def get_guild(guild: discord.Guild):
         g.language = DEFAULT['language']
 
         graph.create(g)
+        logger.info(f"Added guild to database: {g.id}")
 
     return g
 
@@ -66,6 +68,7 @@ def get_user(user: discord.User):
         u.id = user.id
 
         graph.create(u)
+        logger.info(f"Added user to database: {u.id}")
 
     return u
 
@@ -196,8 +199,8 @@ async def notify_author(ctx, message, ticket: Ticket, embed=None):
             return 1
 
 
-def is_author_or_supporter(ctx, ticket: Ticket):
-    return ticket.guild.support_role in [role.id for role in ctx.author.roles] or ctx.author.id == ticket.author.id or \
+def is_author_or_supporter(ctx, entry: Ticket or Response):
+    return entry.guild.support_role in [role.id for role in ctx.author.roles] or ctx.author.id == entry.author.id or \
         ctx.author.permissions_in(ctx.channel).administrator or ctx.author.id in BOT_ADMINS
 
 
@@ -255,3 +258,68 @@ async def multiple_choice(ctx, options: list, title: str, description: str="", m
 
     index = emojis.index(reaction.emoji)
     return options[index], message
+
+
+class TicketViewer:
+    """ Represents an interactive menu containing the whole data of a ticket (including responses). """
+
+    def __init__(self, ctx, ticket: Ticket):
+        self._ctx = ctx
+        self.ticket = ticket
+        self.ticket_embed = ticket_embed(self._ctx, self.ticket)
+        self.response_embeds = [response_embed(self._ctx, r) for r in sorted(self.ticket.responses, key=lambda r: r.id)]
+
+        self.pages = []
+        self.pages.append(deepcopy(self.ticket_embed))  # copy by value (not reference)
+        self.pages.extend(self.response_embeds)
+
+        self.control_emojis = ('⏮', '◀', '▶', '⏭', '⏹')
+
+        for page in self.pages:
+            page.set_footer(text=ctx.translate("page") + f" ( {self.pages.index(page)+1} | {len(self.pages)} )")
+
+    async def run(self):
+        if len(self.pages) == 1:
+            await self._ctx.send(embed=self.ticket_embed)
+            return
+
+        message = await self._ctx.send(embed=self.pages[0])
+        current_page_index = 0
+
+        for emoji in self.control_emojis:
+            await message.add_reaction(emoji)
+
+        def check(r: discord.Reaction, u: discord.User):
+            res = (r.message.id == message.id) and (u.id == self._ctx.author.id) and (r.emoji in self.control_emojis)
+            return res
+
+        while True:
+            try:
+                reaction, user = await self._ctx.bot.wait_for('reaction_add', check=check, timeout=100)
+            except asyncio.TimeoutError:
+                await message.clear_reactions()
+                return
+
+            emoji = reaction.emoji
+            max_index = len(self.pages) - 1
+
+            if emoji == self.control_emojis[0]:
+                load_page_index = 0
+
+            elif emoji == self.control_emojis[1]:
+                load_page_index = current_page_index - 1 if current_page_index > 0 else current_page_index
+
+            elif emoji == self.control_emojis[2]:
+                load_page_index = current_page_index + 1 if current_page_index < max_index else current_page_index
+
+            elif emoji == self.control_emojis[3]:
+                load_page_index = max_index
+
+            else:
+                await message.delete()
+                return
+
+            await message.edit(embed=self.pages[load_page_index])
+            await message.remove_reaction(reaction, user)
+
+            current_page_index = load_page_index

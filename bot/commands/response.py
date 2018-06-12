@@ -40,6 +40,8 @@ async def _create(ctx, ticket: converters.Ticket, content):
 
     resp.content = escaped(content)
 
+    resp.deleted = False
+
     highest_id = graph.run("MATCH (r: Response) RETURN max(r.id)").evaluate()
     if highest_id is None:
         highest_id = 0
@@ -50,7 +52,9 @@ async def _create(ctx, ticket: converters.Ticket, content):
 
     await ctx.send(ctx.translate("response created").format(resp.id))
 
-    resp_msg = ctx.translate("[user] just responded to your ticket [ticket]")
+    resp_msg = ctx.translate(
+        "[user] just responded to your ticket [ticket]"
+    ).format(ctx.author.name, ctx.author.discriminator, ticket.id)
 
     await notify_author(ctx, resp_msg, ticket, embed=response_embed(ctx, resp))
 
@@ -69,6 +73,29 @@ async def _show(ctx, resp: converters.Response):
         await ctx.send(ctx.translate("the related ticket is private"))
         return None
 
+    elif resp.deleted:
+        await ctx.send(ctx.translate("this response is deleted"))
+        return None
+
     emb = response_embed(ctx, resp)
 
     await ctx.send(embed=emb)
+
+
+@response.command(name="delete")
+async def _delete(ctx, resp: converters.Response):
+    """ This is to delete a response. """
+
+    utc = time.time()
+    ticket = resp.ticket
+
+    if not (ctx.author.id == resp.author.id or is_author_or_supporter(ctx, ticket)):
+        await ctx.send(ctx.translate("you are not allowed to perform this action"))
+        return None
+
+    resp.deleted = True
+    resp.deleted_by.add(get_user(ctx.author), properties={'UTC': utc})
+
+    graph.push(resp)
+
+    await ctx.send(ctx.translate("response deleted"))

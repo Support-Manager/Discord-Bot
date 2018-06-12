@@ -1,5 +1,5 @@
 from discord.ext import commands
-from bot.utils import get_guild, logger, DEFAULT
+from bot.utils import get_guild, logger
 from ruamel import yaml
 
 
