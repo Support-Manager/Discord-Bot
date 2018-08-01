@@ -1,3 +1,5 @@
+# === ticket creation ===
+
 'title too long':
   EN: |
     Title too long: (max. `{0}` characters | `{1}` given)
@@ -30,9 +32,25 @@ tickets can't be created via dm:
   EN: "Tickets can't be created via DM."
   DE: "Tickets können nicht per DM erstellt werden."
 
-'this is a local ticket of another guild':
-  EN: "This is a local ticket of another guild. You aren't allowed to access it here."
-  DE: "Dies ist ein lokales Ticket eines anderen Servers. Du darfst hier nicht darauf zugreifen."
+# channel-ticket creation
+
+'support tickets':
+  EN: "support tickets"
+  DE: "Support-Tickets"
+
+'first channel-ticket has been created':
+  EN: "First channel-ticket has been created."
+  DE: "Erstes Kanal-Ticket wurde erstellt."
+
+'new channel-ticket has been created':
+  EN: "New channel-ticket has been created."
+  DE: "Neues Kanal-Ticket wurde erstellt."
+
+# === ticket show command ===
+
+'this is a channel ticket':
+  EN: "This is a channel ticket. You aren't allowed to access it here."
+  DE: "Dies ist ein Kanal-Ticket. Du darfst hier nicht darauf zugreifen."
 
 'this is a private ticket':
   EN: "This is a private ticket. :lock: You need to be supporter, admin or ticket author to access it."
@@ -41,6 +59,8 @@ tickets can't be created via dm:
 'which ticket do you wanna see':
   EN: "Which ticket do you wanna see?:"
   DE: "Welches Ticket willst du sehen?:"
+
+# === ticket close command ===
 
 'this ticket is already closed':
   EN: "This ticket is already closed."
@@ -58,6 +78,12 @@ ticket author doesn't allow dms:
   EN: " (But the ticket author doesn't allow DMs.)"
   DE: " (Aber der Ticket-Autor erlaubt keine Direkt-Nachrichten.)"
 
+'ticket has been closed':
+  EN: "The ticket has been closed."
+  DE: "Das Ticket wurde geschlossen."
+
+# === ticket reopen command ===
+
 'this ticket is not closed':
   EN: "This ticket is not closed."
   DE: "Dieses Ticket ist nicht geschlossen."
@@ -73,6 +99,12 @@ ticket author doesn't allow dms:
 'you have to be supporter or ticket author for this':
   EN: "You have to be supporter or the ticket author for this."
   DE: "Du musst dafür Supporter oder Ticket-Autor sein."
+
+'channel-ticket has been reopened':
+  EN: "The channel-ticket has been reopened."
+  DE: "Das Kanal-Ticket wurde neu geöffnet."
+
+# === tickets command ===
 
 active support tickets:
   EN: "Active support tickets"
@@ -94,12 +126,14 @@ active support tickets:
   EN: "To see all properties of a ticket use the 'ticket show' command."
   DE: "Um alle Eigenschaften eines Tickets zu sehen, nutze den 'ticket show' Befehl."
 
+# === guided configuration ===
+
 'guided configuration':
   EN: "Guided configuration"
   DE: "Begleitete Konfiguration"
 
 'this will guid you through all configurations':
-  EN: "This will guid you through all configurations for your server."
+  EN: "This will guide you through all configurations for your server."
   DE: "Dies wird dich durch alle Konfigurationen für deinen Server führen."
 
 'configuration dialog closed':
@@ -126,6 +160,10 @@ active support tickets:
   EN: "Choose the language of the server!"
   DE: "Wähle die Sprache des Servers!"
 
+'which category do you wanna use for channel-tickets':
+  EN: "Which category do you wanna use for channel-tickets?:"
+  DE: "Welche Kategorie möchtest du für Kanal-Tickets nutzen?:"
+
 'invalid input':
   EN: "Invalid input."
   DE: "Ungültige Eingabe."
@@ -133,6 +171,8 @@ active support tickets:
 'type [pfx]abort to close this dialog':
   EN: "\n(Type `{0}abort` to close this dialog.)"
   DE: "\n(Tippe `{0}abort`, um diesen Dialog zu beenden.)"
+
+# === config commands ===
 
 'configuration is only available on servers':
   EN: "Configuration is only available on servers."
@@ -174,6 +214,12 @@ i'll now notify [role] on ticket events:
   EN: "Okay. `{0}` is the default language on this server now."
   DE: "Okay. `{0}` ist jetzt die Standardsprache auf diesem Server."
 
+'all channel-tickets will be created in [category]':
+  EN: "Okay. All channel-tickets will be created in `{0}`."
+  DE: "Okay. Alle Kanal-Tickets werden in `{0}` erstellt werden."
+
+# === help command ===
+
 'commands':
   EN: "Commands"
   DE: "Befehle"
@@ -198,6 +244,8 @@ i'll now notify [role] on ticket events:
   EN: "Please enable receiving DMs and try again."
   DE: "Bitte erlaube das Empfangen von DMs und versuche es erneut."
 
+# === response command ===
+
 'this ticket is closed':
   EN: "This ticket is closed."
   DE: "Dieses Ticket ist geschlossen."
@@ -210,13 +258,15 @@ i'll now notify [role] on ticket events:
   EN: "{0}#{1} just responded to your ticket #{2}."
   DE: "`{0}#{1}` hat gerade auf dein ticket #{2} geantwortet."
 
-'the related ticket is local of another guild':
-  EN: "The related ticket is a local ticket of another guild. You aren't allowed to access it here."
-  DE: "Das verknüpfte Ticket ist ein lokales Ticket eines anderen Servers. Du darfst hier nicht darauf zugreifen."
+'the related ticket is channel scope':
+  EN: "The related ticket is a channel ticket. You aren't allowed to access it here."
+  DE: "Das verknüpfte Ticket ist ein Kanal-Ticket. Du darfst hier nicht darauf zugreifen."
 
 'the related ticket is private':
   EN: "The related ticket is private. You need to be supporter, admin or ticket author to access it."
   DE: "Das verknüpfte Ticket ist privat.Du musst Supporter, Admin oder Ticket-Autor sein, um darauf zuzugreifen."
+
+# === mixed (utils) ===
 
 'created on':
   EN: "Created on"

@@ -1,7 +1,8 @@
 from discord.ext import commands
 from bot.utils import *
 from ._setup import bot
-from bot import converters
+from bot import logger, enums
+from bot.models import graph, Guild, User, Ticket, Scope, Language
 
 
 @bot.group(name='config', aliases=['set', 'configure'])
@@ -41,15 +42,19 @@ async def config(ctx):
 
             elif action == 'scope':
                 title = ctx.translate("choose a scope as default")
-                choice = await multiple_choice(ctx, CONFIG['scopes'], title, message=msg)
+                choice = await multiple_choice(ctx, [s.value for s in enums.Scope], title, message=msg)
                 choice = choice[0]
-                converter = converters.Scope()
+                converter = Scope()
 
             elif action == 'language':
                 title = ctx.translate("choose the language of the server")
-                choice = await multiple_choice(ctx, CONFIG['languages'], title, message=msg)
+                choice = await multiple_choice(ctx, [l.value for l in enums.Language], title, message=msg)
                 choice = choice[0]
-                converter = converters.Language()
+                converter = Language()
+
+            elif action == 'category':
+                content = "which category do you wanna use for channel-tickets"
+                converter = commands.CategoryChannelConverter()
 
             prefix = ctx.prefix
 
@@ -89,7 +94,7 @@ async def config_error(ctx, error):
         await ctx.send(ctx.translate("configuration is only available on servers"))
 
     elif isinstance(error, commands.CommandError):
-        logger.debug(error.__traceback__)
+        logger.debug(error)
         await ctx.send(ctx.translate("you have to be admin for that"))
 
     else:
@@ -102,14 +107,13 @@ async def _prefix(ctx, pfx: str = ""):
 
     guild = ctx.db_guild
 
-    min_len = CONFIG['prefix_min_len']
-    max_len = CONFIG['prefix_max_len']
+    if len(pfx) > enums.PrefixLength.MAX:
+        await ctx.send(
+            ctx.translate("prefix can't be longer than [max] characters").format(enums.PrefixLength.MAX.value)
+        )
 
-    if len(pfx) > max_len:
-        await ctx.send(ctx.translate("prefix can't be longer than [max] characters").format(max_len))
-
-    elif len(pfx) < min_len:
-        await ctx.send(ctx.translate("prefix must be at least [min] characters").format(min_len))
+    elif len(pfx) < enums.PrefixLength.MIN:
+        await ctx.send(ctx.translate("prefix must be at least [min] characters").format(enums.PrefixLength.MIN.value))
 
     else:
         guild.prefix = pfx
@@ -122,7 +126,7 @@ async def _prefix(ctx, pfx: str = ""):
 async def _channel(ctx, channel: discord.TextChannel):
     """ This is to set the guild's support channel. """
 
-    guild = Guild.select(graph, ctx.guild.id).first()
+    guild = ctx.db_guild
     guild.channel = channel.id
     graph.push(guild)
 
@@ -133,9 +137,9 @@ async def _channel(ctx, channel: discord.TextChannel):
 async def _role(ctx, role: discord.Role):
     """ This is to set the guild's support role. """
 
-    guild = Guild.select(graph, ctx.guild.id).first()
+    guild = ctx.db_guild
     guild.support_role = role.id
-    graph.push(guild)
+    guild.push()
 
     await ctx.send(ctx.translate("i'll now notify [role] on ticket events").format(role.name))
 
@@ -148,12 +152,12 @@ async def _config_error(ctx, error):
 
 
 @config.command(name='scope')
-async def _default_scope(ctx, scope: converters.Scope):
-    guild = Guild.select(graph, ctx.guild.id).first()
+async def _default_scope(ctx, scope: Scope):
+    guild = ctx.db_guild
 
     guild.default_scope = scope
 
-    graph.push(guild)
+    guild.push()
 
     await ctx.send(ctx.translate("all tickets will be default [scope]").format(scope))
 
@@ -165,12 +169,12 @@ async def _scope_error(ctx, error):
 
 
 @config.command(name='language', aliases=['lang'])
-async def _language(ctx, language: converters.Language):
-    guild = Guild.select(graph, ctx.guild.id).first()
+async def _language(ctx, language: Language):
+    guild = ctx.db_guild
 
     guild.language = language
 
-    graph.push(guild)
+    guild.push()
 
     await ctx.send(ctx.translate("[language] is the default language on this server now").format(language))
 
@@ -179,3 +183,14 @@ async def _language(ctx, language: converters.Language):
 async def _language_error(ctx, error):
     if isinstance(error, commands.BadArgument):
         await ctx.send(error)
+
+
+@config.command(name='category')
+async def _category(ctx, category_channel: discord.CategoryChannel):
+    guild = ctx.db_guild
+
+    guild.category_channel = category_channel.id
+
+    guild.push()
+
+    await ctx.send(ctx.translate("all channel-tickets will be created in [category]").format(category_channel.name))

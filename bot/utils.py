@@ -1,94 +1,23 @@
 import discord
-from neo4j_connection import *
-import json
-import logging
-import sys
 import time
 import asyncio
 from copy import deepcopy
-
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
-
-console = logging.StreamHandler(sys.stdout)
-console.setLevel(logging.DEBUG)
-logger.addHandler(console)
-
-with open('properties/secrets.json', 'r', encoding='utf-8') as s:
-    SECRETS = json.load(s)
-
-graph = Graph(password=SECRETS['neo4j'])  # represents database connection
-
-
-with open('properties/default.json', 'r', encoding='utf-8') as d:
-    DEFAULT = json.load(d)
-
-
-with open('properties/config.json', 'r', encoding='utf-8') as c:
-    CONFIG = json.load(c)
-
-    EMBED_COLOR = int(CONFIG["embed_color"], 16)  # convert hex string to integer
-    BOT_ADMINS = CONFIG["bot_admins"]
-
-
-async def dynamic_prefix(bot, msg):
-    if isinstance(msg.channel, discord.DMChannel):
-        return DEFAULT['prefix']
-
-    guild = Guild()
-    guild.id = msg.guild.id
-    graph.pull(guild)
-
-    return guild.prefix
-
-
-def get_guild(guild: discord.Guild):
-    g = Guild.select(graph, guild.id).first()
-
-    if g is None:
-        g = Guild()
-
-        g.id = guild.id
-        g.prefix = DEFAULT['prefix']
-        g.default_scope = DEFAULT['scope']
-        g.language = DEFAULT['language']
-
-        graph.create(g)
-        logger.info(f"Added guild to database: {g.id}")
-
-    return g
-
-
-def get_user(user: discord.User):
-    u = User.select(graph, user.id).first()
-
-    if u is None:
-        u = User()
-
-        u.id = user.id
-
-        graph.create(u)
-        logger.info(f"Added user to database: {u.id}")
-
-    return u
+from .models import Ticket, Response
+from .properties import Defaults
+from bot import enums
 
 
 def ticket_embed(ctx, t: Ticket):
     author = ctx.bot.get_user(t.author.id)
-    guild = ctx.bot.get_guild(t.guild.id)
 
     emb = discord.Embed(
         title=t.title,
         description=t.description,
-        color=EMBED_COLOR
+        color=Defaults.COLOR
     )
     emb.add_field(
         name="ID",
-        value=t.id
-    )
-    emb.add_field(
-        name="Guild",
-        value=guild
+        value=t.channel.mention if t.scope_enum == enums.Scope.CHANNEL else t.id
     )
     emb.add_field(
         name="Scope",
@@ -127,7 +56,7 @@ def response_embed(ctx, r: Response):
     emb = discord.Embed(
         title=f"Re: {r.ticket.title}",
         description=r.content,
-        color=EMBED_COLOR
+        color=Defaults.COLOR
     )
     emb.add_field(
         name="ID",
@@ -180,7 +109,7 @@ async def notify_supporters(ctx, message, ticket: Ticket, embed=True):
                 mention = role.mention
 
         if embed:
-            await channel.send(f"{message} {mention}", embed=ticket_embed(ctx.bot, ticket))
+            await channel.send(f"{message} {mention}", embed=ticket_embed(ctx, ticket))
         else:
             await channel.send(f"{message} {mention}")
 
@@ -199,11 +128,6 @@ async def notify_author(ctx, message, ticket: Ticket, embed=None):
             return 1
 
 
-def is_author_or_supporter(ctx, entry: Ticket or Response):
-    return entry.guild.support_role in [role.id for role in ctx.author.roles] or ctx.author.id == entry.author.id or \
-        ctx.author.permissions_in(ctx.channel).administrator or ctx.author.id in BOT_ADMINS
-
-
 def escaped(msg: str):
     """ Escaping code blocks and double line breaks. """
     return msg.replace("`", "'").replace("\n\n", " ")
@@ -216,7 +140,7 @@ async def multiple_choice(ctx, options: list, title: str, description: str="", m
     config_embed = discord.Embed(
         title=title,
         description=description + "\n" + ctx.translate("use :x: to close the dialog"),
-        color=EMBED_COLOR
+        color=Defaults.COLOR
     )
 
     emojis = []

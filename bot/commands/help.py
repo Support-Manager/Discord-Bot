@@ -2,9 +2,12 @@ from bot.utils import *
 from ._setup import bot
 from discord.ext import commands
 from ruamel import yaml
+from bot.models import Guild
+from bot.properties import Defaults
+import os
 
 
-with open('translations/help.yml', 'r', encoding='utf-8') as stream:
+with open(os.path.dirname(__file__) + '/../translations/help.yml', 'r', encoding='utf-8') as stream:
     try:
         help_translations = yaml.load(stream, Loader=yaml.Loader)  # TODO: complete help texts
     except yaml.YAMLError as exc:
@@ -13,7 +16,7 @@ with open('translations/help.yml', 'r', encoding='utf-8') as stream:
 
 @bot.command(name='help')
 async def help_messages(ctx, command: str=None):
-    guild = get_guild(ctx.guild)
+    guild = Guild.from_discord_guild(ctx.guild)
     language = guild.language
 
     if command is None:
@@ -21,7 +24,7 @@ async def help_messages(ctx, command: str=None):
             title=ctx.translate("commands"),
             url=CONFIG['commands_url'],
             description=ctx.translate("an overview of all features of the bot"),
-            color=EMBED_COLOR
+            color=Defaults.COLOR
         )
 
         help_embed.set_thumbnail(url=bot.user.avatar_url)
@@ -53,7 +56,7 @@ async def help_messages(ctx, command: str=None):
                 title=command,
                 url=CONFIG["commands_url"] + f"#{command}",
                 description=help_translations[command][language].format(prefix=ctx.prefix),
-                color=EMBED_COLOR
+                color=Defaults.COLOR
             )
 
             await ctx.send(embed=help_embed)

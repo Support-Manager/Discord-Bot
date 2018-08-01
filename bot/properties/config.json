@@ -1,12 +1,5 @@
 {
   "commands_url": "https://support-manager.github.io",
   "bot_url": "https://support-manager.github.io",
-  "embed_color": "0x37ceb2",
-  "bot_admins": [269959141508775937],
-  "languages": ["EN", "DE"],
-  "scopes": ["private", "local", "public"],
-  "title_min_len": 5,
-  "title_max_len": 100,
-  "prefix_min_len": 1,
-  "prefix_max_len": 3
+  "bot_admins": [269959141508775937]
 }
