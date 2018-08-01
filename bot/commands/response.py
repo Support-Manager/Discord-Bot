@@ -1,6 +1,8 @@
-from bot.utils import *
+from bot.utils import notify_author, escaped, response_embed
 from ._setup import bot
-from bot import converters
+from bot.models import graph, Ticket, User, Guild, Response
+from bot import enums
+import time
 
 
 @bot.group()
@@ -11,18 +13,18 @@ async def response(ctx):
 
 
 @response.command(name="create")
-async def _create(ctx, ticket: converters.Ticket, content):
+async def _create(ctx, t: Ticket, content: str):
     """ This is to create new responses/to answer tickets. """
 
-    if ticket.scope != 'public' and ctx.guild.id != ticket.guild.id:
-        await ctx.send(ctx.translate("this is a local ticket of another guild"))
+    if t.scope_enum == enums.Scope.CHANNEL and ctx.channel != t.channel and not ctx.may_fully_access(t):
+        await ctx.send(ctx.translate("the related ticket is channel scope"))
         return None
 
-    elif ticket.scope == 'private' and not is_author_or_supporter(ctx, ticket):
+    elif t.scope_enum == enums.Scope.PRIVATE and not ctx.may_fully_access(t):
         await ctx.send(ctx.translate("this is a private ticket"))
         return None
 
-    elif ticket.state == 'closed':
+    elif t.state_enum == enums.State.CLOSED:
         await ctx.send(ctx.translate("this ticket is closed"))
         return None
 
@@ -30,13 +32,13 @@ async def _create(ctx, ticket: converters.Ticket, content):
     
     resp = Response()
     
-    author = get_user(ctx.author)
+    author = User.from_discord_user(ctx.author)
     resp.created_by.add(author, properties={'UTC': utc})
     
-    guild = get_guild(ctx.guild)
+    guild = Guild.from_discord_guild(ctx.guild)
     resp.located_on.add(guild)
     
-    resp.refers_to.add(ticket)
+    resp.refers_to.add(t)
 
     resp.content = escaped(content)
 
@@ -54,22 +56,22 @@ async def _create(ctx, ticket: converters.Ticket, content):
 
     resp_msg = ctx.translate(
         "[user] just responded to your ticket [ticket]"
-    ).format(ctx.author.name, ctx.author.discriminator, ticket.id)
+    ).format(ctx.author.name, ctx.author.discriminator, t.id)
 
-    await notify_author(ctx, resp_msg, ticket, embed=response_embed(ctx, resp))
+    await notify_author(ctx, resp_msg, t, embed=response_embed(ctx, resp))
 
 
 @response.command(name="show")
-async def _show(ctx, resp: converters.Response):
+async def _show(ctx, resp: Response):
     """ This is to show a specific response. """
 
-    ticket = resp.ticket
+    t = resp.ticket
 
-    if ticket.scope != 'public' and ctx.guild.id != ticket.guild.id:
-        await ctx.send(ctx.translate("the related ticket is local of another guild"))
+    if t.scope_enum == enums.Scope.CHANNEL and ctx.channel != t.channel and not ctx.may_fully_access(t):
+        await ctx.send(ctx.translate("the related ticket is channel scope"))
         return None
 
-    elif ticket.scope == 'private' and not is_author_or_supporter(ctx, ticket):
+    elif t.scope_enum == enums.Scope.PRIVATE and not ctx.may_fully_access(t):
         await ctx.send(ctx.translate("the related ticket is private"))
         return None
 
@@ -83,18 +85,18 @@ async def _show(ctx, resp: converters.Response):
 
 
 @response.command(name="delete")
-async def _delete(ctx, resp: converters.Response):
+async def _delete(ctx, resp: Response):
     """ This is to delete a response. """
 
     utc = time.time()
     ticket = resp.ticket
 
-    if not (ctx.author.id == resp.author.id or is_author_or_supporter(ctx, ticket)):
+    if not (ctx.author.id == resp.author.id or ctx.may_fully_access(ticket)):
         await ctx.send(ctx.translate("you are not allowed to perform this action"))
         return None
 
     resp.deleted = True
-    resp.deleted_by.add(get_user(ctx.author), properties={'UTC': utc})
+    resp.deleted_by.add(User.from_discord_user(ctx.author), properties={'UTC': utc})
 
     graph.push(resp)
 
