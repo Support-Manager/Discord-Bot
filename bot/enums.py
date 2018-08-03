@@ -11,6 +11,7 @@ class State(Enum):
     OPEN = "open"
     CLOSED = "closed"
     REOPENED = "reopened"
+    DELETED = "deleted"
 
 
 class Language(Enum):

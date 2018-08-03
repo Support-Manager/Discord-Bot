@@ -1,4 +1,5 @@
 from bot.utils import *
+from discord.ext import commands
 from ._setup import bot
 from bot.models import User
 from bot.properties import Defaults
@@ -6,6 +7,7 @@ from bot import enums
 
 
 @bot.command(aliases=['list', 'all'])
+@commands.guild_only()
 async def tickets(ctx, user: User=None):
     """ Shows a list of tickets on the server/of a specific user. """
 
@@ -23,14 +25,19 @@ async def tickets(ctx, user: User=None):
             icon_url=user.discord.avatar_url
         )
 
-        ticket_list = list(user.tickets)
+        ticket_list = user.get_tickets()
 
     else:
         tickets_emb.description = ctx.translate("all open tickets of this guild")
 
-        ticket_list = list(guild.tickets)
+        tickets_emb.set_author(
+            name=guild.discord.name,
+            icon_url=guild.discord.icon_url
+        )
 
-    ticket_list = list(filter(lambda t: t.state != 'closed', ticket_list))
+        ticket_list = guild.get_tickets()
+
+    ticket_list = list(filter(lambda t: t.state_enum != enums.State.CLOSED, ticket_list))
     ticket_list.reverse()
 
     if not ctx.may_fully_access:
@@ -56,3 +63,9 @@ async def tickets(ctx, user: User=None):
     )
 
     await ctx.send(embed=tickets_emb)
+
+
+@tickets.error
+async def tickets_error(ctx, error):
+    if isinstance(error, commands.NoPrivateMessage):
+        await ctx.send(ctx.translate("tickets can't be accessed via dm"))

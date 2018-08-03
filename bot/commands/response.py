@@ -3,13 +3,21 @@ from ._setup import bot
 from bot.models import graph, Ticket, User, Guild, Response
 from bot import enums
 import time
+from discord.ext import commands
 
 
 @bot.group()
+@commands.guild_only()
 async def response(ctx):
     """ Allows to perform different actions with a response. """
 
     pass
+
+
+@response.error
+async def tickets_error(ctx, error):
+    if isinstance(error, commands.NoPrivateMessage):
+        await ctx.send(ctx.translate("responses can't be accessed via dm"))
 
 
 @response.command(name="create")
@@ -75,10 +83,6 @@ async def _show(ctx, resp: Response):
         await ctx.send(ctx.translate("the related ticket is private"))
         return None
 
-    elif resp.deleted:
-        await ctx.send(ctx.translate("this response is deleted"))
-        return None
-
     emb = response_embed(ctx, resp)
 
     await ctx.send(embed=emb)
@@ -98,6 +102,6 @@ async def _delete(ctx, resp: Response):
     resp.deleted = True
     resp.deleted_by.add(User.from_discord_user(ctx.author), properties={'UTC': utc})
 
-    graph.push(resp)
+    resp.push()
 
     await ctx.send(ctx.translate("response deleted"))

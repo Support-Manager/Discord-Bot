@@ -1,3 +1,9 @@
+# === ticket error ===
+
+tickets can't be accessed via dm:
+  EN: "Tickets can't be accessed via DM."
+  DE: "Auf Tickets kann nicht per DM zugegriffen werden."
+
 # === ticket creation ===
 
 'title too long':
@@ -13,8 +19,8 @@
   DE: "Titel zu kurz: (min. `{0}` Zeichen | `{1}` gegeben)"
 
 'your ticket has been created':
-  EN: "Your ticket (`#{0}`) has been created. I'll inform you here about updates."
-  DE: "Dein Ticket (`#{0}`) wurde erstellt. Ich werde dich hier über Neuigkeiten informieren."
+  EN: "Your ticket (`#{0}` on `{1}`) has been created. I'll inform you here about updates."
+  DE: "Dein Ticket (`#{0}` auf `{1}`) wurde erstellt. Ich werde dich hier über Neuigkeiten informieren."
 
 'ticket created':
   EN: "Ticket created. :white_check_mark:\nID: {0}"
@@ -27,10 +33,6 @@
 'new ticket':
   EN: "New ticket:"
   DE: "Neues Ticket:"
-
-tickets can't be created via dm:
-  EN: "Tickets can't be created via DM."
-  DE: "Tickets können nicht per DM erstellt werden."
 
 # channel-ticket creation
 
@@ -103,6 +105,20 @@ ticket author doesn't allow dms:
 'channel-ticket has been reopened':
   EN: "The channel-ticket has been reopened."
   DE: "Das Kanal-Ticket wurde neu geöffnet."
+
+# == ticket delete ===
+
+'you are attempting to delete ticket [ticket]':
+  EN: "You are attempting to permanently delete ticket #{0}. This action is irreversible.\n Do you want to continue?"
+  DE: "Du versuchst Ticket #{0} endgültig zu löschen. Dieser Schritt ist unumkehrbar.\n Möchtest du fortfahren?"
+
+'ticket deleted':
+  EN: "Ticket deleted. :white_check_mark:"
+  DE: "Ticket gelöscht. :white_check_mark:"
+
+'ticket has been deleted':
+  EN: "The ticket has been deleted."
+  DE: "Das Ticket wurde gelöscht."
 
 # === tickets command ===
 
@@ -244,6 +260,12 @@ i'll now notify [role] on ticket events:
   EN: "Please enable receiving DMs and try again."
   DE: "Bitte erlaube das Empfangen von DMs und versuche es erneut."
 
+# === response error ===
+
+responses can't be accessed via dm:
+  EN: "Responses can't be accessed via DM."
+  DE: "Auf Antworten kann nicht per DM zugegriffen werden."
+
 # === response command ===
 
 'this ticket is closed':
@@ -288,10 +310,6 @@ i'll now notify [role] on ticket events:
   EN: "You are not allowed to perform this action. :no_entry:"
   DE: "Du bist nicht dazu berechtigt, diese Aktion durchzuführen. :no_entry:"
 
-'this response is deleted':
-  EN: "This response is deleted."
-  DE: "Diese Antwort ist gelöscht."
-
 'response deleted':
   EN: "Response deleted. :white_check_mark:"
   DE: "Antwort gelöscht. :white_check_mark:"
@@ -299,3 +317,7 @@ i'll now notify [role] on ticket events:
 'page':
  EN: "Page"
  DE: "Seite"
+
+'canceled':
+  EN: "Canceled."
+  DE: "Abgebrochen."

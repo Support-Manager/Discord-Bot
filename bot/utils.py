@@ -27,6 +27,13 @@ def ticket_embed(ctx, t: Ticket):
         name="State",
         value=t.state
     )
+
+    if isinstance(ctx.channel, discord.DMChannel):  # only need to display guild in DM channels
+        emb.add_field(
+            name="Guild",
+            value=t.guild.discord.name
+        )
+
     emb.set_author(
         name=f"{author.name}#{author.discriminator}",
         icon_url=author.avatar_url
@@ -191,7 +198,8 @@ class TicketViewer:
         self._ctx = ctx
         self.ticket = ticket
         self.ticket_embed = ticket_embed(self._ctx, self.ticket)
-        self.response_embeds = [response_embed(self._ctx, r) for r in sorted(self.ticket.responses, key=lambda r: r.id)]
+        self.response_embeds = \
+            [response_embed(self._ctx, r) for r in sorted(self.ticket.get_responses(), key=lambda r: r.id)]
 
         self.pages = []
         self.pages.append(deepcopy(self.ticket_embed))  # copy by value (not reference)
@@ -247,3 +255,55 @@ class TicketViewer:
             await message.remove_reaction(reaction, user)
 
             current_page_index = load_page_index
+
+
+class Confirmation:
+    """ Represents a message to let the user confirm a specific action. """
+
+    def __init__(self, ctx):
+        self._ctx = ctx
+        self.emojis = {"✅": True, "❌": False}
+        self._confirmed = None
+        self._message = None
+
+    @property
+    def confirmed(self):
+        return self._confirmed
+
+    async def confirm(self, text: str) -> bool or None:
+        emb = discord.Embed(
+            title=text,
+            color=Defaults.COLOR
+        )
+        emb.set_author(
+            name=str(self._ctx.author),
+            icon_url=self._ctx.author.avatar_url
+        )
+
+        msg = await self._ctx.send(embed=emb)
+        self._message = msg
+
+        for emoji in self.emojis:
+            await msg.add_reaction(emoji)
+
+        author = self._ctx.author
+
+        try:
+            reaction, user = await self._ctx.bot.wait_for(
+                'reaction_add',
+                check=lambda r, u: (r.message.id == msg.id) and (u.id == author.id) and (r.emoji in self.emojis),
+                timeout=20
+            )
+        except asyncio.TimeoutError:
+            self._confirmed = None
+            return
+        finally:
+            await msg.clear_reactions()
+
+        confirmed = self.emojis[reaction.emoji]
+
+        self._confirmed = confirmed
+        return confirmed
+
+    async def display(self, text: str, embed: discord.Embed=None):
+        await self._message.edit(content=text, embed=embed)

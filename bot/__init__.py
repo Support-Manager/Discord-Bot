@@ -19,7 +19,7 @@ logger.addHandler(console)
 class Context(commands.Context):
     @property
     def db_guild(self):
-        return Guild.from_discord_guild(self.guild)
+        return Guild.from_discord_guild(self.guild, ctx=self)
 
     @property
     def language(self):

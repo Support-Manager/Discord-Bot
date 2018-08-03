@@ -2,27 +2,34 @@ from bot.utils import *
 from ._setup import bot
 from discord.ext import commands
 from bot import errors, logger, enums
-from bot.models import graph, Scope, User, Guild
+from bot.models import graph, Scope, User
 
 
 @bot.group(name='ticket')
+@commands.guild_only()
 async def ticket(ctx):
     """ Allows to perform different actions with a ticket. """
 
-    # TODO: implement action on when it's invoked without subcommands
+    if ctx.invoked_subcommand is None:
+        pass  # TODO: implement action on when it's invoked without sub-commands
 
     pass
 
 
+@ticket.error
+async def ticket_error(ctx, error):
+    if isinstance(error, commands.NoPrivateMessage):
+        await ctx.send(ctx.translate("tickets can't be accessed via dm"))
+
+
 # TODO: Rework/Rethink error system. (Throw exceptions)
 @ticket.command(name='create')
-@commands.guild_only()
 async def _create(ctx, title: str, description: str=None, scope: Scope=None):
     """ This is to create a support ticket. """
 
     guild = ctx.db_guild
 
-    t = Ticket()
+    t = Ticket(ctx=ctx)
 
     if len(title) > enums.TitleLength.MAX:
         await ctx.send(ctx.translate("title too long").format(enums.TitleLength.MAX.value, len(title)))
@@ -51,7 +58,7 @@ async def _create(ctx, title: str, description: str=None, scope: Scope=None):
         t.scope = scope
 
         highest_id = graph.run(
-            "MATCH (t:Ticket)-[:LOCATED_ON]->(g:Guild {id: %i}) RETURN max(t.id)" % guild.id
+            "MATCH (t:Ticket)-[:TICKET_LOCATED_ON]->(g:Guild {id: %i}) RETURN max(t.id)" % guild.id
         ).evaluate()
 
         if highest_id is None:
@@ -107,7 +114,7 @@ async def _create(ctx, title: str, description: str=None, scope: Scope=None):
         msg = ctx.translate("ticket created").format(format_id)
 
         try:
-            await ctx.author.send(ctx.translate("your ticket has been created").format(t.id))
+            await ctx.author.send(ctx.translate("your ticket has been created").format(t.id, guild.discord.name))
             dm_allowed = True
         except commands.BotMissingPermissions:
             dm_allowed = False
@@ -122,10 +129,7 @@ async def _create(ctx, title: str, description: str=None, scope: Scope=None):
 
 @_create.error
 async def _creation_error(ctx, error):
-    if isinstance(error, commands.NoPrivateMessage):
-        await ctx.send(ctx.translate("tickets can't be created via dm"))
-
-    elif isinstance(error, commands.BadArgument):
+    if isinstance(error, commands.BadArgument):
         await ctx.send(error)
 
     raise error
@@ -270,3 +274,40 @@ async def _close_reopen_error(ctx, error):
 
     else:
         logger.error(error.__cause__, error)
+
+
+@ticket.command(name='delete')
+async def _delete(ctx, t: Ticket):
+    """ This is to delete a ticket. """
+
+    utc = time.time()
+
+    if not ctx.may_fully_access(t):
+        await ctx.send(ctx.translate("you are not allowed to perform this action"))
+        return None
+
+    conf = Confirmation(ctx)
+    await conf.confirm(ctx.translate("you are attempting to delete ticket [ticket]").format(t.id))
+
+    if conf.confirmed:
+        author = User.from_discord_user(ctx.author)
+
+        t.state_enum = enums.State.DELETED
+        t.deleted_by.add(author, properties={'UTC': utc})
+        t.push()
+
+        for resp in t.get_responses():
+            resp.deleted = True
+            resp.deleted_by.add(author, properties={'UTC': utc})
+
+            resp.push()
+
+        await conf.display(ctx.translate("ticket deleted"))
+
+        if t.scope_enum == enums.Scope.CHANNEL:
+            channel = t.channel
+            if channel is not None:
+                await channel.delete(reason=ctx.translate("ticket has been deleted"))
+
+    else:
+        await conf.display((ctx.translate("canceled")))

@@ -2,7 +2,7 @@ from discord.ext import commands
 from bot.utils import *
 from ._setup import bot
 from bot import logger, enums
-from bot.models import graph, Guild, User, Ticket, Scope, Language
+from bot.models import graph, Scope, Language
 
 
 @bot.group(name='config', aliases=['set', 'configure'])

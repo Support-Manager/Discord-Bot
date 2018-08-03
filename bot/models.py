@@ -5,7 +5,6 @@ from py2neo.ogm import GraphObject
 import logging
 from .properties import Defaults, CONFIG
 from . import enums
-import re
 
 
 logger = logging.getLogger(__name__)
@@ -72,6 +71,10 @@ class Ticket(TicketMixin, commands.Converter):
         except TypeError:
             t = None
 
+        if t is not None:
+            if t.state_enum == enums.State.DELETED:
+                t = None
+
         return t
 
     @property
@@ -81,12 +84,20 @@ class Ticket(TicketMixin, commands.Converter):
         else:
             return None
 
+    @scope_enum.setter
+    def scope_enum(self, enum: enums.Scope):
+        self.scope = enum.value
+
     @property
     def state_enum(self):
         if self.state is not None:
             return enums.State(self.state)
         else:
             return None
+
+    @state_enum.setter
+    def state_enum(self, enum: enums.State):
+        self.state = enum.value
 
     @property
     def guild(self):
@@ -110,11 +121,27 @@ class Ticket(TicketMixin, commands.Converter):
     def channel(self):
         return discord.utils.get(self.guild.discord.channels, name=str(self.id))
 
+    def push(self):
+        graph.push(self)
+
+    def get_responses(self):
+        responses = []
+        for r in self.responses:
+            response = Response.get(r.id, ctx=self._creation_ctx)
+            if response is not None:
+                responses.append(response)
+
+        return responses
+
 
 class Response(commands.Converter, ResponseMixin):
+    def __init__(self, ctx=None):
+        self._creation_ctx = ctx
+        super().__init__()
+
     async def convert(self, ctx, argument):
         try:
-            r = self.select(graph, int(argument)).first()
+            r = self.get(int(argument), ctx=ctx)
         except ValueError:
             r = None
 
@@ -123,17 +150,65 @@ class Response(commands.Converter, ResponseMixin):
         else:
             return r
 
+    @classmethod
+    def get(cls, id: int, ctx=None):
+        r = cls(ctx=ctx)
+        r.id = id
+
+        try:
+            graph.pull(r)
+        except TypeError:
+            r = None
+
+        if r is not None:
+            if r.deleted:
+                r = None
+
+        return r
+
+    @property
+    def guild(self):
+        g = list(self.located_on)[0]
+
+        if self._creation_ctx is not None:
+            g = Guild.get(self._creation_ctx, g.id)
+
+        return g
+
+    @property
+    def author(self):
+        a = list(self.created_by)[0]
+
+        if self._creation_ctx is not None:
+            a = User.get(self._creation_ctx, a.id)
+
+        return a
+
+    @property
+    def ticket(self):
+        t = list(self.refers_to)[0]
+
+        if self._creation_ctx is not None:
+            t = Ticket.get(t.id, ctx=self._creation_ctx)
+
+        return t
+
+    def push(self):
+        graph.push(self)
+
 
 class Guild(GuildMixin, commands.IDConverter):
     __primarylabel__ = "Guild"
 
-    def __init__(self, discord_guild: discord.Guild=None):
+    def __init__(self, discord_guild: discord.Guild=None, ctx=None):
         self._discord = discord_guild
 
         if self._discord is not None:
             self.id = discord_guild.id
         else:
             self.id = None
+
+        self._creation_ctx = ctx
 
         super(Guild, self).__init__()
 
@@ -148,7 +223,7 @@ class Guild(GuildMixin, commands.IDConverter):
             discord_guild = None
 
         if discord_guild is not None:
-            result = self.from_discord_guild(discord_guild)  # converts discord.Guild into this class
+            result = self.from_discord_guild(discord_guild, ctx=ctx)  # converts discord.Guild into this class
 
         if result is None:
             raise commands.BadArgument('Guild "{}" not found'.format(argument))
@@ -156,13 +231,13 @@ class Guild(GuildMixin, commands.IDConverter):
             return result
 
     @classmethod
-    def from_discord_guild(cls, guild: discord.Guild):
-        g = cls(guild)
+    def from_discord_guild(cls, guild: discord.Guild, ctx=None):
+        g = cls(guild, ctx=ctx)
 
         try:
             graph.pull(g)
         except TypeError:  # when guild is not in database yet
-            g = cls(guild)  # re-initialize broken object
+            g = cls(guild, ctx=ctx)  # re-initialize broken object
             g.id = guild.id
             g.prefix = Defaults.PREFIX
             g.default_scope = Defaults.SCOPE
@@ -176,7 +251,7 @@ class Guild(GuildMixin, commands.IDConverter):
     @classmethod
     def get(cls, ctx, id: int):
         guild = ctx.bot.get_guild(id)
-        return cls.from_discord_guild(guild)
+        return cls.from_discord_guild(guild, ctx=ctx)
 
     @property
     def language_enum(self):
@@ -192,9 +267,27 @@ class Guild(GuildMixin, commands.IDConverter):
     def push(self):
         graph.push(self)
 
+    def get_tickets(self):
+        tickets = []
+        for t in self.tickets:
+            ticket = Ticket.get(t.id, ctx=self._creation_ctx)
+            if ticket is not None:
+                tickets.append(ticket)
+
+        return tickets
+
+    def get_responses(self):
+        responses = []
+        for r in self.responses:
+            response = Response.get(r.id, ctx=self._creation_ctx)
+            if response is not None:
+                responses.append(response)
+
+        return responses
+
 
 class User(commands.Converter, UserMixin):
-    def __init__(self, discord_user: discord.User=None):
+    def __init__(self, discord_user: discord.User=None, ctx=None):
         self._discord = discord_user
 
         if self._discord is not None:
@@ -202,12 +295,16 @@ class User(commands.Converter, UserMixin):
         else:
             self.id = None
 
+        self._creation_ctx = ctx
+
+        super().__init__()
+
     async def convert(self, ctx, argument):
         result = None
 
         discord_user = await commands.UserConverter().convert(ctx, argument)
         if discord_user:
-            result = self.from_discord_user(discord_user)  # converts discord.User into this class
+            result = self.from_discord_user(discord_user, ctx=ctx)  # converts discord.User into this class
 
         if result is None:
             raise commands.BadArgument('User "{}" not found'.format(argument))
@@ -215,13 +312,13 @@ class User(commands.Converter, UserMixin):
             return result
 
     @classmethod
-    def from_discord_user(cls, user: discord.User):
-        u = cls(user)
+    def from_discord_user(cls, user: discord.User, ctx=None):
+        u = cls(user, ctx=ctx)
 
         try:
             graph.pull(u)
         except TypeError:
-            u = cls(user)  # re-initializing broken object
+            u = cls(user, ctx=ctx)  # re-initializing broken object
             u.id = user.id
             graph.create(u)
             logger.info(f"Added user to database: {u.id}")
@@ -231,7 +328,7 @@ class User(commands.Converter, UserMixin):
     @classmethod
     def get(cls, ctx, id: int):
         discord_user = ctx.bot.get_user(id)
-        return cls.from_discord_user(discord_user)
+        return cls.from_discord_user(discord_user, ctx=ctx)
 
     @property
     def discord(self):
@@ -240,8 +337,26 @@ class User(commands.Converter, UserMixin):
     def push(self):
         graph.push(self)
 
+    def get_tickets(self):
+        tickets = []
+        for t in self.tickets:
+            ticket = Ticket.get(t.id, ctx=self._creation_ctx)
+            if ticket is not None:
+                tickets.append(ticket)
 
-class DiscordModelChild:
+        return tickets
+
+    def get_responses(self):
+        responses = []
+        for r in self.responses:
+            response = Response.get(r.id, ctx=self._creation_ctx)
+            if response is not None:
+                responses.append(response)
+
+        return responses
+
+
+class DiscordModelChild:  # TODO: implement as Abstract Base Class for User and Guild (at least consider doing so)
     def __init__(self, discord_model=None):
         if not issubclass(self.__class__, GraphObject):
             raise Exception("Derived classes need to derive from py2neo.ogm.GraphObject as well.")
