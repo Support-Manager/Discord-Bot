@@ -102,6 +102,10 @@ async def on_command_error(ctx, error):
         msg = ctx.translate("[object] could not be found").format(object_name)
         await ctx.send(msg)
 
+    elif isinstance(error, discord.ext.commands.MissingRequiredArgument):
+        msg = ctx.translate("parameter needs to be specified")
+        await ctx.send(msg)
+
     else:
         raise error
 

@@ -287,8 +287,12 @@ responses can't be accessed via dm:
 # === conversion errors ===
 
 '[object] could not be found':
-  EN: "{} could not be found."
-  DE: "{} konnte nicht gefunden werden."
+  EN: "`{}` could not be found."
+  DE: "`{}` konnte nicht gefunden werden."
+
+'parameter needs to be specified':
+  EN: "Wrong command usage: A missing parameter needs to be specified."
+  DE: "Falsche Benutzung des Befehls: Ein fehlender Parameter muss angegeben werden."
 
 # === mixed (utils) ===
 
