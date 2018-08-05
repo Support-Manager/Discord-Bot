@@ -1,7 +1,7 @@
 from bot.utils import *
 from ._setup import bot
 from discord.ext import commands
-from bot import errors, logger, enums
+from bot import errors, enums
 from bot.models import graph, Scope, User
 
 
@@ -127,14 +127,6 @@ async def _create(ctx, title: str, description: str=None, scope: Scope=None):
         await notify_supporters(ctx, ctx.translate('new ticket'), t)
 
 
-@_create.error
-async def _creation_error(ctx, error):
-    if isinstance(error, commands.BadArgument):
-        await ctx.send(error)
-
-    raise error
-
-
 @ticket.command(name="show")
 async def _show(ctx, t: Ticket):
     """ This is to see a specific support ticket. """
@@ -167,17 +159,12 @@ async def _show_error(ctx, error):
         msg = await bot.wait_for('message', check=check)
 
         try:
-            ticket_id = int(msg.content)
-        except ValueError:
-            return 0
+            t = await Ticket().convert(ctx, msg.content)
+        except commands.BadArgument as e:
+            await ctx.bot.on_command_error(ctx, e)  # redirects to global error handler
+            return
 
-        await ctx.invoke(_show, Ticket.get(ticket_id))
-
-    elif isinstance(error, commands.BadArgument):
-        await ctx.send(error)
-
-    else:
-        logger.error(error)
+        await ctx.invoke(_show, t)
 
 
 @ticket.command(name='close')
@@ -271,9 +258,6 @@ async def _reopen(ctx, t: Ticket):
 async def _close_reopen_error(ctx, error):
     if isinstance(error.__cause__, errors.MissingPermissions):
         await ctx.send(ctx.translate("you have to be supporter or ticket author for this"))
-
-    else:
-        logger.error(error.__cause__, error)
 
 
 @ticket.command(name='delete')

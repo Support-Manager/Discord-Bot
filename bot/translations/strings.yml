@@ -218,10 +218,6 @@ i'll now notify [role] on ticket events:
   EN: "Okay, I'll now notify `{0}` on ticket events :white_check_mark:"
   DE: "Okay, ich werde jetzt `{0}` bei Ticket-Ereignissen benachrichtigen."
 
-'role not found':
-  EN: "Role not found."
-  DE: "Rolle nicht gefunden."
-
 'all tickets will be default [scope]':
   EN: "Okay, all tickets will be default `{0}`."
   DE: "Okay, alle Tickets werden standardmäßig `{0}` sein."
@@ -287,6 +283,12 @@ responses can't be accessed via dm:
 'the related ticket is private':
   EN: "The related ticket is private. You need to be supporter, admin or ticket author to access it."
   DE: "Das verknüpfte Ticket ist privat.Du musst Supporter, Admin oder Ticket-Autor sein, um darauf zuzugreifen."
+
+# === conversion errors ===
+
+'[object] could not be found':
+  EN: "{} could not be found."
+  DE: "{} konnte nicht gefunden werden."
 
 # === mixed (utils) ===
 

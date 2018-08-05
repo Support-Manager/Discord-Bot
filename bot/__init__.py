@@ -6,6 +6,7 @@ from discord.ext import commands
 from ruamel import yaml
 from .models import Guild, User, graph, Ticket, Response
 from .properties import CONFIG, Defaults
+from inspect import Parameter
 
 
 logger = logging.getLogger(__name__)
@@ -81,6 +82,28 @@ async def on_ready():
 @bot.event
 async def on_guild_join(guild):
     Guild.from_discord_guild(guild)
+
+
+@bot.event
+async def on_command_error(ctx, error):
+    if isinstance(error, discord.ext.commands.BadArgument):
+        cmd: commands.Command = ctx.command
+
+        successful_parsed_args = len(ctx.args)  # number of arguments parsed without errors
+        params = list(cmd.params)  # list all param names of the function
+
+        param_name = params[successful_parsed_args]  # get name of the param where the error occurred
+        param: Parameter = cmd.params[param_name]  # get inspect.Parameter object
+
+        annotation = param.annotation  # get the class that the argument should be converted to
+
+        object_name = annotation.__name__  # class name (e.g. 'Ticket' or 'TextChannel')
+
+        msg = ctx.translate("[object] could not be found").format(object_name)
+        await ctx.send(msg)
+
+    else:
+        raise error
 
 
 @bot.before_invoke

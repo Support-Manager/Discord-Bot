@@ -97,9 +97,6 @@ async def config_error(ctx, error):
         logger.debug(error)
         await ctx.send(ctx.translate("you have to be admin for that"))
 
-    else:
-        logger.error(error)
-
 
 @config.command(name='prefix')
 async def _prefix(ctx, pfx: str = ""):
@@ -144,13 +141,6 @@ async def _role(ctx, role: discord.Role):
     await ctx.send(ctx.translate("i'll now notify [role] on ticket events").format(role.name))
 
 
-@_channel.error
-@_role.error
-async def _config_error(ctx, error):
-    if isinstance(error, commands.BadArgument):
-        await ctx.send(ctx.translate("role not found"))
-
-
 @config.command(name='scope')
 async def _default_scope(ctx, scope: Scope):
     guild = ctx.db_guild
@@ -162,12 +152,6 @@ async def _default_scope(ctx, scope: Scope):
     await ctx.send(ctx.translate("all tickets will be default [scope]").format(scope))
 
 
-@_default_scope.error
-async def _scope_error(ctx, error):
-    if isinstance(error, commands.BadArgument):
-        await ctx.send(error)
-
-
 @config.command(name='language', aliases=['lang'])
 async def _language(ctx, language: Language):
     guild = ctx.db_guild
@@ -177,12 +161,6 @@ async def _language(ctx, language: Language):
     guild.push()
 
     await ctx.send(ctx.translate("[language] is the default language on this server now").format(language))
-
-
-@_language.error
-async def _language_error(ctx, error):
-    if isinstance(error, commands.BadArgument):
-        await ctx.send(error)
 
 
 @config.command(name='category')

@@ -15,7 +15,7 @@ async def response(ctx):
 
 
 @response.error
-async def tickets_error(ctx, error):
+async def response_error(ctx, error):
     if isinstance(error, commands.NoPrivateMessage):
         await ctx.send(ctx.translate("responses can't be accessed via dm"))
 

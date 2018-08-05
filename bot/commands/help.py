@@ -3,7 +3,7 @@ from ._setup import bot
 from discord.ext import commands
 from ruamel import yaml
 from bot.models import Guild
-from bot.properties import Defaults
+from bot.properties import Defaults, CONFIG
 import os
 
 
