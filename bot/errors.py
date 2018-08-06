@@ -1,4 +1,7 @@
-class SupportManagerError(Exception):
+from discord.ext import commands
+
+
+class SupportManagerError(commands.CommandError):
     """ Support-Manager's base exception. """
 
     def __init__(self, msg=None):
@@ -6,4 +9,8 @@ class SupportManagerError(Exception):
 
 
 class MissingPermissions(SupportManagerError):
+    pass
+
+
+class InvalidAction(SupportManagerError):
     pass

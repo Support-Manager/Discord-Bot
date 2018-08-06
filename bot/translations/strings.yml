@@ -284,6 +284,44 @@ responses can't be accessed via dm:
   EN: "The related ticket is private. You need to be supporter, admin or ticket author to access it."
   DE: "Das verknüpfte Ticket ist privat.Du musst Supporter, Admin oder Ticket-Autor sein, um darauf zuzugreifen."
 
+# === outlaw command ===
+
+'[user] just warned you':
+  EN: "`{0}` just warned you (on `{1}`):\n```{2}```"
+  DE: "`{0}` hat dich gerade verwarnt (auf `{1}`):\n```{2}```"
+
+'user warned':
+  EN: "User warned. :white_check_mark:"
+  DE: "Nutzer verwarnt. :white_check_mark:"
+
+'[user] just kicked you':
+  EN: "`{0}` just kicked you out of `{1}`:\n```{2}```"
+  DE: "`{0}` hat dich gerade aus `{1}` gekickt:\n```{2}```"
+
+'user kicked':
+  EN: "User kicked. :white_check_mark:"
+  DE: "Nutzer gekickt. :white_check_mark:"
+
+'[user] just banned you':
+  EN: "`{0}` just banned you from `{1}`:\n```{2}```"
+  DE: "`{0}` hat dich gerade aus `{1}` gebannt:\n```{2}```"
+
+'user banned':
+  EN: "User banned{0}. :white_check_mark:"
+  DE: "Nutzer gebannt{0}. :white_check_mark:"
+
+'for [days] days':
+  EN: " for {0} days"
+  DE: " für {0} Tage"
+
+'ban time expired':
+  EN: "The ban time for this user has expired."
+  DE: "Die Sperrzeit für diesen Nutzer ist abgelaufen."
+
+but user doesn't allow direct messages:
+  EN: ":warning: But the user doesn't allow direct messages."
+  DE: ":warning: Aber der Nutzer erlaubt keine direkt Nachrichten."
+
 # === conversion errors ===
 
 '[object] could not be found':
@@ -315,6 +353,10 @@ responses can't be accessed via dm:
 'you are not allowed to perform this action':
   EN: "You are not allowed to perform this action. :no_entry:"
   DE: "Du bist nicht dazu berechtigt, diese Aktion durchzuführen. :no_entry:"
+
+'invalid action':
+  EN: "This action is invalid. :no_entry_sign: "
+  DE: "Diese Aktion ist nicht zulässig. :no_entry_sign: "
 
 'response deleted':
   EN: "Response deleted. :white_check_mark:"

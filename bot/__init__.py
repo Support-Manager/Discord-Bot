@@ -6,6 +6,7 @@ from discord.ext import commands
 from ruamel import yaml
 from .models import Guild, User, graph, Ticket, Response
 from .properties import CONFIG, Defaults
+from .errors import MissingPermissions, InvalidAction
 from inspect import Parameter
 
 
@@ -21,6 +22,10 @@ class Context(commands.Context):
     @property
     def db_guild(self):
         return Guild.from_discord_guild(self.guild, ctx=self)
+
+    @property
+    def db_author(self):
+        return User.from_discord_user(self.author, ctx=self)
 
     @property
     def language(self):
@@ -104,6 +109,14 @@ async def on_command_error(ctx, error):
 
     elif isinstance(error, discord.ext.commands.MissingRequiredArgument):
         msg = ctx.translate("parameter needs to be specified")
+        await ctx.send(msg)
+
+    elif isinstance(error, discord.ext.commands.MissingPermissions) or isinstance(error, MissingPermissions):
+        msg = ctx.translate("you are not allowed to perform this action")
+        await ctx.send(msg)
+
+    elif isinstance(error, InvalidAction):
+        msg = ctx.translate("invalid action")
         await ctx.send(msg)
 
     else:

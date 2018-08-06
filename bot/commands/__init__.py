@@ -7,3 +7,4 @@ def setup(bot):
     from .tickets import tickets
     from .response import response
     from .help import help_messages
+    from .outlaw import outlaw
