@@ -119,6 +119,9 @@ async def on_command_error(ctx, error):
         msg = ctx.translate("invalid action")
         await ctx.send(msg)
 
+    elif isinstance(error, discord.ext.commands.CommandNotFound):
+        pass
+
     else:
         raise error
 
