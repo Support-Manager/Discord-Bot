@@ -194,10 +194,6 @@ active support tickets:
   EN: "Configuration is only available on servers."
   DE: "Konfiguration ist nur auf Servern verfügbar."
 
-'you have to be admin for that':
-  EN: "You have to be admin for that."
-  DE: "Dafür musst du Admin sein."
-
 prefix can't be longer than [max] characters:
   EN: "Prefix can't be longer than {0} characters."
   DE: "Präfix kann nicht länger als {0} Zeichen sein."

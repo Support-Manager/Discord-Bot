@@ -1,7 +1,7 @@
 from discord.ext import commands
 from bot.utils import *
 from ._setup import bot
-from bot import logger, enums
+from bot import enums
 from bot.models import graph, Scope, Language
 
 
@@ -92,10 +92,6 @@ async def config(ctx):
 async def config_error(ctx, error):
     if isinstance(error, commands.NoPrivateMessage):
         await ctx.send(ctx.translate("configuration is only available on servers"))
-
-    elif isinstance(error, commands.CommandError):
-        logger.debug(error)
-        await ctx.send(ctx.translate("you have to be admin for that"))
 
 
 @config.command(name='prefix')
