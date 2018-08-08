@@ -1,7 +1,6 @@
 from bot.utils import notify_author, escaped, response_embed
-from ._setup import bot
 from bot.models import graph, Ticket, User, Guild, Response
-from bot import enums
+from bot import bot, enums
 import time
 from discord.ext import commands
 

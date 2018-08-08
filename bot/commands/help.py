@@ -1,5 +1,5 @@
 from bot.utils import *
-from ._setup import bot
+from bot import bot
 from discord.ext import commands
 from ruamel import yaml
 from bot.models import Guild

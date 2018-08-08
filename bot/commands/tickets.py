@@ -1,9 +1,8 @@
 from bot.utils import *
 from discord.ext import commands
-from ._setup import bot
 from bot.models import User
 from bot.properties import Defaults
-from bot import enums
+from bot import bot, enums
 
 
 @bot.command(aliases=['list', 'all'])

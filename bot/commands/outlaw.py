@@ -1,4 +1,4 @@
-from ._setup import bot
+from bot import bot
 from bot.models import User
 from discord.ext import commands
 import discord

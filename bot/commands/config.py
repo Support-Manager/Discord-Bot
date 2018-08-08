@@ -1,7 +1,6 @@
 from discord.ext import commands
 from bot.utils import *
-from ._setup import bot
-from bot import enums
+from bot import bot, enums
 from bot.models import graph, Scope, Language
 
 

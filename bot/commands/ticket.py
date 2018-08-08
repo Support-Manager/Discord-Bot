@@ -1,7 +1,6 @@
 from bot.utils import *
-from ._setup import bot
 from discord.ext import commands
-from bot import errors, enums
+from bot import bot, errors, enums
 from bot.models import graph, Scope, User
 
 
