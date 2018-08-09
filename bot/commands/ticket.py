@@ -123,7 +123,7 @@ async def _create(ctx, title: str, description: str=None, scope: Scope=None):
 
         await ctx.send(msg)
 
-        await notify_supporters(ctx, ctx.translate('new ticket'), t)
+        await notify_supporters(ctx, ctx.translate('new ticket'), t.guild, embed=ticket_embed(ctx, t))
 
 
 @ticket.command(name="show")
@@ -199,7 +199,7 @@ async def _close(ctx, t: Ticket, response=None):
 
         await ctx.send(conf_msg)
 
-        await notify_supporters(ctx, close_msg, t, embed=False)
+        await notify_supporters(ctx, close_msg, t.guild, embed=ticket_embed(ctx, t))
 
         if t.scope_enum == enums.Scope.CHANNEL:
             channel = t.channel
@@ -246,7 +246,10 @@ async def _reopen(ctx, t: Ticket):
 
         await ctx.send(ctx.translate("ticket reopened"))
 
-        await notify_supporters(ctx, ctx.translate("[user] reopened a ticket").format(ctx.author.mention), t)
+        await notify_supporters(ctx,
+                                ctx.translate("[user] reopened a ticket").format(ctx.author.mention),
+                                t.guild,
+                                ticket_embed(ctx, t))
 
     else:
         raise errors.MissingPermissions

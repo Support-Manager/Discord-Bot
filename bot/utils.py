@@ -2,7 +2,7 @@ import discord
 import time
 import asyncio
 from copy import deepcopy
-from .models import Ticket, Response
+from .models import Ticket, Response, Guild
 from .properties import Defaults
 from bot import enums
 
@@ -101,22 +101,20 @@ def response_embed(ctx, r: Response):
     return emb
 
 
-async def notify_supporters(ctx, message, ticket: Ticket, embed=True):
-    guild = ticket.guild
-
-    channel_id = guild.channel
-    if (channel_id is not None) and (ticket.scope != 'public') and (channel_id != ctx.channel.id):
+async def notify_supporters(ctx, message, db_guild: Guild, embed: discord.Embed=None):
+    channel_id = db_guild.channel
+    if (channel_id is not None) and (channel_id != ctx.channel.id):
         channel = ctx.bot.get_channel(channel_id)
 
         mention = ""
 
-        if guild.support_role is not None:
-            role = discord.utils.find(lambda r: r.id == guild.support_role, ctx.guild.roles)
+        if db_guild.support_role is not None:
+            role = discord.utils.find(lambda r: r.id == db_guild.support_role, ctx.guild.roles)
             if role is not None:
                 mention = role.mention
 
-        if embed:
-            await channel.send(f"{message} {mention}", embed=ticket_embed(ctx, ticket))
+        if embed is not None:
+            await channel.send(f"{message} {mention}", embed=embed)
         else:
             await channel.send(f"{message} {mention}")
 
