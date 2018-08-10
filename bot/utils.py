@@ -101,15 +101,15 @@ def response_embed(ctx, r: Response):
     return emb
 
 
-async def notify_supporters(ctx, message, db_guild: Guild, embed: discord.Embed=None):
+async def notify_supporters(bot, message, db_guild: Guild, embed: discord.Embed=None):
     channel_id = db_guild.channel
-    if (channel_id is not None) and (channel_id != ctx.channel.id):
-        channel = ctx.bot.get_channel(channel_id)
+    if channel_id is not None:
+        channel = bot.get_channel(channel_id)
 
         mention = ""
 
         if db_guild.support_role is not None:
-            role = discord.utils.find(lambda r: r.id == db_guild.support_role, ctx.guild.roles)
+            role = discord.utils.find(lambda r: r.id == db_guild.support_role, db_guild.discord.roles)
             if role is not None:
                 mention = role.mention
 
