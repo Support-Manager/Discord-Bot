@@ -1,5 +1,6 @@
 import logging
 import sys
+import traceback
 import os
 import discord
 from discord.ext import commands
@@ -7,6 +8,7 @@ from ruamel import yaml
 from .models import Guild, User, graph, Ticket, Response
 from .properties import CONFIG, Defaults
 from .errors import MissingPermissions, InvalidAction
+from . import utils
 from inspect import Parameter
 
 
@@ -126,9 +128,32 @@ async def on_command_error(ctx, error):
         raise error
 
 
+@bot.event
+async def on_error(event, *args, **kwargs):
+    exc_info = sys.exc_info()
+    instance = exc_info[1]
+
+    if event == "on_voice_state_update" and isinstance(instance, errors.OnCooldown):
+        member = args[0]
+        guild = Guild.from_discord_guild(member.guild)
+
+        translator = utils.Translator(bot.string_translations, guild.language_enum)
+
+        seconds = int(instance.retry_after)
+        try:
+            await member.send(translator.translate("you're on cooldown for [sec] seconds").format(seconds))
+        except discord.Forbidden:
+            pass
+
+    else:
+        print('Ignoring exception in {}'.format(event), file=sys.stderr)
+        traceback.print_exc()
+
+
 @bot.before_invoke
 async def before_invoke(ctx):
     await ctx.trigger_typing()
 
 
 bot.load_extension('bot.commands')
+bot.load_extension('bot.services')

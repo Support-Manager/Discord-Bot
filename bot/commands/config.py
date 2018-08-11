@@ -31,8 +31,8 @@ async def config(ctx):
             if action == 'prefix':
                 content = 'type the new prefix'
 
-            elif action == 'channel':
-                content = 'which channel do you wanna use as support channel'
+            elif action == 'notifications':
+                content = 'which channel do you wanna use as notification channel'
                 converter = commands.TextChannelConverter()
 
             elif action == 'role':
@@ -53,6 +53,10 @@ async def config(ctx):
 
             elif action == 'category':
                 content = "which category do you wanna use for channel-tickets"
+                converter = commands.CategoryChannelConverter()
+
+            elif action == 'voice':
+                content = 'which category do you wanna use for voice support'
                 converter = commands.CategoryChannelConverter()
 
             prefix = ctx.prefix
@@ -114,9 +118,9 @@ async def _prefix(ctx, pfx: str = ""):
         await ctx.send(ctx.translate("the new prefix is [pfx]").format(pfx))
 
 
-@config.command(name='channel')
-async def _channel(ctx, channel: discord.TextChannel):
-    """ This is to set the guild's support channel. """
+@config.command(name='notifications', aliases=['notify', 'notification', 'channel'])
+async def _notifications(ctx, channel: discord.TextChannel):
+    """ This is to set the guild's notification channel. """
 
     guild = ctx.db_guild
     guild.channel = channel.id
@@ -162,8 +166,26 @@ async def _language(ctx, language: Language):
 async def _category(ctx, category_channel: discord.CategoryChannel):
     guild = ctx.db_guild
 
-    guild.category_channel = category_channel.id
+    guild.ticket_category = category_channel.id
 
     guild.push()
 
     await ctx.send(ctx.translate("all channel-tickets will be created in [category]").format(category_channel.name))
+
+
+@config.command(name='voice', aliases=['voice-channel'])
+async def _voice(ctx, voice_category: discord.CategoryChannel):
+    """ This is to set the guilds voice support channel. """
+
+    guild = ctx.db_guild
+    guild.voice_category = voice_category.id
+    guild.push()
+
+    await ctx.send(ctx.translate("i'll notify you when someone is waiting in [category]").format(voice_category.name))
+
+    channel = await guild.discord.create_voice_channel(
+        name=ctx.translate("available support room"),
+        category=voice_category,
+        reason=ctx.translate("providing available voice support room")
+    )
+    await channel.edit(user_limit=2)

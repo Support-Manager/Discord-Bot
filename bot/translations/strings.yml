@@ -160,9 +160,13 @@ active support tickets:
   EN: "Type the new prefix:"
   DE: "Gib den neuen Präfix ein:"
 
-'which channel do you wanna use as support channel':
-  EN: "Which channel do you wanna use as support channel?:"
-  DE: "Welchen Kanal möchtest du als Support-Kanal nutzen?:"
+'which channel do you wanna use as notification channel':
+  EN: "Which channel do you wanna use as notification channel?:"
+  DE: "Welchen Kanal möchtest du als Benachrichtigungskanal nutzen?:"
+
+'which category do you wanna use for voice support':
+  EN: "Which category do you wanna use for voice support?:"
+  DE: "Welche Kategorie möchtest du für Sprach-Support nutzen?:"
 
 'which role do you wanna use as support role':
   EN: "Which role do you wanna use as support role?:"
@@ -209,6 +213,10 @@ prefix can't be longer than [max] characters:
 i'll send ticket events in [channel]:
   EN: "Okay, I'll send ticket events in {0}. :white_check_mark:"
   DE: "Okay, ich werde Ticket-Ereignisse in {0} senden. :white_check_mark:"
+
+i'll notify you when someone is waiting in [category]:
+  EN: "Okay, I'll notify you when someone is waiting in `{0}`."
+  DE: "Okay, ich werde dich benachrichtigen, wenn jemand in `{0}` wartet."
 
 i'll now notify [role] on ticket events:
   EN: "Okay, I'll now notify `{0}` on ticket events :white_check_mark:"
@@ -327,6 +335,40 @@ but user doesn't allow direct messages:
 'parameter needs to be specified':
   EN: "Wrong command usage: A missing parameter needs to be specified."
   DE: "Falsche Benutzung des Befehls: Ein fehlender Parameter muss angegeben werden."
+
+# === voice support service ===
+
+'[user] is waiting for support in [channel]':
+  EN: "{0} is waiting for support in `{1}`."
+  DE: "{0} wartet in `{1}` auf Hilfe."
+
+'the supporters have been notified':
+  EN: "The supporters have been notified. They'll join you as fast as possible. Please be patient."
+  DE: "Die Supporter wurden benachrichtigt. Sie werden dir so schnell wie möglich beitreten. Bitte habe Geduld."
+
+'available support room':
+  EN: "available support room"
+  DE: "verfügbarer Support-Raum"
+
+'occupied support room':
+  EN: "occupied support room"
+  DE: "belegter Support-Raum"
+
+'providing available voice support room':
+  EN: "Providing available voice support room."
+  DE: "Stelle verfügbaren Sprach-Support-Raum zur verfügung."
+
+'support room got occupied':
+  EN: "This support room got occupied."
+  DE: "Dieser Support-Raum ist belegt worden."
+
+'support room is not needed anymore':
+  EN: "This support room isn't needed anymore."
+  DE: "Dieser Support-Raum wird nicht mehr gebraucht."
+
+you're on cooldown for [sec] seconds:
+  EN: "Keep calm! You're on cooldown for `{0}` seconds. :snowflake: "
+  DE: "Bleib ruhig! Du bist für `{0}` Sekunden auf Cooldown. :snowflake: "
 
 # === mixed (utils) ===
 

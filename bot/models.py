@@ -1,5 +1,6 @@
 from discord.ext import commands
 import discord
+from discord import Role as DiscordRole
 from neo4j_connection import Graph, TicketMixin, ResponseMixin, GuildMixin, UserMixin
 from py2neo.ogm import GraphObject
 import logging
@@ -284,6 +285,12 @@ class Guild(GuildMixin, commands.IDConverter):
                 responses.append(response)
 
         return responses
+
+    def get_support_role(self) -> DiscordRole:
+        if self.support_role is not None:
+            role = discord.utils.find(lambda r: r.id == self.support_role, self.discord.roles)
+
+            return role
 
 
 class User(commands.Converter, UserMixin):

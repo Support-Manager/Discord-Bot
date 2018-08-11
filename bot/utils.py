@@ -108,10 +108,9 @@ async def notify_supporters(bot, message, db_guild: Guild, embed: discord.Embed=
 
         mention = ""
 
-        if db_guild.support_role is not None:
-            role = discord.utils.find(lambda r: r.id == db_guild.support_role, db_guild.discord.roles)
-            if role is not None:
-                mention = role.mention
+        role = db_guild.get_support_role()
+        if role is not None:
+            mention = role.mention
 
         if embed is not None:
             await channel.send(f"{message} {mention}", embed=embed)
@@ -327,3 +326,12 @@ class UnbanTimer(Timer):
     def __init__(self, days, member, reason=None):
         timeout = days * (60*60*24)  # calculates days into seconds
         super().__init__(timeout, member.unban, reason=reason)
+
+
+class Translator(dict):
+    def __init__(self, translations: dict, language: enums.Language):
+        self.language = language.value
+        super().__init__(**translations)
+
+    def translate(self, key: str):
+        return self[key][self.language]
