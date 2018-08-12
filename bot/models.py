@@ -292,6 +292,10 @@ class Guild(GuildMixin, commands.IDConverter):
 
             return role
 
+    async def log(self, message: str):
+        channel = self.discord.get_channel(self.log_channel)
+        await channel.send(message)
+
 
 class User(commands.Converter, UserMixin):
     def __init__(self, discord_user: discord.User=None, ctx=None):

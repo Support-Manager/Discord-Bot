@@ -370,6 +370,12 @@ you're on cooldown for [sec] seconds:
   EN: "Keep calm! You're on cooldown for `{0}` seconds. :snowflake: "
   DE: "Bleib ruhig! Du bist für `{0}` Sekunden auf Cooldown. :snowflake: "
 
+# === log ===
+
+'not enough permissions to perform action':
+  EN: "Not enough permissions to perform an action."
+  DE: "Nicht genügend Berechtigungen, um eine Aktion zu tätigen."
+
 # === mixed (utils) ===
 
 'created on':
@@ -391,6 +397,10 @@ you're on cooldown for [sec] seconds:
 'you are not allowed to perform this action':
   EN: "You are not allowed to perform this action. :no_entry:"
   DE: "Du bist nicht dazu berechtigt, diese Aktion durchzuführen. :no_entry:"
+
+'need required permissions [permissions]':
+  EN: "Error! Need required permissions: `{0}`."
+  DE: "Fehler! Brauche erforderliche Berechtigungen: `{0}`."
 
 'invalid action':
   EN: "This action is invalid. :no_entry_sign: "

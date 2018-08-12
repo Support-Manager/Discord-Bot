@@ -117,6 +117,10 @@ async def on_command_error(ctx, error):
         msg = ctx.translate("you are not allowed to perform this action")
         await ctx.send(msg)
 
+    elif isinstance(error, discord.ext.commands.BotMissingPermissions):
+        msg = ctx.translate("need required permissions [permissions]").format("`, `".join(error.missing_perms))
+        await ctx.send(msg)
+
     elif isinstance(error, InvalidAction):
         msg = ctx.translate("invalid action")
         await ctx.send(msg)
@@ -133,17 +137,21 @@ async def on_error(event, *args, **kwargs):
     exc_info = sys.exc_info()
     instance = exc_info[1]
 
-    if event == "on_voice_state_update" and isinstance(instance, errors.OnCooldown):
+    if event == "on_voice_state_update":
         member = args[0]
         guild = Guild.from_discord_guild(member.guild)
 
         translator = utils.Translator(bot.string_translations, guild.language_enum)
 
-        seconds = int(instance.retry_after)
-        try:
-            await member.send(translator.translate("you're on cooldown for [sec] seconds").format(seconds))
-        except discord.Forbidden:
-            pass
+        if isinstance(instance, errors.OnCooldown):
+            seconds = int(instance.retry_after)
+            try:
+                await member.send(translator.translate("you're on cooldown for [sec] seconds").format(seconds))
+            except discord.Forbidden:
+                pass
+
+        elif isinstance(instance, discord.Forbidden) and guild.log_channel is not None:
+            await guild.log(translator.translate("not enough permissions to perform action"))
 
     else:
         print('Ignoring exception in {}'.format(event), file=sys.stderr)
