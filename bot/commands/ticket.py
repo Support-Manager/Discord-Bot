@@ -43,7 +43,7 @@ async def _create(ctx, title: str, description: str=None, scope: Scope=None):
 
         t.description = escaped(description)
 
-        t.state = "open"
+        t.state = enums.State.OPEN.value
         t.updated = utc
 
         author = User.from_discord_user(ctx.author)
@@ -106,6 +106,14 @@ async def _create(ctx, title: str, description: str=None, scope: Scope=None):
             )
             await channel.send(embed=ticket_embed(ctx, t))
             format_id = channel.mention
+
+        elif t.scope_enum == enums.Scope.PRIVATE:
+            try:
+                await ctx.message.delete()
+            except discord.Forbidden:
+                pass
+
+            format_id = t.id
 
         else:
             format_id = t.id
