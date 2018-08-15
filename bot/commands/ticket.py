@@ -23,7 +23,7 @@ async def ticket_error(ctx, error):
 
 # TODO: Rework/Rethink error system. (Throw exceptions)
 @ticket.command(name='create')
-async def _create(ctx, title: str, description: str=None, scope: Scope=None):
+async def _create(ctx, title: str, description: str="", scope: Scope=None):
     """ This is to create a support ticket. """
 
     guild = ctx.db_guild
@@ -196,7 +196,7 @@ async def _close(ctx, t: Ticket, response=None):
         graph.push(t)
 
         conf_msg = ctx.translate('ticket closed')
-        close_msg = ctx.translate('[user] just closed ticket [ticket]').format(str(ctx.author), t.id)
+        close_msg = ctx.translate('[user] just closed ticket [ticket]').format(ctx.author.mention, t.id)
 
         if response is not None:
             close_msg += f"\n```{escaped(response)}```"
