@@ -1,13 +1,28 @@
 from bot.utils import *
 from discord.ext import commands
-from bot.models import User
+from bot.models import User, Ticket
 from bot.properties import Defaults
 from bot import bot, enums
 
 
-@bot.command(aliases=['list', 'all'])
+@bot.group()
 @commands.guild_only()
-async def tickets(ctx, user: User=None):
+async def tickets(ctx):
+    if ctx.invoked_subcommand is None:
+        user = None
+
+        if ctx.subcommand_passed is not None:
+            try:
+                user = await User().convert(ctx, ctx.subcommand_passed)
+            except commands.BadArgument:
+                pass
+
+        list_tickets = bot.get_command('tickets list')
+        await ctx.invoke(list_tickets, user=user)
+
+
+@tickets.command(name="list")
+async def _list(ctx, user: User=None):
     """ Shows a list of tickets on the server/of a specific user. """
 
     guild = ctx.db_guild
@@ -53,7 +68,7 @@ async def tickets(ctx, user: User=None):
     for ticket in ticket_list:
         tickets_emb.add_field(
             name=f"#{ticket.id} || {ticket.title}",
-            value=ticket.description,
+            value=ticket.description or "|",
             inline=False
         )
 
@@ -62,6 +77,14 @@ async def tickets(ctx, user: User=None):
     )
 
     await ctx.send(embed=tickets_emb)
+
+
+@tickets.command(name="close")
+async def _close(ctx, *_tickets: Ticket):
+    close_ticket = bot.get_command('ticket close')
+
+    for t in _tickets:
+        await ctx.invoke(close_ticket, t)
 
 
 @tickets.error
