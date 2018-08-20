@@ -2,6 +2,7 @@ import logging
 import sys
 import traceback
 import os
+import time
 import discord
 from discord.ext import commands
 from ruamel import yaml
@@ -89,6 +90,16 @@ async def on_ready():
 @bot.event
 async def on_guild_join(guild):
     Guild.from_discord_guild(guild)
+
+
+@bot.event
+async def on_member_join(member):
+    db_guild = Guild.from_discord_guild(member.guild)
+    db_user = User.from_discord_user(member)
+
+    db_guild.joined_users.add(db_user, properties={'UTC': time.time()})
+
+    db_guild.push()
 
 
 @bot.event

@@ -5,3 +5,4 @@ def setup(bot):
     from .response import response
     from .help import help_messages
     from .outlaw import outlaw
+    from .statistics import statistics

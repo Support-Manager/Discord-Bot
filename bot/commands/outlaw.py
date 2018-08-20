@@ -15,7 +15,7 @@ async def outlaw(ctx):
 @outlaw.command()
 @commands.has_permissions(kick_members=True)
 async def warn(ctx, user: User, reason: str):
-    user.warned_by.add(ctx.db_author, properties={'UTC': time.time(), 'reason': reason})
+    user.warned_by.add(ctx.db_author, properties={'UTC': time.time(), 'reason': reason, 'guild': ctx.guild.id})
     user.push()
 
     conf_msg = ctx.translate("user warned")
@@ -38,7 +38,7 @@ async def kick(ctx, user: User, reason: str):
     if user.id == ctx.guild.owner_id:
         raise InvalidAction("Guild owner cannot be kicked.")
 
-    user.kicked_by.add(ctx.db_author, properties={'UTC': time.time(), 'reason': reason})
+    user.kicked_by.add(ctx.db_author, properties={'UTC': time.time(), 'reason': reason, 'guild': ctx.guild.id})
     user.push()
 
     conf_msg = ctx.translate("user kicked")
@@ -63,7 +63,11 @@ async def ban(ctx, user: User, reason: str, days: int=None):
     if user.id == ctx.guild.owner_id:
         raise InvalidAction("Guild owner cannot be banned.")
 
-    user.banned_by.add(ctx.db_author, properties={'UTC': time.time(), 'reason': reason, 'days': days})
+    user.banned_by.add(
+        ctx.db_author,
+        properties={'UTC': time.time(), 'reason': reason, 'days': days, 'guild': ctx.guild.id}
+    )
+
     user.push()
 
     if days is not None:

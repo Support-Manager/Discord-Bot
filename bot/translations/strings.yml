@@ -326,6 +326,83 @@ but user doesn't allow direct messages:
   EN: ":warning: But the user doesn't allow direct messages."
   DE: ":warning: Aber der Nutzer erlaubt keine direkt Nachrichten."
 
+# === statistics command ===
+'statistics':
+  EN: "Statistics"
+  DE: "Statistiken"
+
+# user stats
+
+'statistics of the given user':
+  EN: "Statistics of the given user."
+  DE: "Statistiken des angegebenen Nutzers."
+
+'warned':
+  EN: "Warned"
+  DE: "Gewarnt"
+
+'kicked':
+  EN: "Kicked"
+  DE: "Gekickt"
+
+'banned':
+  EN: "Banned"
+  DE: "Gebannt"
+
+'tickets':
+  EN: "Tickets"
+  DE: "Tickets"
+
+'responses':
+  EN: "Responses"
+  DE: "Antworten"
+
+'global':
+  EN: "Global"
+  DE: "Global"
+
+'local':
+  EN: "Local"
+  DE: "Lokal"
+
+'shared guilds':
+  EN: "Shared guilds"
+  DE: "Gemeinsame Server"
+
+# guild stats
+
+'statistics of this guild':
+  EN: "Statistics of this guild."
+  DE: "Statistiken dieses Servers."
+
+'members':
+  EN: "Members"
+  DE: "Mitglieder"
+
+'member joins':
+  EN: "Member joins*"
+  DE: "Mitglieds-Beitritte*"
+
+'recorded since the bot is member':
+  EN: "*Only recorded since the bot is a member of this guild."
+  DE: "*Erst aufgezeichnet, seit der Bot Mitglied dieses Servers ist."
+
+'total':
+  EN: "Total"
+  DE: "Insgesamt"
+
+'last 30 days':
+  EN: "Last 30 days"
+  DE: "Letzte 30 Tage"
+
+'average per day':
+  EN: "Average per day"
+  DE: "Durchschnittlich am Tag"
+
+'online':
+  EN: "Online"
+  DE: "Online"
+
 # === conversion errors ===
 
 '[object] could not be found':

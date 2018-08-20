@@ -2,6 +2,7 @@ from bot.utils import *
 from discord.ext import commands
 from bot import bot, errors, enums
 from bot.models import graph, Scope, User
+import uuid
 
 
 @bot.group(name='ticket')
@@ -64,6 +65,7 @@ async def _create(ctx, title: str, description: str="", scope: Scope=None):
             highest_id = 0
 
         t.id = highest_id + 1
+        t.uuid = uuid.uuid4().hex
 
         graph.create(t)
 

@@ -53,7 +53,7 @@ class Ticket(TicketMixin, commands.Converter):
                     argument = channel.name  # channel name == ticket id
 
         try:
-            t = self.get(int(argument), ctx=ctx)
+            t = self.get(int(argument), ctx.db_guild, ctx=ctx)
         except ValueError:
             t = None
 
@@ -63,13 +63,20 @@ class Ticket(TicketMixin, commands.Converter):
             return t
 
     @classmethod
-    def get(cls, id: int, ctx=None):
-        t = cls(ctx=ctx)
-        t.id = id
+    def get(cls, id: int, guild: GuildMixin, ctx=None):
+        uuid = graph.run(
+            "MATCH (t:Ticket {id: %i})-[:TICKET_LOCATED_ON]->(g:Guild {id: %i}) RETURN t.uuid" % (id, guild.id)
+        ).evaluate()
 
-        try:
-            graph.pull(t)
-        except TypeError:
+        if uuid is not None:
+            t = cls(ctx=ctx)
+            t.uuid = uuid
+
+            try:
+                graph.pull(t)
+            except TypeError:
+                t = None
+        else:
             t = None
 
         if t is not None:
@@ -190,7 +197,7 @@ class Response(commands.Converter, ResponseMixin):
         t = list(self.refers_to)[0]
 
         if self._creation_ctx is not None:
-            t = Ticket.get(t.id, ctx=self._creation_ctx)
+            t = Ticket.get(t.id, t.guild, ctx=self._creation_ctx)
 
         return t
 
@@ -271,7 +278,7 @@ class Guild(GuildMixin, commands.IDConverter):
     def get_tickets(self):
         tickets = []
         for t in self.tickets:
-            ticket = Ticket.get(t.id, ctx=self._creation_ctx)
+            ticket = Ticket.get(t.id, t.guild, ctx=self._creation_ctx)
             if ticket is not None:
                 tickets.append(ticket)
 
@@ -351,7 +358,7 @@ class User(commands.Converter, UserMixin):
     def get_tickets(self):
         tickets = []
         for t in self.tickets:
-            ticket = Ticket.get(t.id, ctx=self._creation_ctx)
+            ticket = Ticket.get(t.id, t.guild, ctx=self._creation_ctx)
             if ticket is not None:
                 tickets.append(ticket)
 
