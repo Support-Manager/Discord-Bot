@@ -62,6 +62,12 @@ tickets can't be accessed via dm:
   EN: "Which ticket do you wanna see?:"
   DE: "Welches Ticket willst du sehen?:"
 
+# === ticket edit command ===
+
+'ticket edited':
+  EN: "Ticket edited. :white_check_mark:"
+  DE: "Ticket bearbeitet. :white_check_mark:"
+
 # === ticket close command ===
 
 'this ticket is already closed':

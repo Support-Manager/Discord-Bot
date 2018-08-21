@@ -177,6 +177,42 @@ async def _show_error(ctx, error):
         await ctx.invoke(_show, t)
 
 
+@ticket.command(name="edit", aliases=["change", "update"])
+async def _edit(ctx, t: Ticket, title: str="", description: str=None):
+    if ctx.author.id != t.author.id:
+        ctx.send(ctx.translate("you are not allowed to perform this action"))
+        return
+
+    if title != "":
+        if len(title) > enums.TitleLength.MAX:
+            await ctx.send(ctx.translate("title too long").format(enums.TitleLength.MAX.value, len(title)))
+            return
+
+        elif len(title) < enums.TitleLength.MIN:
+            await ctx.send(ctx.translate("title too short").format(enums.TitleLength.MIN.value, len(title)))
+            return
+
+        else:
+            t.title = escaped(title)
+
+    t.updated = time.time()
+
+    if description is not None:
+        t.description = escaped(description)
+
+    t.push()
+
+    await ctx.send(ctx.translate("ticket edited"))
+
+
+@ticket.command(name="append", aliases=["addinfo"])
+async def _append(ctx, t: Ticket, info: str):
+    new_description = f"{t.description}\n{escaped(info)}"
+
+    edit_cmd = bot.get_command("ticket edit")
+    await ctx.invoke(edit_cmd, t, description=new_description)
+
+
 @ticket.command(name='close')
 async def _close(ctx, t: Ticket, response=None):
     """ This is to close a specific support ticket. """
