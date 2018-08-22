@@ -50,6 +50,7 @@ async def _create(ctx, t: Ticket, content: str):
     resp.content = escaped(content)
 
     resp.deleted = False
+    resp.updated = utc
 
     highest_id = graph.run(
         "MATCH (r:Response)-[:REFERS_TO]->(t:Ticket {uuid: '%s'}) RETURN max(r.id)" % t.uuid
@@ -88,6 +89,31 @@ async def _show(ctx, resp: Response):
     emb = response_embed(ctx, resp)
 
     await ctx.send(embed=emb)
+
+
+@response.command(name="edit", aliases=["change", "update"])
+async def _edit(ctx, resp: Response, content: str):
+    """ This is to edit a specific response. """
+
+    if resp.author.id != ctx.author.id:
+        await ctx.send(ctx.translate("you are not allowed to perform this action"))
+
+    else:
+        resp.updated = time.time()
+
+        resp.content = escaped(content)
+
+        resp.push()
+
+        await ctx.send(ctx.translate("response edited"))
+
+
+@response.command(name="append", aliases=["addinfo"])
+async def _append(ctx, resp: Response, content: str):
+    new_content = f"{resp.content}\n{escaped(content)}"
+
+    edit_cmd = bot.get_command("response edit")
+    await ctx.invoke(edit_cmd, resp, new_content)
 
 
 @response.command(name="delete")

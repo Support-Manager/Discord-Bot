@@ -58,7 +58,6 @@ def ticket_embed(ctx, t: Ticket):
 
 def response_embed(ctx, r: Response):
     author = ctx.bot.get_user(r.author.id)
-    guild = ctx.bot.get_guild(r.guild.id)
 
     emb = discord.Embed(
         title=f"Re: {r.ticket.title}",
@@ -83,12 +82,10 @@ def response_embed(ctx, r: Response):
             value=time.strftime("%B %d, %Y", time.gmtime(creation_time))
         )
 
-    """
-    if creation_time < t.updated:
+    if creation_time < r.updated:
         emb.set_footer(
-            text=time.strftime("Updated on %B %d, %Y at %I:%M %P UTC", time.gmtime(t.updated))
+            text=time.strftime(f"{ctx.translate('updated on')} %B %d, %Y at %I:%M %P UTC", time.gmtime(r.updated))
         )
-    """
 
     return emb
 

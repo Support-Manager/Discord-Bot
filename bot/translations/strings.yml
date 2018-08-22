@@ -294,6 +294,10 @@ responses can't be accessed via dm:
   EN: "The related ticket is private. You need to be supporter, admin or ticket author to access it."
   DE: "Das verknüpfte Ticket ist privat.Du musst Supporter, Admin oder Ticket-Autor sein, um darauf zuzugreifen."
 
+'response edited':
+  EN: "Response edited. :white_check_mark:"
+  DE: "Antwort bearbeitet. :white_check_mark:"
+
 # === outlaw command ===
 
 '[user] just warned you':
