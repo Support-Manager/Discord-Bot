@@ -135,7 +135,7 @@ class Ticket(TicketMixin, commands.Converter):
     def get_responses(self):
         responses = []
         for r in self.responses:
-            response = Response.get(r.id, ctx=self._creation_ctx)
+            response = Response.get(r.id, r.ticket, ctx=self._creation_ctx)
             if response is not None:
                 responses.append(response)
 
@@ -149,7 +149,9 @@ class Response(commands.Converter, ResponseMixin):
 
     async def convert(self, ctx, argument):
         try:
-            r = self.get(int(argument), ctx=ctx)
+            t_id, r_id = argument.split('-')
+            t = Ticket.get(int(t_id), ctx.guild, ctx=ctx)
+            r = self.get(int(r_id), t, ctx=ctx)
         except ValueError:
             r = None
 
@@ -159,13 +161,20 @@ class Response(commands.Converter, ResponseMixin):
             return r
 
     @classmethod
-    def get(cls, id: int, ctx=None):
-        r = cls(ctx=ctx)
-        r.id = id
+    def get(cls, id: int, ticket: Ticket or TicketMixin, ctx=None):
+        uuid = graph.run(
+            "MATCH (r:Response {id: %i})-[:REFERS_TO]->(t:Ticket {uuid: '%s'}) RETURN r.uuid" % (id, ticket.uuid)
+        ).evaluate()
 
-        try:
-            graph.pull(r)
-        except TypeError:
+        if uuid is not None:
+            r = cls(ctx=ctx)
+            r.uuid = uuid
+
+            try:
+                graph.pull(r)
+            except TypeError:
+                r = None
+        else:
             r = None
 
         if r is not None:
@@ -203,6 +212,10 @@ class Response(commands.Converter, ResponseMixin):
 
     def push(self):
         graph.push(self)
+
+    @property
+    def full_id(self):
+        return f"{self.ticket.id}-{self.id}"
 
 
 class Guild(GuildMixin, commands.IDConverter):
@@ -287,7 +300,7 @@ class Guild(GuildMixin, commands.IDConverter):
     def get_responses(self):
         responses = []
         for r in self.responses:
-            response = Response.get(r.id, ctx=self._creation_ctx)
+            response = Response.get(r.id, r.ticket, ctx=self._creation_ctx)
             if response is not None:
                 responses.append(response)
 
@@ -367,7 +380,7 @@ class User(commands.Converter, UserMixin):
     def get_responses(self):
         responses = []
         for r in self.responses:
-            response = Response.get(r.id, ctx=self._creation_ctx)
+            response = Response.get(r.id, r.ticket, ctx=self._creation_ctx)
             if response is not None:
                 responses.append(response)
 

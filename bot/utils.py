@@ -67,15 +67,7 @@ def response_embed(ctx, r: Response):
     )
     emb.add_field(
         name="ID",
-        value=r.id
-    )
-    emb.add_field(
-        name="Guild",
-        value=guild
-    )
-    emb.add_field(
-        name=ctx.translate("refers to ticket"),
-        value=f"#{r.ticket.id}"
+        value=r.full_id
     )
     emb.set_author(
         name=f"{author.name}#{author.discriminator}",

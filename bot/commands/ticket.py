@@ -213,6 +213,14 @@ async def _append(ctx, t: Ticket, info: str):
     await ctx.invoke(edit_cmd, t, description=new_description)
 
 
+@ticket.command(name="respond")
+async def _respond(ctx, t: Ticket, content: str):
+    """ This is just a shortcut for 'response create' """
+
+    response_create = bot.get_command("response create")
+    await ctx.invoke(response_create, t, content)
+
+
 @ticket.command(name='close')
 async def _close(ctx, t: Ticket, response=None):
     """ This is to close a specific support ticket. """

@@ -3,6 +3,7 @@ from bot.models import graph, Ticket, User, Guild, Response
 from bot import bot, enums
 import time
 from discord.ext import commands
+import uuid
 
 
 @bot.group()
@@ -41,9 +42,8 @@ async def _create(ctx, t: Ticket, content: str):
     
     author = User.from_discord_user(ctx.author)
     resp.created_by.add(author, properties={'UTC': utc})
-    
-    guild = Guild.from_discord_guild(ctx.guild)
-    resp.located_on.add(guild)
+
+    resp.located_on.add(ctx.db_guild)
     
     resp.refers_to.add(t)
 
@@ -51,15 +51,18 @@ async def _create(ctx, t: Ticket, content: str):
 
     resp.deleted = False
 
-    highest_id = graph.run("MATCH (r: Response) RETURN max(r.id)").evaluate()
+    highest_id = graph.run(
+        "MATCH (r:Response)-[:REFERS_TO]->(t:Ticket {uuid: '%s'}) RETURN max(r.id)" % t.uuid
+    ).evaluate()
     if highest_id is None:
         highest_id = 0
 
     resp.id = highest_id + 1
+    resp.uuid = uuid.uuid4().hex
 
     graph.create(resp)
 
-    await ctx.send(ctx.translate("response created").format(resp.id))
+    await ctx.send(ctx.translate("response created").format(resp.full_id))
 
     resp_msg = ctx.translate(
         "[user] just responded to your ticket [ticket]"
