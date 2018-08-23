@@ -177,31 +177,30 @@ async def multiple_choice(ctx, options: list, title: str, description: str="", m
     return options[index], message
 
 
-class TicketViewer:
-    """ Represents an interactive menu containing the whole data of a ticket (including responses). """
+class EmbedPaginator:
+    """ Represents an interactive menu containing multiple embeds. """
 
-    def __init__(self, ctx, ticket: Ticket):
+    def __init__(self, ctx, pages: [discord.Embed]):
         self._ctx = ctx
-        self.ticket = ticket
-        self.ticket_embed = ticket_embed(self._ctx, self.ticket)
-        self.response_embeds = \
-            [response_embed(self._ctx, r) for r in sorted(self.ticket.get_responses(), key=lambda r: r.id)]
-
-        self.pages = []
-        self.pages.append(deepcopy(self.ticket_embed))  # copy by value (not reference)
-        self.pages.extend(self.response_embeds)
+        self.pages = pages
 
         self.control_emojis = ('⏮', '◀', '▶', '⏭', '⏹')
 
-        for page in self.pages:
-            page.set_footer(text=ctx.translate("page") + f" ( {self.pages.index(page)+1} | {len(self.pages)} )")
+    @property
+    def formatted_pages(self):
+        pages = deepcopy(self.pages)  # copy by value not reference
+        for page in pages:
+            page.set_footer(
+                text=self._ctx.translate("page") + f" ( {pages.index(page)+1} | {len(pages)} )"
+            )
+        return pages
 
     async def run(self):
-        if len(self.pages) == 1:
-            await self._ctx.send(embed=self.ticket_embed)
+        if len(self.pages) == 1:  # no pagination needed in this case
+            await self._ctx.send(embed=self.pages[0])
             return
 
-        message = await self._ctx.send(embed=self.pages[0])
+        message = await self._ctx.send(embed=self.formatted_pages[0])
         current_page_index = 0
 
         for emoji in self.control_emojis:
@@ -219,7 +218,7 @@ class TicketViewer:
                 return
 
             emoji = reaction.emoji
-            max_index = len(self.pages) - 1
+            max_index = len(self.pages) - 1  # index for the last page
 
             if emoji == self.control_emojis[0]:
                 load_page_index = 0
@@ -237,10 +236,23 @@ class TicketViewer:
                 await message.delete()
                 return
 
-            await message.edit(embed=self.pages[load_page_index])
+            await message.edit(embed=self.formatted_pages[load_page_index])
             await message.remove_reaction(reaction, user)
 
             current_page_index = load_page_index
+
+
+class TicketViewer(EmbedPaginator):
+    """ Represents an interactive menu containing the whole data of a ticket (including responses). """
+
+    def __init__(self, ctx, ticket: Ticket):
+        pages = [ticket_embed(self._ctx, ticket)]
+        response_embeds = \
+            [response_embed(self._ctx, r) for r in sorted(ticket.get_responses(), key=lambda r: r.id)]
+
+        pages.extend(response_embeds)
+
+        super().__init__(ctx, pages)
 
 
 class Confirmation:

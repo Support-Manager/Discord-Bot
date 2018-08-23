@@ -31,6 +31,9 @@ async def _list(ctx, user: User=None):
         title=ctx.translate("active support tickets"),
         color=Defaults.COLOR
     )
+    tickets_emb.set_footer(
+        text=ctx.translate("to see all properties of a ticket use the ticket show command")
+    )
 
     if user is not None:
         tickets_emb.description = ctx.translate("all open tickets of the given user")
@@ -65,18 +68,31 @@ async def _list(ctx, user: User=None):
         await ctx.send(ctx.translate("there are no active support tickets"))
         return None
 
-    for ticket in ticket_list:
-        tickets_emb.add_field(
-            name=f"#{ticket.id} || {ticket.title}",
-            value=ticket.description or "|",
-            inline=False
-        )
+    elif len(ticket_list) > 25:
+        sub_lists = []
 
-    tickets_emb.set_footer(
-        text=ctx.translate("to see all properties of a ticket use the ticket show command")
-    )
+        while len(ticket_list) > 20:
+            sub_lists.append(ticket_list[:20])
+            del ticket_list[:20]
 
-    await ctx.send(embed=tickets_emb)
+        sub_lists.append(ticket_list)
+
+    else:
+        sub_lists = [ticket_list]
+
+    pages = []
+    for sub_list in sub_lists:
+        page = deepcopy(tickets_emb)  # copy by value not reference
+        for ticket in sub_list:
+            page.add_field(
+                name=f"#{ticket.id} || {ticket.title}",
+                value=ticket.description or "|",
+                inline=False
+            )
+        pages.append(page)
+
+    paginator = EmbedPaginator(ctx, pages)
+    await paginator.run()
 
 
 @tickets.command(name="close")
