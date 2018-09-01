@@ -336,6 +336,32 @@ but user doesn't allow direct messages:
   EN: ":warning: But the user doesn't allow direct messages."
   DE: ":warning: Aber der Nutzer erlaubt keine direkt Nachrichten."
 
+# === blacklist command ===
+
+'user blacklisted':
+  EN: "User blacklisted{0}. :white_check_mark:"
+  DE: "Nutzer in die schwarze Liste eingetragen{0}. :white_check_mark:"
+
+'[user] just blacklisted you':
+  EN: "`{0}` just blacklisted you on `{1}`:\n```{2}```"
+  DE: "`{0}` hat dich gerade in die schwarze Liste auf `{1}` eingetragen:\n```{2}```"
+
+'user not in blacklist':
+  EN: "User not in blacklist."
+  DE: "Nutzer ist nicht auf der schwarzen Liste."
+
+'removed user from blacklist':
+  EN: "Removed user from blacklist. :white_check_mark:"
+  DE: "Nutzer von der schwarzen Liste entfernt. :white_check_mark:"
+
+'blacklist is empty':
+  EN: "The blacklist is empty."
+  DE: "Die schwarze Liste ist leer."
+
+'you are blacklisted':
+  EN: "You are blacklisted on this server. :flag_black: "
+  DE: "Du bist in diesem Server auf der schwarzen Liste. :flag_black: "
+
 # === statistics command ===
 'statistics':
   EN: "Statistics"

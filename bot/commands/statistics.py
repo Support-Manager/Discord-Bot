@@ -14,24 +14,21 @@ async def statistics(ctx, user: User=None):
         color=Defaults.COLOR
     )
 
-    def get_local(properties: iter, guild_as_property=True):
+    def get_local(properties: iter):
         def is_local(p):
-            if guild_as_property:
-                return p.guild.id == ctx.guild.id
-            else:  # guild as relationship property
-                return properties.get(p, 'guild') == ctx.guild.id
+            return p.guild.id == ctx.guild.id
 
         return [p for p in properties if is_local(p)]
 
     if user is not None:
-        global_warnings = len(user.warned_by)
-        local_warnings = len(get_local(user.warned_by, guild_as_property=False))
+        global_warnings = len(user.warnings)
+        local_warnings = len(get_local(user.warnings))
 
-        global_kicked = len(user.kicked_by)
-        local_kicked = len(get_local(user.kicked_by, guild_as_property=False))
+        global_kicked = len(user.kicks)
+        local_kicked = len(get_local(user.kicks))
 
-        global_banned = len(user.banned_by)
-        local_banned = len(get_local(user.banned_by, guild_as_property=False))
+        global_banned = len(user.bans)
+        local_banned = len(get_local(user.bans))
 
         global_created_tickets = len(user.tickets)
         local_created_tickets = len(get_local(user.tickets))
@@ -93,39 +90,11 @@ async def statistics(ctx, user: User=None):
                   f"{ctx.translate('online')}: `{len(online_members)}`"
         )
 
-        class TimeGetter:
-            def __init__(self, relationships: iter, property_key: str=None):
-                """ property_key: name of the relationship which contains the utc timestamp """
-
-                self.relationships = relationships
-                self.property_key = property_key
-
-            def __call__(self, r):
-                if self.property_key is None:
-                    return self.relationships.get(r, 'UTC')
-                else:
-                    property_relations = getattr(r, self.property_key)
-                    return property_relations.get(list(property_relations)[0], 'UTC')
-
-        class OutlawTimeGetter:
-            def __init__(self, property_key: str):
-                self.db_members: [User] = [User.from_discord_user(m, ctx) for m in ctx.guild.members]
-                self.member_warnings: {User: [UserMixin]} = {
-                    m.id: (m, get_local(getattr(m, property_key), guild_as_property=False)) for m in self.db_members
-                }
-                self.warning_times: [float] = [
-                    getattr(self.member_warnings[m1_id][0], property_key).get(m2, 'UTC')
-                    for m1_id in self.member_warnings for m2 in self.member_warnings[m1_id][1]
-                ]
-
-            def __call__(self, r: float):
-                return r
-
         class Stats:
-            def __init__(self, name: str, relationships: iter, property_key: str=None):
+            def __init__(self, name: str, relationships: iter, utc_key: 'function'):
                 self.name = name
                 self.relationships = relationships
-                self.get_time = TimeGetter(relationships, property_key=property_key)
+                self.get_timestamp = utc_key
 
             @property
             def total(self) -> int:
@@ -133,11 +102,11 @@ async def statistics(ctx, user: User=None):
 
             @property
             def last_30_days(self) -> int:
-                return len([r for r in self.relationships if self.get_time(r) > time.time() - (60 * 60 * 24 * 30)])
+                return len([r for r in self.relationships if self.get_timestamp(r) > time.time() - (60 * 60 * 24 * 30)])
 
             @property
             def average_per_day(self) -> float:
-                dates = list(map(lambda r: date.fromtimestamp(self.get_time(r)), self.relationships))
+                dates = list(map(lambda r: date.fromtimestamp(self.get_timestamp(r)), self.relationships))
                 day_count = ((date.today() - min(dates)).days + 1) if len(dates) != 0 else 1
                 return len(self.relationships) / day_count
 
@@ -149,25 +118,19 @@ async def statistics(ctx, user: User=None):
                           f"{ctx.translate('average per day')}: `{round(self.average_per_day, 2)}`"
                 )
 
-        member_joins = Stats("member joins", guild.joined_users)
+        member_joins = Stats("member joins", guild.joined_users, lambda m: guild.joined_users.get(m, 'UTC'))
         member_joins.add_field()
 
-        tickets = Stats("tickets", guild.tickets, "created_by")
+        tickets = Stats("tickets", guild.tickets, lambda t: t.created_by.get(list(t.created_by)[0], 'UTC'))
         tickets.add_field()
 
-        get_warning_time = OutlawTimeGetter("warned_by")
-        warnings = Stats("warned", get_warning_time.warning_times)
-        warnings.get_time = get_warning_time
+        warnings = Stats("warned", guild.warnings, lambda w: w.utc)
         warnings.add_field()
 
-        get_kick_time = OutlawTimeGetter("kicked_by")
-        kicked = Stats("kicked", get_kick_time.warning_times)
-        kicked.get_time = get_kick_time
+        kicked = Stats("kicked", guild.kicks, lambda k: k.utc)
         kicked.add_field()
 
-        get_ban_time = OutlawTimeGetter("banned_by")
-        banned = Stats("banned", get_ban_time.warning_times)
-        banned.get_time = get_ban_time
+        banned = Stats("banned", guild.bans, lambda b: b.utc)
         banned.add_field()
 
         stats_emb.set_footer(text=ctx.translate("recorded since the bot is member"))

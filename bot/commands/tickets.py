@@ -68,17 +68,7 @@ async def _list(ctx, user: User=None):
         await ctx.send(ctx.translate("there are no active support tickets"))
         return None
 
-    elif len(ticket_list) > 25:
-        sub_lists = []
-
-        while len(ticket_list) > 20:
-            sub_lists.append(ticket_list[:20])
-            del ticket_list[:20]
-
-        sub_lists.append(ticket_list)
-
-    else:
-        sub_lists = [ticket_list]
+    sub_lists = EmbedPaginator.generate_sub_lists(ticket_list)
 
     pages = []
     for sub_list in sub_lists:

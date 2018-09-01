@@ -1,12 +1,13 @@
 from bot.utils import *
 from discord.ext import commands
-from bot import bot, errors, enums
+from bot import bot, errors, enums, checks
 from bot.models import graph, Scope, User
 import uuid
 
 
 @bot.group(name='ticket')
 @commands.guild_only()
+@checks.check_blacklisted()
 async def ticket(ctx):
     """ Allows to perform different actions with a ticket. """
 

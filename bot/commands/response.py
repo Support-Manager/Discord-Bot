@@ -1,6 +1,6 @@
 from bot.utils import notify_author, escaped, response_embed
 from bot.models import graph, Ticket, User, Guild, Response
-from bot import bot, enums
+from bot import bot, enums, checks
 import time
 from discord.ext import commands
 import uuid
@@ -8,6 +8,7 @@ import uuid
 
 @bot.group()
 @commands.guild_only()
+@checks.check_blacklisted()
 async def response(ctx):
     """ Allows to perform different actions with a response. """
 

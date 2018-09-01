@@ -6,3 +6,4 @@ def setup(bot):
     from .help import help_messages
     from .outlaw import outlaw
     from .statistics import statistics
+    from .blacklist import blacklist

@@ -8,7 +8,7 @@ from discord.ext import commands
 from ruamel import yaml
 from .models import Guild, User, graph, Ticket, Response
 from .properties import CONFIG, Defaults
-from .errors import MissingPermissions, InvalidAction
+from .errors import MissingPermissions, InvalidAction, Blacklisted
 from . import utils
 from inspect import Parameter
 
@@ -134,6 +134,10 @@ async def on_command_error(ctx, error):
 
     elif isinstance(error, InvalidAction):
         msg = ctx.translate("invalid action")
+        await ctx.send(msg)
+
+    elif isinstance(error, Blacklisted):
+        msg = ctx.translate("you are blacklisted")
         await ctx.send(msg)
 
     elif isinstance(error, discord.ext.commands.CommandNotFound):

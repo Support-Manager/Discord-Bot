@@ -1,11 +1,12 @@
 from discord.ext import commands
 import discord
 from discord import Role as DiscordRole
-from neo4j_connection import Graph, TicketMixin, ResponseMixin, GuildMixin, UserMixin
+from neo4j_connection import Graph, TicketMixin, ResponseMixin, GuildMixin, UserMixin, WarningMixin, KickMixin, BanMixin
 from py2neo.ogm import GraphObject
 import logging
 from .properties import Defaults, CONFIG
 from . import enums
+import time
 
 
 logger = logging.getLogger(__name__)
@@ -315,6 +316,20 @@ class Guild(GuildMixin, commands.IDConverter):
     async def log(self, message: str):
         channel = self.discord.get_channel(self.log_channel)
         await channel.send(message)
+
+    @property
+    def updated_blacklist(self):
+        bl = self.blacklist
+
+        for user in bl:
+            utc = bl.get(user, 'UTC')
+            days = bl.get(user, 'days')
+
+            if utc + days * (60 * 60 * 24) > time.time():
+                self.blacklist.remove(user)
+
+        self.push()
+        return bl
 
 
 class User(commands.Converter, UserMixin):

@@ -3,8 +3,23 @@ from bot.models import User
 from discord.ext import commands
 import discord
 import time
-from bot.utils import UnbanTimer
+from bot.utils import UnbanTimer, escaped
 from bot.errors import InvalidAction
+from bot.models import graph
+from neo4j_connection import WarningMixin, KickMixin, BanMixin
+import uuid
+
+
+def prepare_outlaw(ol, reason, user, ctx, **properties):
+    setattr(ol, "uuid", uuid.uuid4().hex)
+    setattr(ol, "utc", time.time())
+    setattr(ol, "reason", escaped(reason))
+    getattr(ol, "applies_to").add(user)
+    getattr(ol, "executed_by").add(ctx.db_author)
+    getattr(ol, "executed_on").add(ctx.db_guild)
+
+    for p in properties:
+        setattr(ol, p, properties[p])
 
 
 @bot.group()
@@ -15,15 +30,18 @@ async def outlaw(ctx):
 @outlaw.command()
 @commands.has_permissions(kick_members=True)
 async def warn(ctx, user: User, reason: str):
-    user.warned_by.add(ctx.db_author, properties={'UTC': time.time(), 'reason': reason, 'guild': ctx.guild.id})
-    user.push()
+    db_warning = WarningMixin()
+    prepare_outlaw(db_warning, escaped(reason), user, ctx)
+    graph.create(db_warning)
 
     conf_msg = ctx.translate("user warned")
 
     member = ctx.guild.get_member(user.id)
 
     try:
-        await member.send(ctx.translate("[user] just warned you").format(str(ctx.author), ctx.guild.name, reason))
+        await member.send(ctx.translate("[user] just warned you").format(
+            str(ctx.author), ctx.guild.name, escaped(reason))
+        )
     except discord.Forbidden:
         warning_note = ctx.translate("but user doesn't allow direct messages")
         conf_msg = f"{conf_msg}\n{warning_note}"
@@ -38,15 +56,18 @@ async def kick(ctx, user: User, reason: str):
     if user.id == ctx.guild.owner_id:
         raise InvalidAction("Guild owner cannot be kicked.")
 
-    user.kicked_by.add(ctx.db_author, properties={'UTC': time.time(), 'reason': reason, 'guild': ctx.guild.id})
-    user.push()
+    db_kick = KickMixin()
+    prepare_outlaw(db_kick, escaped(reason), user, ctx)
+    graph.create(db_kick)
 
     conf_msg = ctx.translate("user kicked")
 
     member: discord.Member = ctx.guild.get_member(user.id)
 
     try:
-        await member.send(ctx.translate("[user] just kicked you").format(str(ctx.author), ctx.guild.name, reason))
+        await member.send(ctx.translate("[user] just kicked you").format(
+            str(ctx.author), ctx.guild.name, escaped(reason))
+        )
     except discord.Forbidden:
         warning_note = ctx.translate("but user doesn't allow direct messages")
         conf_msg = f"{conf_msg}\n{warning_note}"
@@ -63,12 +84,9 @@ async def ban(ctx, user: User, reason: str, days: int=None):
     if user.id == ctx.guild.owner_id:
         raise InvalidAction("Guild owner cannot be banned.")
 
-    user.banned_by.add(
-        ctx.db_author,
-        properties={'UTC': time.time(), 'reason': reason, 'days': days, 'guild': ctx.guild.id}
-    )
-
-    user.push()
+    db_ban = BanMixin()
+    prepare_outlaw(db_ban, escaped(reason), user, ctx, days=days)
+    graph.create(db_ban)
 
     if days is not None:
         for_days = ctx.translate("for [days] days").format(days)
@@ -80,7 +98,7 @@ async def ban(ctx, user: User, reason: str, days: int=None):
     member: discord.Member = ctx.guild.get_member(user.id)
 
     try:
-        await member.send(ctx.translate("[user] just banned you").format(str(ctx.author), for_days, reason))
+        await member.send(ctx.translate("[user] just banned you").format(str(ctx.author), for_days, escaped(reason)))
     except discord.Forbidden:
         warning_note = ctx.translate("but user doesn't allow direct messages")
         conf_msg = f"{conf_msg}\n{warning_note}"

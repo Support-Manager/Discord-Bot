@@ -20,6 +20,10 @@ class InvalidAction(SupportManagerCommandError):
     pass
 
 
+class Blacklisted(SupportManagerCommandError):
+    pass
+
+
 class OnCooldown(SupportManagerError):
     def __init__(self, cooldown, retry_after, msg=None):
         self.cooldown = cooldown

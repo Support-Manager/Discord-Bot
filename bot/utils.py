@@ -241,6 +241,22 @@ class EmbedPaginator:
 
             current_page_index = load_page_index
 
+    @staticmethod
+    def generate_sub_lists(l: list) -> [list]:
+        if len(l) > 25:
+            sub_lists = []
+
+            while len(l) > 20:
+                sub_lists.append(l[:20])
+                del l[:20]
+
+            sub_lists.append(l)
+
+        else:
+            sub_lists = [l]
+
+        return sub_lists
+
 
 class TicketViewer(EmbedPaginator):
     """ Represents an interactive menu containing the whole data of a ticket (including responses). """
