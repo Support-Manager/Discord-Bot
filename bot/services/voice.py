@@ -5,6 +5,28 @@ from bot.utils import notify_supporters, Translator
 from discord.ext.commands import Cooldown, CooldownMapping, BucketType
 
 
+async def leaved_channel(channel, guild, translator):
+    category = channel.category
+
+    if category is not None:
+        if category.id == guild.voice_category:
+            if len(channel.members) == 0:
+                """ when the channel is empty now """
+
+                channels_occupied = [len(c.members) >= 1 for c in category.channels]
+
+                if channels_occupied.count(True) == len(category.channels) - 1:
+                    """ when all other channels are occupied """
+
+                    await channel.edit(
+                        name=translator.translate("available support room"),
+                        reason=translator.translate("providing available voice support room")
+                    )
+
+                else:
+                    await channel.delete(reason=translator.translate("support room is not needed anymore"))
+
+
 class CustomCooldownMapping(CooldownMapping):
     def _bucket_key(self, member):
         bucket_type = self._cooldown.type
@@ -51,6 +73,9 @@ async def on_voice_state_update(member, before, after):
                         bucket = buckets.get_bucket(member)  # getting cooldown
                         retry_after = bucket.update_rate_limit()
                         if retry_after:
+                            if before.channel is not None:
+                                await leaved_channel(before.channel, guild, translator)
+
                             raise errors.OnCooldown(bucket, retry_after)
 
                     message = translator.translate("[user] is waiting for support in [channel]")
@@ -64,22 +89,5 @@ async def on_voice_state_update(member, before, after):
 
     if before.channel is not None:
         channel = before.channel
-        category = channel.category
 
-        if category is not None:
-            if category.id == guild.voice_category:
-                if len(channel.members) == 0:
-                    """ when the channel is empty now """
-
-                    channels_occupied = [len(c.members) >= 1 for c in category.channels]
-
-                    if channels_occupied.count(True) == len(category.channels) - 1:
-                        """ when all other channels are occupied """
-
-                        await channel.edit(
-                            name=translator.translate("available support room"),
-                            reason=translator.translate("providing available voice support room")
-                        )
-
-                    else:
-                        await channel.delete(reason=translator.translate("support room is not needed anymore"))
+        await leaved_channel(channel, guild, translator)
