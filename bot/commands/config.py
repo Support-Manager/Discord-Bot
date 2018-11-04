@@ -59,6 +59,10 @@ async def config(ctx):
                 content = 'which category do you wanna use for voice support'
                 converter = commands.CategoryChannelConverter()
 
+            elif action == 'log':
+                content = 'which channel do you wanna use for logging'
+                converter = commands.TextChannelConverter()
+
             prefix = ctx.prefix
 
             if content is not None:
@@ -189,3 +193,15 @@ async def _voice(ctx, voice_category: discord.CategoryChannel):
         reason=ctx.translate("providing available voice support room")
     )
     await channel.edit(user_limit=2)
+
+
+@config.command(name='log', aliases=['logging', 'logger'])
+@bot.prime_feature
+async def _log(ctx, log_channel: discord.TextChannel):
+    """ This is to set the guilds log channel. """
+
+    guild = ctx.db_guild
+    guild.log_channel = log_channel.id
+    guild.push()
+
+    await ctx.send(ctx.translate("i'll log my actions in [channel]").format(log_channel.mention))

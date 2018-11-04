@@ -71,6 +71,9 @@ async def _create(ctx, t: Ticket, content: str):
     ).format(ctx.author.name, ctx.author.discriminator, t.id)
 
     await notify_author(ctx, resp_msg, t, embed=response_embed(ctx, resp))
+    await resp.guild.log(ctx.translate("[user] created response [response]").format(
+        ctx.author, f"{resp.ticket.id}-{resp.id}"
+    ))
 
 
 @response.command(name="show")
@@ -107,6 +110,9 @@ async def _edit(ctx, resp: Response, content: str):
         resp.push()
 
         await ctx.send(ctx.translate("response edited"))
+        await resp.guild.log(ctx.translate("[user] edited response [response]").format(
+            ctx.author, f"{resp.ticket.id}-{resp.id}"
+        ))
 
 
 @response.command(name="append", aliases=["addinfo"])
@@ -134,3 +140,6 @@ async def _delete(ctx, resp: Response):
     resp.push()
 
     await ctx.send(ctx.translate("response deleted"))
+    await resp.guild.log(ctx.translate("[user] deleted response [response]").format(
+        ctx.author, f"{resp.ticket.id}-{resp.id}"
+    ))

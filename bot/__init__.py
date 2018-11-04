@@ -11,6 +11,7 @@ from .properties import CONFIG, Defaults
 from .errors import MissingPermissions, InvalidAction, Blacklisted
 from . import utils
 from inspect import Parameter
+from functools import wraps
 
 
 logger = logging.getLogger(__name__)
@@ -43,6 +44,16 @@ class Context(commands.Context):
                or self.author.permissions_in(self.channel).administrator \
                or self.author.id in CONFIG['bot_admins']
 
+    def is_prime(self):
+        member = self.author
+        discord_guild = self.bot.get_guild(CONFIG['home_guild'])
+        prime_roles = [discord_guild.get_role(r_id) for r_id in CONFIG['prime_roles']]
+
+        if member in discord_guild.members:
+            return any(role in member.roles for role in prime_roles)  # checks if member has any prime role
+        else:
+            return False
+
 
 class Bot(commands.Bot):
     def __init__(self, *args, **kwargs):
@@ -61,6 +72,17 @@ class Bot(commands.Bot):
     @property
     def string_translations(self):
         return Bot._string_translations
+
+    @staticmethod
+    def prime_feature(f: callable) -> callable:
+        @wraps(f)
+        async def wrapper(ctx, *args, **kwargs):
+            if not ctx.is_prime():
+                await ctx.send(ctx.translate("this is a prime feature"))
+            else:
+                await f(ctx, *args, *kwargs)
+
+        return wrapper
 
 
 async def dynamic_prefix(bot, msg):
@@ -165,7 +187,7 @@ async def on_error(event, *args, **kwargs):
             except discord.Forbidden:
                 pass
 
-        elif isinstance(instance, discord.Forbidden) and guild.log_channel is not None:
+        elif isinstance(instance, discord.Forbidden):
             await guild.log(translator.translate("not enough permissions to perform action"))
 
     else:

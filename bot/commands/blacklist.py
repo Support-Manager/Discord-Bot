@@ -40,6 +40,9 @@ async def _add(ctx, user: User, reason: str, days: int=None):
         conf_msg = f"{conf_msg}\n{warning_note}"
 
     await ctx.send(conf_msg)
+    await ctx.db_guild.log(ctx.translate("[user] blacklisted [user] [reason]").format(
+        str(ctx.author), str(member), utils.escaped(reason)
+    ))
 
 
 @blacklist.command(name="remove")
@@ -54,6 +57,9 @@ async def _remove(ctx, user: User):
         guild.push()
 
         await ctx.send(ctx.translate("removed user from blacklist"))
+        await ctx.db_guild.log(ctx.translate("[user] removed [user] from blacklist").format(
+            str(ctx.author), str(user.discord)
+        ))
 
 
 @blacklist.command(name="show")

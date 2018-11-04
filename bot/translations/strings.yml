@@ -34,6 +34,10 @@ tickets can't be accessed via dm:
   EN: "New ticket:"
   DE: "Neues Ticket:"
 
+'[user] created ticket [ticket]':
+  EN: "`{0}` created ticket `#{1}`."
+  DE: "`{0}` hat Ticket `#{1}` erstellt."
+
 # channel-ticket creation
 
 'support tickets':
@@ -68,6 +72,10 @@ tickets can't be accessed via dm:
   EN: "Ticket edited. :white_check_mark:"
   DE: "Ticket bearbeitet. :white_check_mark:"
 
+'[user] edited ticket [ticket]':
+  EN: "`{0}` edited ticket `#{1}`."
+  DE: "`{0}` hat Ticket `#{1}` bearbeitet."
+
 # === ticket close command ===
 
 'this ticket is already closed':
@@ -89,6 +97,10 @@ ticket author doesn't allow dms:
 'ticket has been closed':
   EN: "The ticket has been closed."
   DE: "Das Ticket wurde geschlossen."
+
+'[user] closed ticket [ticket]':
+  EN: "`{0}` closed ticket `#{1}`."
+  DE: "`{0}` hat Ticket `#{1}` geschlossen."
 
 # === ticket reopen command ===
 
@@ -112,6 +124,10 @@ ticket author doesn't allow dms:
   EN: "The channel-ticket has been reopened."
   DE: "Das Kanal-Ticket wurde neu geöffnet."
 
+'[user] reopened ticket [ticket]':
+  EN: "`{0}` reopened ticket `#{1}`."
+  DE: "`{0}` hat Ticket `#{1}` neu geöffnet."
+
 # == ticket delete ===
 
 'you are attempting to delete ticket [ticket]':
@@ -125,6 +141,10 @@ ticket author doesn't allow dms:
 'ticket has been deleted':
   EN: "The ticket has been deleted."
   DE: "Das Ticket wurde gelöscht."
+
+'[user] deleted ticket [ticket]':
+  EN: "`{0}` deleted ticket `#{1}`."
+  DE: "`{0}` hat Ticket `#{1}` gelöscht."
 
 # === tickets command ===
 
@@ -190,6 +210,10 @@ active support tickets:
   EN: "Which category do you wanna use for channel-tickets?:"
   DE: "Welche Kategorie möchtest du für Kanal-Tickets nutzen?:"
 
+'which channel do you wanna use for logging':
+  EN: "Which channel do you wanna use for logging?:"
+  DE: "Welchen Kanal möchtest du zum protokollieren nutzen?:"
+
 'invalid input':
   EN: "Invalid input."
   DE: "Ungültige Eingabe."
@@ -240,6 +264,10 @@ i'll now notify [role] on ticket events:
   EN: "Okay. All channel-tickets will be created in `{0}`."
   DE: "Okay. Alle Kanal-Tickets werden in `{0}` erstellt werden."
 
+i'll log my actions in [channel]:
+  EN: "Okay. I'll log my actions in {0}."
+  DE: "Okay. Ich werde meine Aktionen in {0} protokollieren."
+
 # === help command ===
 
 'commands':
@@ -282,6 +310,10 @@ responses can't be accessed via dm:
   EN: "Response created. :white_check_mark:\nID: {0}"
   DE: "Antwort erstellt. :white_check_mark:\nID: {0}"
 
+'[user] created response [response]':
+  EN: "`{0}` created response `{1}`."
+  DE: "`{0}` hat Antwort `{1}` erstellt."
+
 '[user] just responded to your ticket [ticket]':
   EN: "{0}#{1} just responded to your ticket #{2}."
   DE: "`{0}#{1}` hat gerade auf dein ticket #{2} geantwortet."
@@ -297,6 +329,18 @@ responses can't be accessed via dm:
 'response edited':
   EN: "Response edited. :white_check_mark:"
   DE: "Antwort bearbeitet. :white_check_mark:"
+
+'[user] edited response [response]':
+  EN: "`{0}` edited response `{1}`."
+  DE: "`{0}` hat Antwort `{1}` bearbeitet."
+
+'response deleted':
+  EN: "Response deleted. :white_check_mark:"
+  DE: "Antwort gelöscht. :white_check_mark:"
+
+'[user] deleted response [response]':
+  EN: "`{0}` deleted response `{1}`."
+  DE: "`{0}` hat Antwort `{1}` gelöscht."
 
 # === outlaw command ===
 
@@ -317,8 +361,8 @@ responses can't be accessed via dm:
   DE: "Nutzer gekickt. :white_check_mark:"
 
 '[user] just banned you':
-  EN: "`{0}` just banned you from `{1}`:\n```{2}```"
-  DE: "`{0}` hat dich gerade aus `{1}` gebannt:\n```{2}```"
+  EN: "`{0}` just banned you from `{1}`{2}:\n```{3}```"  # '{2}' is for the duration (like " for 2 days")
+  DE: "`{0}` hat dich gerade{2} aus `{1}` gebannt:\n```{3}```"
 
 'user banned':
   EN: "User banned{0}. :white_check_mark:"
@@ -335,6 +379,20 @@ responses can't be accessed via dm:
 but user doesn't allow direct messages:
   EN: ":warning: But the user doesn't allow direct messages."
   DE: ":warning: Aber der Nutzer erlaubt keine direkt Nachrichten."
+
+# log
+
+'[user] warned [user] because of [reason]':
+  EN: "`{0}` warned `{1}` because of `{2}`."
+  DE: "`{0}` warnte `{1}` wegen `{2}`."
+
+'[user] kicked [user] because of [reason]':
+  EN: "`{0}` kicked `{1}` because of `{2}`."
+  DE: "`{0}` kickte `{1}` wegen `{2}`."
+
+'[user] banned [user][for days] because of [reason]':
+  EN: "`{0}` banned `{1}`{2} because of `{3}`."
+  DE: "`{0}` bannte `{1}`{2} wegen `{3}`."
 
 # === blacklist command ===
 
@@ -361,6 +419,16 @@ but user doesn't allow direct messages:
 'you are blacklisted':
   EN: "You are blacklisted on this server. :flag_black: "
   DE: "Du bist in diesem Server auf der schwarzen Liste. :flag_black: "
+
+# log
+
+'[user] blacklisted [user] [reason]':
+  EN: "`{0}` blacklisted `{1}`: `{2}`"
+  DE: "`{0}` trug `{1}` in die schwarze Liste ein: `{2}`"
+
+'[user] removed [user] from blacklist':
+  EN: "`{0}` removed `{1}` from blacklist."
+  DE: "`{0}` entfernte `{1}` von der schwarzen Liste."
 
 # === statistics command ===
 'statistics':
@@ -486,8 +554,12 @@ you're on cooldown for [sec] seconds:
 # === log ===
 
 'not enough permissions to perform action':
-  EN: "Not enough permissions to perform an action."
-  DE: "Nicht genügend Berechtigungen, um eine Aktion zu tätigen."
+  EN: "A command failed: Not enough permissions to perform an action."
+  DE: "Ein Befehl ist fehlgeschlagen: Nicht genügend Berechtigungen, um eine Aktion zu tätigen."
+
+'unbanned [member] [reason]':
+  EN: "Unbanned `{0}`: `{1}`"
+  DE: "`{0}` entbannt: `{1}`"
 
 # === mixed (utils) ===
 
@@ -519,10 +591,6 @@ you're on cooldown for [sec] seconds:
   EN: "This action is invalid. :no_entry_sign: "
   DE: "Diese Aktion ist nicht zulässig. :no_entry_sign: "
 
-'response deleted':
-  EN: "Response deleted. :white_check_mark:"
-  DE: "Antwort gelöscht. :white_check_mark:"
-
 'page':
  EN: "Page"
  DE: "Seite"
@@ -530,3 +598,7 @@ you're on cooldown for [sec] seconds:
 'canceled':
   EN: "Canceled."
   DE: "Abgebrochen."
+
+'this is a prime feature':  # TODO: ↓↓↓ Make this more concrete ↓↓↓
+  EN: "This is a prime feature."
+  DE: "Dies ist ein Premium-Feature."

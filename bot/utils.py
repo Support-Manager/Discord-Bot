@@ -262,9 +262,9 @@ class TicketViewer(EmbedPaginator):
     """ Represents an interactive menu containing the whole data of a ticket (including responses). """
 
     def __init__(self, ctx, ticket: Ticket):
-        pages = [ticket_embed(self._ctx, ticket)]
+        pages = [ticket_embed(ctx, ticket)]
         response_embeds = \
-            [response_embed(self._ctx, r) for r in sorted(ticket.get_responses(), key=lambda r: r.id)]
+            [response_embed(ctx, r) for r in sorted(ticket.get_responses(), key=lambda r: r.id)]
 
         pages.extend(response_embeds)
 
@@ -340,9 +340,16 @@ class Timer:
 
 
 class UnbanTimer(Timer):
-    def __init__(self, days, member, reason=None):
+    def __init__(self, ctx, days, member, reason=None):
         timeout = days * (60*60*24)  # calculates days into seconds
-        super().__init__(timeout, member.unban, reason=reason)
+
+        async def callback(c, m, *, r):
+            await m.unban(reason=r)
+
+            g = Guild.from_discord_guild(m.guild)
+            await g.log(c.translate("unbanned [member] [reason]").format(str(m), reason))
+
+        super().__init__(timeout, callback, ctx, member, r=reason)
 
 
 class Translator(dict):

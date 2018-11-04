@@ -137,6 +137,8 @@ async def _create(ctx, title: str, description: str="", scope: Scope=None):
         if t.guild.channel != ctx.channel.id:
             await notify_supporters(ctx.bot, ctx.translate('new ticket'), t.guild, embed=ticket_embed(ctx, t))
 
+        await t.guild.log(ctx.translate("[user] created ticket [ticket]").format(ctx.author, t.id))
+
 
 @ticket.command(name="show")
 async def _show(ctx, t: Ticket):
@@ -204,6 +206,7 @@ async def _edit(ctx, t: Ticket, title: str="", description: str=None):
     t.push()
 
     await ctx.send(ctx.translate("ticket edited"))
+    await t.guild.log(ctx.translate("[user] edited ticket [ticket]").format(ctx.author, t.id))
 
 
 @ticket.command(name="append", aliases=["addinfo"])
@@ -263,6 +266,8 @@ async def _close(ctx, t: Ticket, response=None):
             if channel is not None:
                 await channel.delete(reason=ctx.translate("ticket has been closed"))
 
+        await t.guild.log(ctx.translate("[user] closed ticket [ticket]").format(ctx.author, t.id))
+
     else:
         raise errors.MissingPermissions
 
@@ -309,6 +314,8 @@ async def _reopen(ctx, t: Ticket):
                                     t.guild,
                                     ticket_embed(ctx, t))
 
+        await t.guild.log(ctx.translate("[user] reopened ticket [ticket]").format(ctx.author, t.id))
+
     else:
         raise errors.MissingPermissions
 
@@ -352,6 +359,8 @@ async def _delete(ctx, t: Ticket):
             channel = t.channel
             if channel is not None:
                 await channel.delete(reason=ctx.translate("ticket has been deleted"))
+
+        await t.guild.log(ctx.translate("[user] deleted ticket [ticket]").format(ctx.author, t.id))
 
     else:
         await conf.display((ctx.translate("canceled")))

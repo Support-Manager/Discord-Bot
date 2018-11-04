@@ -47,6 +47,9 @@ async def warn(ctx, user: User, reason: str):
         conf_msg = f"{conf_msg}\n{warning_note}"
 
     await ctx.send(conf_msg)
+    await ctx.db_guild.log(ctx.translate("[user] warned [user] because of [reason]").format(
+        str(ctx.author), str(member), db_warning.reason
+    ))
 
 
 @outlaw.command()
@@ -75,6 +78,9 @@ async def kick(ctx, user: User, reason: str):
     await member.kick(reason=reason)
 
     await ctx.send(conf_msg)
+    await ctx.db_guild.log(ctx.translate("[user] kicked [user] because of [reason]").format(
+        str(ctx.author), str(member), db_kick.reason
+    ))
 
 
 @outlaw.command()
@@ -98,13 +104,18 @@ async def ban(ctx, user: User, reason: str, days: int=None):
     member: discord.Member = ctx.guild.get_member(user.id)
 
     try:
-        await member.send(ctx.translate("[user] just banned you").format(str(ctx.author), for_days, escaped(reason)))
+        await member.send(ctx.translate("[user] just banned you").format(
+            str(ctx.author), ctx.guild.name, for_days, escaped(reason)
+        ))
     except discord.Forbidden:
         warning_note = ctx.translate("but user doesn't allow direct messages")
         conf_msg = f"{conf_msg}\n{warning_note}"
 
     await member.ban(reason=reason, delete_message_days=1)
 
-    UnbanTimer(days, member, reason=ctx.translate("ban time expired"))
+    UnbanTimer(ctx, days, member, reason=ctx.translate("ban time expired"))
 
     await ctx.send(conf_msg)
+    await ctx.db_guild.log(ctx.translate("[user] banned [user][for days] because of [reason]").format(
+        str(ctx.author), str(member), for_days, db_ban.reason
+    ))
