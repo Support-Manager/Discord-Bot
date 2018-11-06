@@ -1,5 +1,5 @@
 from bot import bot, Defaults
-from bot.models import User, UserMixin
+from bot.models import User
 from discord.ext import commands
 import discord
 import time
@@ -8,6 +8,7 @@ from datetime import date
 
 @bot.command(aliases=["stats"])
 @commands.guild_only()
+@bot.prime_feature
 async def statistics(ctx, user: User=None):
     stats_emb = discord.Embed(
         title=ctx.translate("statistics"),
@@ -32,6 +33,9 @@ async def statistics(ctx, user: User=None):
 
         global_created_tickets = len(user.tickets)
         local_created_tickets = len(get_local(user.tickets))
+
+        has_reported = len(user.has_reported)
+        reported_by = len(user.reported_by)
 
         global_created_responses = len(user.responses)
         local_created_responses = len(get_local(user.responses))
@@ -67,6 +71,10 @@ async def statistics(ctx, user: User=None):
         stats_emb.add_field(
             name=ctx.translate("responses"),
             value=format_values(global_created_responses, local_created_responses)
+        )
+        stats_emb.add_field(
+            name=ctx.translate("reports"),
+            value=f"{ctx.translate('has reported')}: `{has_reported}`\n{ctx.translate('was reported')}: `{reported_by}`"
         )
         stats_emb.add_field(
             name=ctx.translate("shared guilds"),

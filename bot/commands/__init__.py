@@ -7,3 +7,4 @@ def setup(bot):
     from .outlaw import outlaw
     from .statistics import statistics
     from .blacklist import blacklist
+    from .report import report

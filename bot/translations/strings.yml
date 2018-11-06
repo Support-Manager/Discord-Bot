@@ -268,6 +268,10 @@ i'll log my actions in [channel]:
   EN: "Okay. I'll log my actions in {0}."
   DE: "Okay. Ich werde meine Aktionen in {0} protokollieren."
 
+'removed':
+  EN: "Removed. :white_check_mark:"
+  DE: "Entfernt. :white_check_mark:"
+
 # === help command ===
 
 'commands':
@@ -469,6 +473,18 @@ but user doesn't allow direct messages:
   EN: "Local"
   DE: "Lokal"
 
+'reports':
+  EN: "Reports"
+  DE: "Meldungen"
+
+'has reported':
+  EN: "Has reported"
+  DE: "Hat gemeldet"
+
+'was reported':
+  EN: "Was reported"
+  DE: "Wurde gemeldet"
+
 'shared guilds':
   EN: "Shared guilds"
   DE: "Gemeinsame Server"
@@ -506,6 +522,31 @@ but user doesn't allow direct messages:
 'online':
   EN: "Online"
   DE: "Online"
+
+# === report command ===
+'you already reported this user':
+  EN: "You already reported this user. :x:"
+  DE: "Du hast diesen Nutzer bereits gemeldet. :x:"
+
+'you cannot report yourself':
+  EN: "You cannot report yourself. But nice try :wink:"
+  DE: "Du kannst dich nicht selbst melden. Aber netter Versuch :wink:"
+
+'user reported':
+  EN: "User reported. :white_check_mark:"
+  DE: "Nutzer gemeldet. :white_check_mark:"
+
+'user has been reported three times now':
+  EN: "\n:eye_in_speech_bubble: This user has been reported three times now. It may be time to take action."
+  DE: "\n:eye_in_speech_bubble: Dieser Nutzer wurde nun schon drei mal gemeldet. Es könnte an der Zeit sein zu handeln."
+
+'[user] reported [user] because of [reason]':
+  EN: "`{0}` reported `{1}`:\n```{2}```"
+  DE: "`{0}` hat `{1}` gemeldet:\n```{2}```"
+
+'[user] has been reported because of [reason]':
+  EN: "`{0}` has been reported because of `{1}`."
+  DE: "`{0}` wurde wegen `{1}` gemeldet."
 
 # === conversion errors ===
 

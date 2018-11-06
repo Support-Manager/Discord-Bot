@@ -80,21 +80,21 @@ async def _create(ctx, title: str, description: str="", scope: Scope=None):
                 guild.discord.default_role:
                     discord.PermissionOverwrite(read_messages=False),
                 guild.discord.me:
-                    discord.PermissionOverwrite(manage_messages=True, add_reactions=True),
+                    discord.PermissionOverwrite(manage_messages=True, add_reactions=True, manage_channels=True),
                 supporter:
                     discord.PermissionOverwrite(read_messages=True, send_messages=True)
             }
 
-            if guild.category_channel is None:
+            if guild.ticket_category is None:
                 category = await guild.discord.create_category(
                     ctx.translate("support tickets"),
                     overwrites=overwrites,
                     reason=ctx.translate("first channel-ticket has been created")
                 )
-                guild.category_channel = category.id
+                guild.ticket_category = category.id
                 guild.push()
             else:
-                category = guild.discord.get_channel(guild.category_channel)
+                category = guild.discord.get_channel(guild.ticket_category)
 
             overwrites[author.discord] = discord.PermissionOverwrite(read_messages=True, send_messages=True)
 
@@ -293,7 +293,7 @@ async def _reopen(ctx, t: Ticket):
         graph.push(t)
 
         if t.scope_enum == enums.Scope.CHANNEL:
-            category = t.guild.discord.get_channel(t.guild.category_channel)
+            category = t.guild.discord.get_channel(t.guild.ticket_category)
 
             channel = await t.guild.discord.create_text_channel(
                 str(t.id),

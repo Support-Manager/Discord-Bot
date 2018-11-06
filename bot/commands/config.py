@@ -1,7 +1,8 @@
 from discord.ext import commands
 from bot.utils import *
-from bot import bot, enums
+from bot import bot, enums, errors
 from bot.models import graph, Scope, Language
+from typing import Union
 
 
 @bot.group(name='config', aliases=['set', 'configure'])
@@ -95,6 +96,16 @@ async def config(ctx):
             await ctx.invoke(command, choice)
 
 
+def to_be_removed(arg) -> bool:
+    if type(arg) == str:
+        if arg == 'remove':
+            return True
+        else:
+            raise errors.InvalidAction
+    else:
+        return False
+
+
 @config.error
 async def config_error(ctx, error):
     if isinstance(error, commands.NoPrivateMessage):
@@ -123,25 +134,35 @@ async def _prefix(ctx, pfx: str = ""):
 
 
 @config.command(name='notifications', aliases=['notify', 'notification', 'channel'])
-async def _notifications(ctx, channel: discord.TextChannel):
+async def _notifications(ctx, channel: Union[discord.TextChannel, str]):
     """ This is to set the guild's notification channel. """
 
     guild = ctx.db_guild
-    guild.channel = channel.id
-    graph.push(guild)
 
-    await ctx.send(ctx.translate("i'll send ticket events in [channel]").format(channel.mention))
+    if to_be_removed(channel):
+        guild.channel = None
+        guild.push()
+        await ctx.send(ctx.translate("removed"))
+    else:
+        guild.channel = channel.id
+        guild.push()
+        await ctx.send(ctx.translate("i'll send ticket events in [channel]").format(channel.mention))
 
 
 @config.command(name='role', aliases=['supprole', 'supporters'])
-async def _role(ctx, role: discord.Role):
+async def _role(ctx, role: Union[discord.Role, str]):
     """ This is to set the guild's support role. """
 
     guild = ctx.db_guild
-    guild.support_role = role.id
-    guild.push()
 
-    await ctx.send(ctx.translate("i'll now notify [role] on ticket events").format(role.name))
+    if to_be_removed(role):
+        guild.support_role = None
+        guild.push()
+        await ctx.send(ctx.translate("removed"))
+    else:
+        guild.support_role = role.id
+        guild.push()
+        await ctx.send(ctx.translate("i'll now notify [role] on ticket events").format(role.name))
 
 
 @config.command(name='scope')
@@ -167,41 +188,57 @@ async def _language(ctx, language: Language):
 
 
 @config.command(name='category')
-async def _category(ctx, category_channel: discord.CategoryChannel):
+async def _category(ctx, ticket_category: Union[discord.CategoryChannel, str]):
     guild = ctx.db_guild
 
-    guild.ticket_category = category_channel.id
-
-    guild.push()
-
-    await ctx.send(ctx.translate("all channel-tickets will be created in [category]").format(category_channel.name))
+    if to_be_removed(ticket_category):
+        guild.ticket_category = None
+        guild.push()
+        await ctx.send(ctx.translate("removed"))
+    else:
+        guild.ticket_category = ticket_category.id
+        guild.push()
+        await ctx.send(ctx.translate("all channel-tickets will be created in [category]").format(ticket_category.name))
 
 
 @config.command(name='voice', aliases=['voice-channel'])
-async def _voice(ctx, voice_category: discord.CategoryChannel):
+async def _voice(ctx, voice_category: Union[discord.CategoryChannel, str]):
     """ This is to set the guilds voice support channel. """
 
     guild = ctx.db_guild
-    guild.voice_category = voice_category.id
-    guild.push()
 
-    await ctx.send(ctx.translate("i'll notify you when someone is waiting in [category]").format(voice_category.name))
+    if to_be_removed(voice_category):
+        guild.voice_category = None
+        guild.push()
+        await ctx.send(ctx.translate("removed"))
+    else:
+        guild.voice_category = voice_category.id
+        guild.push()
 
-    channel = await guild.discord.create_voice_channel(
-        name=ctx.translate("available support room"),
-        category=voice_category,
-        reason=ctx.translate("providing available voice support room")
-    )
-    await channel.edit(user_limit=2)
+        await ctx.send(
+            ctx.translate("i'll notify you when someone is waiting in [category]").format(voice_category.name)
+        )
+
+        channel = await guild.discord.create_voice_channel(
+            name=ctx.translate("available support room"),
+            category=voice_category,
+            reason=ctx.translate("providing available voice support room")
+        )
+        await channel.edit(user_limit=2)
 
 
 @config.command(name='log', aliases=['logging', 'logger'])
 @bot.prime_feature
-async def _log(ctx, log_channel: discord.TextChannel):
+async def _log(ctx, log_channel: Union[discord.TextChannel, str]):
     """ This is to set the guilds log channel. """
 
     guild = ctx.db_guild
-    guild.log_channel = log_channel.id
-    guild.push()
 
-    await ctx.send(ctx.translate("i'll log my actions in [channel]").format(log_channel.mention))
+    if to_be_removed(log_channel):
+        guild.log_channel = None
+        guild.push()
+        await ctx.send(ctx.translate("removed"))
+    else:
+        guild.log_channel = log_channel.id
+        guild.push()
+        await ctx.send(ctx.translate("i'll log my actions in [channel]").format(log_channel.mention))
