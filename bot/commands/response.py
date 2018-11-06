@@ -1,12 +1,12 @@
 from bot.utils import notify_author, escaped, response_embed
-from bot.models import graph, Ticket, User, Guild, Response
-from bot import bot, enums, checks
+from bot.models import graph, Ticket, User, Response
+from bot import enums, checks
 import time
 from discord.ext import commands
 import uuid
 
 
-@bot.group()
+@commands.group()
 @commands.guild_only()
 @checks.check_blacklisted()
 async def response(ctx):
@@ -119,7 +119,7 @@ async def _edit(ctx, resp: Response, content: str):
 async def _append(ctx, resp: Response, content: str):
     new_content = f"{resp.content}\n{escaped(content)}"
 
-    edit_cmd = bot.get_command("response edit")
+    edit_cmd = ctx.bot.get_command("response edit")
     await ctx.invoke(edit_cmd, resp, new_content)
 
 

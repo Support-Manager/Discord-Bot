@@ -2,10 +2,10 @@ from bot.utils import *
 from discord.ext import commands
 from bot.models import User, Ticket
 from bot.properties import Defaults
-from bot import bot, enums
+from bot import enums
 
 
-@bot.group()
+@commands.group()
 @commands.guild_only()
 async def tickets(ctx):
     if ctx.invoked_subcommand is None:
@@ -17,7 +17,7 @@ async def tickets(ctx):
             except commands.BadArgument:
                 pass
 
-        list_tickets = bot.get_command('tickets list')
+        list_tickets = ctx.bot.get_command('tickets list')
         await ctx.invoke(list_tickets, user=user)
 
 
@@ -87,7 +87,7 @@ async def _list(ctx, user: User=None):
 
 @tickets.command(name="close")
 async def _close(ctx, *_tickets: Ticket):
-    close_ticket = bot.get_command('ticket close')
+    close_ticket = ctx.bot.get_command('ticket close')
 
     for t in _tickets:
         await ctx.invoke(close_ticket, t)

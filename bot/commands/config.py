@@ -1,11 +1,11 @@
 from discord.ext import commands
 from bot.utils import *
-from bot import bot, enums, errors
+from bot import enums, errors, Bot
 from bot.models import graph, Scope, Language
 from typing import Union
 
 
-@bot.group(name='config', aliases=['set', 'configure'])
+@commands.group(name='config', aliases=['set', 'configure'])
 @commands.guild_only()
 @commands.has_permissions(administrator=True)
 async def config(ctx):
@@ -75,7 +75,7 @@ async def config(ctx):
                     return message.author.id == ctx.author.id and message.channel.id == msg.channel.id
 
                 try:
-                    choice = await bot.wait_for('message', check=check, timeout=60)
+                    choice = await ctx.bot.wait_for('message', check=check, timeout=60)
                 except asyncio.TimeoutError:
                     continue
                 choice = choice.content
@@ -92,7 +92,7 @@ async def config(ctx):
                     await ctx.send(ctx.translate("invalid input"))
                     continue
 
-            command = bot.get_command('config ' + action)
+            command = ctx.bot.get_command('config ' + action)
             await ctx.invoke(command, choice)
 
 
@@ -228,7 +228,7 @@ async def _voice(ctx, voice_category: Union[discord.CategoryChannel, str]):
 
 
 @config.command(name='log', aliases=['logging', 'logger'])
-@bot.prime_feature
+@Bot.prime_feature
 async def _log(ctx, log_channel: Union[discord.TextChannel, str]):
     """ This is to set the guilds log channel. """
 

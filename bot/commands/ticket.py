@@ -1,11 +1,11 @@
 from bot.utils import *
 from discord.ext import commands
-from bot import bot, errors, enums, checks
+from bot import errors, enums, checks
 from bot.models import graph, Scope, User
 import uuid
 
 
-@bot.group(name='ticket')
+@commands.group(name='ticket')
 @commands.guild_only()
 @checks.check_blacklisted()
 async def ticket(ctx):
@@ -169,7 +169,7 @@ async def _show_error(ctx, error):
         def check(m):
             return m.author == ctx.author
 
-        msg = await bot.wait_for('message', check=check)
+        msg = await ctx.bot.wait_for('message', check=check)
 
         try:
             t = await Ticket().convert(ctx, msg.content)
@@ -213,7 +213,7 @@ async def _edit(ctx, t: Ticket, title: str="", description: str=None):
 async def _append(ctx, t: Ticket, info: str):
     new_description = f"{t.description}\n{escaped(info)}"
 
-    edit_cmd = bot.get_command("ticket edit")
+    edit_cmd = ctx.bot.get_command("ticket edit")
     await ctx.invoke(edit_cmd, t, description=new_description)
 
 
@@ -221,7 +221,7 @@ async def _append(ctx, t: Ticket, info: str):
 async def _respond(ctx, t: Ticket, content: str):
     """ This is just a shortcut for 'response create' """
 
-    response_create = bot.get_command("response create")
+    response_create = ctx.bot.get_command("response create")
     await ctx.invoke(response_create, t, content)
 
 

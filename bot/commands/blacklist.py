@@ -1,18 +1,19 @@
-from bot import bot, errors, utils, properties
+from discord.ext import commands
+from bot import errors, utils, properties
 from bot.models import User
 import time
 import discord
 from copy import deepcopy
 
 
-@bot.group()
+@commands.group()
 async def blacklist(ctx):
     if ctx.db_guild.support_role not in [r.id for r in ctx.author.roles]:
         if not ctx.author.guild_permissions.administrator:
             raise errors.MissingPermissions
 
     if ctx.invoked_subcommand is None:
-        await ctx.invoke(bot.get_command('blacklist show'))
+        await ctx.invoke(ctx.bot.get_command('blacklist show'))
 
 
 @blacklist.command(name="add", aliases=["append"])
@@ -83,7 +84,7 @@ async def _show(ctx):
     for sub_list in sub_lists:
         page = deepcopy(blacklist_emb)  # copy by value not reference
         for user in sub_list:
-            discord_user = bot.get_user(user.id)
+            discord_user = ctx.bot.get_user(user.id)
             page.add_field(
                 name=f"{str(discord_user)}",
                 value=ctx.db_guild.blacklist.get(user, 'reason'),

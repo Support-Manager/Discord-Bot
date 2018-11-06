@@ -1,5 +1,5 @@
 import discord
-from bot import bot, errors
+from bot import Bot, errors
 from bot.models import Guild
 from bot.utils import notify_supporters, Translator
 from discord.ext.commands import Cooldown, CooldownMapping, BucketType
@@ -42,52 +42,54 @@ cooldown = Cooldown(1, 300, BucketType.user)
 buckets = CustomCooldownMapping(cooldown)
 
 
-@bot.event
-async def on_voice_state_update(member, before, after):
-    guild = Guild.from_discord_guild(member.guild)
+def setup_voice_state_update_handler(bot):
+    async def on_voice_state_update(member, before, after):
+        guild = Guild.from_discord_guild(member.guild)
 
-    translator = Translator(bot.string_translations, guild.language_enum)
+        translator = Translator(Bot._string_translations, guild.language_enum)
 
-    if after.channel is not None:
-        channel = after.channel
-        category = channel.category
+        if after.channel is not None:
+            channel = after.channel
+            category = channel.category
 
-        if category is not None:
-            if before.channel != channel and category.id == guild.voice_category:
-                """ when someone joins into a server's voice support channel """
+            if category is not None:
+                if before.channel != channel and category.id == guild.voice_category:
+                    """ when someone joins into a server's voice support channel """
 
-                if len(channel.members) == 1:
-                    await channel.edit(
-                        name=translator.translate("occupied support room"),
-                        reason=translator.translate("support room got occupied")
-                    )
+                    if len(channel.members) == 1:
+                        await channel.edit(
+                            name=translator.translate("occupied support room"),
+                            reason=translator.translate("support room got occupied")
+                        )
 
-                    new_channel = await member.guild.create_voice_channel(
-                        name=translator.translate("available support room"),
-                        category=category,
-                        reason=translator.translate("providing available voice support room")
-                    )
-                    await new_channel.edit(user_limit=2)
+                        new_channel = await member.guild.create_voice_channel(
+                            name=translator.translate("available support room"),
+                            category=category,
+                            reason=translator.translate("providing available voice support room")
+                        )
+                        await new_channel.edit(user_limit=2)
 
-                    if buckets.valid:
-                        bucket = buckets.get_bucket(member)  # getting cooldown
-                        retry_after = bucket.update_rate_limit()
-                        if retry_after:
-                            if before.channel is not None:
-                                await leaved_channel(before.channel, guild, translator)
+                        if buckets.valid:
+                            bucket = buckets.get_bucket(member)  # getting cooldown
+                            retry_after = bucket.update_rate_limit()
+                            if retry_after:
+                                if before.channel is not None:
+                                    await leaved_channel(before.channel, guild, translator)
 
-                            raise errors.OnCooldown(bucket, retry_after)
+                                raise errors.OnCooldown(bucket, retry_after)
 
-                    message = translator.translate("[user] is waiting for support in [channel]")
-                    await notify_supporters(bot, message.format(member.mention, category.name), guild)
+                        message = translator.translate("[user] is waiting for support in [channel]")
+                        await notify_supporters(bot, message.format(member.mention, category.name), guild)
 
-                    message = translator.translate("the supporters have been notified")
-                    try:
-                        await member.send(message)
-                    except discord.Forbidden:
-                        pass
+                        message = translator.translate("the supporters have been notified")
+                        try:
+                            await member.send(message)
+                        except discord.Forbidden:
+                            pass
 
-    if before.channel is not None:
-        channel = before.channel
+        if before.channel is not None:
+            channel = before.channel
 
-        await leaved_channel(channel, guild, translator)
+            await leaved_channel(channel, guild, translator)
+
+    return on_voice_state_update

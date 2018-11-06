@@ -1,5 +1,4 @@
 from bot.utils import *
-from bot import bot
 from discord.ext import commands
 from ruamel import yaml
 from bot.models import Guild
@@ -14,7 +13,7 @@ with open(os.path.dirname(__file__) + '/../translations/help.yml', 'r', encoding
         print(exc)
 
 
-@bot.command(name='help')
+@commands.command(name='help')
 async def help_messages(ctx, command: str=None):
     guild = Guild.from_discord_guild(ctx.guild)
     language = guild.language
@@ -27,7 +26,7 @@ async def help_messages(ctx, command: str=None):
             color=Defaults.COLOR
         )
 
-        help_embed.set_thumbnail(url=bot.user.avatar_url)
+        help_embed.set_thumbnail(url=ctx.bot.user.avatar_url)
 
         for command in help_translations:
             help_embed.add_field(
@@ -46,7 +45,7 @@ async def help_messages(ctx, command: str=None):
     else:
         valid_command = False
 
-        for cmd in bot.commands:
+        for cmd in ctx.bot.commands:
             if command == cmd.name or command in cmd.aliases:
                 command = cmd.name
                 valid_command = True

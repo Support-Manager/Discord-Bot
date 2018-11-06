@@ -1,11 +1,11 @@
+from discord.ext import commands
 import discord
-from bot import bot
 from bot.models import User
 import time
 from bot.utils import escaped, notify_supporters
 
 
-@bot.command()
+@commands.command()
 async def report(ctx, user: User, reason: str):
     db_author: User = ctx.db_author
 

@@ -1,4 +1,3 @@
-from bot import bot
 from bot.models import User
 from discord.ext import commands
 import discord
@@ -22,7 +21,7 @@ def prepare_outlaw(ol, reason, user, ctx, **properties):
         setattr(ol, p, properties[p])
 
 
-@bot.group()
+@commands.group()
 async def outlaw(ctx):
     pass
 

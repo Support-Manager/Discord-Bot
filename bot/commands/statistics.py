@@ -1,4 +1,4 @@
-from bot import bot, Defaults
+from bot import Defaults, Bot
 from bot.models import User
 from discord.ext import commands
 import discord
@@ -6,9 +6,9 @@ import time
 from datetime import date
 
 
-@bot.command(aliases=["stats"])
+@commands.command(aliases=["stats"])
 @commands.guild_only()
-@bot.prime_feature
+@Bot.prime_feature
 async def statistics(ctx, user: User=None):
     stats_emb = discord.Embed(
         title=ctx.translate("statistics"),
@@ -40,7 +40,7 @@ async def statistics(ctx, user: User=None):
         global_created_responses = len(user.responses)
         local_created_responses = len(get_local(user.responses))
 
-        shared_guilds = len([g for g in bot.guilds if user.id in [m.id for m in g.members]])
+        shared_guilds = len([g for g in ctx.bot.guilds if user.id in [m.id for m in g.members]])
 
         stats_emb.description = ctx.translate("statistics of the given user")
 
