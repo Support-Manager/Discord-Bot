@@ -2,7 +2,6 @@ from discord.ext import commands
 import logging
 from ruamel import yaml
 import os
-from functools import wraps
 from .context import Context
 
 
@@ -26,14 +25,3 @@ class Bot(commands.Bot):
     @property
     def string_translations(self):
         return Bot._string_translations
-
-    @staticmethod
-    def prime_feature(f: callable) -> callable:
-        @wraps(f)
-        async def wrapper(ctx, *args, **kwargs):
-            if not ctx.is_prime():
-                await ctx.send(ctx.translate("this is a prime feature"))
-            else:
-                await f(ctx, *args, *kwargs)
-
-        return wrapper

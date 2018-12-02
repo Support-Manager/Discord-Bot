@@ -1,8 +1,10 @@
+import discord
 from bot.utils import *
 from discord.ext import commands
 from bot.models import User, Ticket
 from bot.properties import Defaults
 from bot import enums
+from copy import deepcopy
 
 
 @commands.group()

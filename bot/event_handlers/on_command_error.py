@@ -41,6 +41,9 @@ async def on_command_error(ctx, error):
         msg = ctx.translate("you are blacklisted")
         await ctx.send(msg)
 
+    elif isinstance(error, errors.RequiresPrime):
+        await ctx.send(ctx.translate("this is a prime feature"))
+
     elif isinstance(error, discord.ext.commands.CommandNotFound):
         pass
 

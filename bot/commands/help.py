@@ -1,4 +1,4 @@
-from bot.utils import *
+import discord
 from discord.ext import commands
 from ruamel import yaml
 from bot.models import Guild

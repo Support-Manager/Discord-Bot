@@ -24,6 +24,10 @@ class Blacklisted(SupportManagerCommandError):
     pass
 
 
+class RequiresPrime(SupportManagerCommandError):
+    pass
+
+
 class OnCooldown(SupportManagerError):
     def __init__(self, cooldown, retry_after, msg=None):
         self.cooldown = cooldown

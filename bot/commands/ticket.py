@@ -1,8 +1,11 @@
+import discord
 from bot.utils import *
 from discord.ext import commands
 from bot import errors, enums, checks
-from bot.models import graph, Scope, User
+from bot.models import graph, Scope, User, Guild
 import uuid
+import time
+import random
 
 
 @commands.group(name='ticket')
@@ -68,6 +71,15 @@ async def _create(ctx, title: str, description: str="", scope: Scope=None):
         t.id = highest_id + 1
         t.uuid = uuid.uuid4().hex
 
+        if t.guild.auto_assigning:
+            support_role: discord.Role = t.guild.discord.get_role(t.guild.support_role)
+            responsible_user = random.choice(support_role.members)
+            responsible_user = User.from_discord_user(responsible_user, ctx=ctx)
+
+            t.assigned_to.add(responsible_user)
+        else:
+            responsible_user = None
+
         graph.create(t)
 
         # create text channel (and category if not exist yet) for channel ticket
@@ -132,10 +144,13 @@ async def _create(ctx, title: str, description: str="", scope: Scope=None):
         if not dm_allowed:
             msg += '\n' + ctx.translate("please allow receiving dms")
 
+        if responsible_user is not None:
+            msg += '\n\n' + ctx.translate("ticket auto-assigned to [user]").format(responsible_user.discord)
+
         await ctx.send(msg)
 
         if t.guild.channel != ctx.channel.id:
-            await notify_supporters(ctx.bot, ctx.translate('new ticket'), t.guild, embed=ticket_embed(ctx, t))
+            await notify_ticket_authority(ctx, t, ctx.translate("new ticket"), send_embed=True)
 
         await t.guild.log(ctx.translate("[user] created ticket [ticket]").format(ctx.author, t.id))
 
@@ -225,99 +240,163 @@ async def _respond(ctx, t: Ticket, content: str):
     await ctx.invoke(response_create, t, content)
 
 
-@ticket.command(name='close')
-async def _close(ctx, t: Ticket, response=None):
-    """ This is to close a specific support ticket. """
+@ticket.command(name="assign")
+@checks.prime_feature()
+@requires_property_access
+async def _assign(ctx, t: Ticket, user: User):
+    """ This is to assign a ticket to another user for treatment. """
 
-    if ctx.may_fully_access(t):
-        if t.state_enum == enums.State.CLOSED:
-            await ctx.send(ctx.translate('this ticket is already closed'))
-            return None
+    if t.state_enum == enums.State.CLOSED:
+        await ctx.send(ctx.translate('this ticket is closed'))
+        return
 
-        utc = time.time()
+    elif len(t.assigned_to) > 0:
+        if user.id in [u.id for u in t.assigned_to]:
+            await ctx.send(ctx.translate("this ticket is already assigned to this user"))
+            return
+        else:
+            old_user = list(t.assigned_to)[0]
+            old_user = ctx.bot.get_user(old_user.id)
 
-        t.state = enums.State.CLOSED.value
+            conf = Confirmation(ctx)
+            await conf.confirm(ctx.translate("this ticket is already assigned to [user]").format(old_user))
 
-        user = User.from_discord_user(ctx.author)
-        t.closed_by.add(user, properties={'UTC': utc})
+            if not conf.confirmed:
+                await conf.display(ctx.translate("canceled"))
+                return
 
-        t.updated = utc
+    utc = time.time()
 
-        graph.push(t)
+    t.assigned_to.clear()
+    t.assigned_to.add(user, properties={'UTC': utc})
+    t.push()
 
-        conf_msg = ctx.translate('ticket closed')
-        close_msg = ctx.translate('[user] just closed ticket [ticket]').format(ctx.author.mention, t.id)
+    msg: discord.Message = await ctx.send(ctx.translate('ticket assigned'))
 
-        if response is not None:
-            close_msg += f"\n```{escaped(response)}```"
+    db_guild: Guild = ctx.db_guild
 
-        send_success = await notify_author(ctx, close_msg, t)
+    just_assigned_ticket = ctx.translate(
+        "[user] just assigned ticket [ticket] to [user]"
+    ).format(ctx.author, t.id, user.discord)
 
-        if send_success == 1:
-            conf_msg += ctx.translate("ticket author doesn't allow dms")
+    if ctx.channel.id != db_guild.channel:
+        await notify_supporters(
+            ctx.bot,
+            just_assigned_ticket,
+            db_guild,
+            mention_supporters=False
+        )
 
-        await ctx.send(conf_msg)
+    discord_member: discord.Member = db_guild.discord.get_member(user.id)
 
-        if t.guild.channel != ctx.channel.id:
-            await notify_supporters(ctx.bot, close_msg, t.guild, embed=ticket_embed(ctx, t))
+    if db_guild.support_role not in [r.id for r in discord_member.roles]:
+        try:
+            await discord_member.send(ctx.translate("[user] just assigned ticket [ticket] on [guild] to you"))
+        except discord.Forbidden:
+            await msg.edit(content=f"{msg.content}\n\n :grey_exclamation: {ctx.translate('failed to contact user')}")
 
         if t.scope_enum == enums.Scope.CHANNEL:
             channel = t.channel
             if channel is not None:
-                await channel.delete(reason=ctx.translate("ticket has been closed"))
+                await channel.set_permissions(discord_member, read_messages=True, send_messages=True,
+                                              reason=just_assigned_ticket)
 
-        await t.guild.log(ctx.translate("[user] closed ticket [ticket]").format(ctx.author, t.id))
 
-    else:
-        raise errors.MissingPermissions
+@ticket.command(name="claim")
+@requires_property_access
+async def _claim(ctx, t: Ticket):
+    """ This is to assign a ticket to yourself. """
+
+    ticket_assign = ctx.bot.get_command("ticket assign")
+    await ctx.invoke(ticket_assign, t, ctx.author)
+
+
+@ticket.command(name='close')
+@requires_property_access
+async def _close(ctx, t: Ticket, response=None):
+    """ This is to close a specific support ticket. """
+
+    if t.state_enum == enums.State.CLOSED:
+        await ctx.send(ctx.translate('this ticket is already closed'))
+        return None
+
+    utc = time.time()
+
+    t.state = enums.State.CLOSED.value
+
+    user = User.from_discord_user(ctx.author)
+    t.closed_by.add(user, properties={'UTC': utc})
+
+    t.updated = utc
+
+    graph.push(t)
+
+    conf_msg = ctx.translate('ticket closed')
+    close_msg = ctx.translate('[user] just closed ticket [ticket]').format(ctx.author.mention, t.id)
+
+    if response is not None:
+        close_msg += f"\n```{escaped(response)}```"
+
+    send_success = await notify_author(ctx, close_msg, t)
+
+    if send_success == 1:
+        conf_msg += ctx.translate("ticket author doesn't allow dms")
+
+    await ctx.send(conf_msg)
+
+    if t.guild.channel != ctx.channel.id:
+        await notify_ticket_authority(ctx, t, close_msg, send_embed=True)
+
+    if t.scope_enum == enums.Scope.CHANNEL:
+        channel = t.channel
+        if channel is not None:
+            await channel.delete(reason=ctx.translate("ticket has been closed"))
+
+    await t.guild.log(ctx.translate("[user] closed ticket [ticket]").format(ctx.author, t.id))
 
 
 @ticket.command(name='reopen')
+@requires_property_access
 async def _reopen(ctx, t: Ticket):
     """ This is to reopen a specific support ticket. """
 
-    if ctx.may_fully_access(t):
-        if t.state_enum != enums.State.CLOSED:
-            await ctx.send(ctx.translate("this ticket is not closed"))
-            return None
+    if t.state_enum != enums.State.CLOSED:
+        await ctx.send(ctx.translate("this ticket is not closed"))
+        return None
 
-        utc = time.time()
+    utc = time.time()
 
-        t.state = enums.State.REOPENED.value
+    t.state = enums.State.REOPENED.value
 
-        user = User.from_discord_user(ctx.author)
-        t.reopened_by.add(user, properties={'UTC': utc})
+    user = User.from_discord_user(ctx.author)
+    t.reopened_by.add(user, properties={'UTC': utc})
 
-        t.updated = utc
+    t.updated = utc
 
-        graph.push(t)
+    graph.push(t)
 
-        if t.scope_enum == enums.Scope.CHANNEL:
-            category = t.guild.discord.get_channel(t.guild.ticket_category)
+    if t.scope_enum == enums.Scope.CHANNEL:
+        category = t.guild.discord.get_channel(t.guild.ticket_category)
 
-            channel = await t.guild.discord.create_text_channel(
-                str(t.id),
-                overwrites={t.author.discord: discord.PermissionOverwrite(read_messages=True, send_messages=True)},
-                category=category,
-                reason=ctx.translate("channel-ticket has been reopened")
-            )
-            await channel.edit(
-                topic=t.title,
-                sync_permissions=True
-            )
+        channel = await t.guild.discord.create_text_channel(
+            str(t.id),
+            overwrites={t.author.discord: discord.PermissionOverwrite(read_messages=True, send_messages=True)},
+            category=category,
+            reason=ctx.translate("channel-ticket has been reopened")
+        )
+        await channel.edit(
+            topic=t.title,
+            sync_permissions=True
+        )
 
-        await ctx.send(ctx.translate("ticket reopened"))
+    await ctx.send(ctx.translate("ticket reopened"))
 
-        if t.guild.channel != ctx.channel.id:
-            await notify_supporters(ctx.bot,
-                                    ctx.translate("[user] just reopened a ticket").format(ctx.author.mention),
-                                    t.guild,
-                                    ticket_embed(ctx, t))
+    if t.guild.channel != ctx.channel.id:
+        await notify_ticket_authority(
+            ctx, t, ctx.translate("[user] just reopened a ticket").format(ctx.author.mention), send_embed=True
+        )
 
-        await t.guild.log(ctx.translate("[user] reopened ticket [ticket]").format(ctx.author, t.id))
-
-    else:
-        raise errors.MissingPermissions
+    await t.guild.log(ctx.translate("[user] reopened ticket [ticket]").format(ctx.author, t.id))
 
 
 @_close.error
@@ -328,14 +407,11 @@ async def _close_reopen_error(ctx, error):
 
 
 @ticket.command(name='delete')
+@requires_property_access
 async def _delete(ctx, t: Ticket):
     """ This is to delete a ticket. """
 
     utc = time.time()
-
-    if not ctx.may_fully_access(t):
-        await ctx.send(ctx.translate("you are not allowed to perform this action"))
-        return None
 
     conf = Confirmation(ctx)
     await conf.confirm(ctx.translate("you are attempting to delete ticket [ticket]").format(t.id))

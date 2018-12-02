@@ -1,4 +1,4 @@
-from bot import Defaults, Bot
+from bot import Defaults, checks
 from bot.models import User
 from discord.ext import commands
 import discord
@@ -8,7 +8,7 @@ from datetime import date
 
 @commands.command(aliases=["stats"])
 @commands.guild_only()
-@Bot.prime_feature
+@checks.prime_feature()
 async def statistics(ctx, user: User=None):
     stats_emb = discord.Embed(
         title=ctx.translate("statistics"),

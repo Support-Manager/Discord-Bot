@@ -1,6 +1,8 @@
+import discord
+import asyncio
 from discord.ext import commands
 from bot.utils import *
-from bot import enums, errors, Bot
+from bot import enums, errors, checks
 from bot.models import graph, Scope, Language
 from typing import Union
 
@@ -63,6 +65,13 @@ async def config(ctx):
             elif action == 'log':
                 content = 'which channel do you wanna use for logging'
                 converter = commands.TextChannelConverter()
+
+            elif action == 'assigning':
+                text = ctx.translate("do you want to enable auto-assigning")
+                conf = Confirmation(ctx)
+                await conf.confirm(text)
+
+                choice = conf.confirmed
 
             prefix = ctx.prefix
 
@@ -228,7 +237,7 @@ async def _voice(ctx, voice_category: Union[discord.CategoryChannel, str]):
 
 
 @config.command(name='log', aliases=['logging', 'logger'])
-@Bot.prime_feature
+@checks.prime_feature()
 async def _log(ctx, log_channel: Union[discord.TextChannel, str]):
     """ This is to set the guilds log channel. """
 
@@ -242,3 +251,19 @@ async def _log(ctx, log_channel: Union[discord.TextChannel, str]):
         guild.log_channel = log_channel.id
         guild.push()
         await ctx.send(ctx.translate("i'll log my actions in [channel]").format(log_channel.mention))
+
+
+@config.command(name='assigning', aliases=['auto-assigning', 'assign', 'auto-assign'])
+@checks.prime_feature()
+async def _assigning(ctx, enable: bool):
+    """ This is to enable/disable auto-assigning for tickets. """
+
+    guild = ctx.db_guild
+
+    guild.auto_assigning = enable
+    guild.push()
+
+    if enable:
+        await ctx.send(ctx.translate("auto-assigning enabled"))
+    else:
+        await ctx.send(ctx.translate("auto-assigning disabled"))

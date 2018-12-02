@@ -7,6 +7,7 @@ import logging
 from .properties import Defaults, CONFIG
 from . import enums
 import time
+from typing import Union, Optional
 
 
 logger = logging.getLogger(__name__)
@@ -109,7 +110,7 @@ class Ticket(TicketMixin, commands.Converter):
         self.state = enum.value
 
     @property
-    def guild(self):
+    def guild(self) -> Union['Guild', GuildMixin]:
         g = list(self.located_on)[0]
 
         if self._creation_ctx is not None:
@@ -118,7 +119,7 @@ class Ticket(TicketMixin, commands.Converter):
         return g
 
     @property
-    def author(self):
+    def author(self) -> Union['User', UserMixin]:
         a = list(self.created_by)[0]
 
         if self._creation_ctx is not None:
@@ -127,8 +128,20 @@ class Ticket(TicketMixin, commands.Converter):
         return a
 
     @property
-    def channel(self):
+    def channel(self) -> Optional[discord.TextChannel]:
         return discord.utils.get(self.guild.discord.channels, name=str(self.id))
+
+    @property
+    def responsible_user(self) -> Optional[Union['User', UserMixin]]:
+        if len(self.assigned_to) == 0:
+            return None
+
+        u = list(self.assigned_to)[0]
+
+        if self._creation_ctx is not None:
+            u = User.get(self._creation_ctx, u.id)
+
+        return u
 
     def push(self):
         graph.push(self)

@@ -1,6 +1,7 @@
 from discord.ext import commands
 from .models import Guild, User, Ticket, Response
 from .properties import CONFIG
+from typing import Union
 
 
 class Context(commands.Context):
@@ -19,11 +20,17 @@ class Context(commands.Context):
     def translate(self, text: str):
         return self.bot.string_translations[text][self.language]
 
-    def may_fully_access(self, entry: Ticket or Response):
-        return entry.guild.support_role in [role.id for role in self.author.roles] \
-               or self.author.id == entry.author.id \
-               or self.author.permissions_in(self.channel).administrator \
-               or self.author.id in CONFIG['bot_admins']
+    def may_fully_access(self, ticket_or_response: Union[Ticket, Response]):
+        if isinstance(ticket_or_response, Ticket):  # check if user is assigned to the ticket
+            is_assigned = ticket_or_response.responsible_user == self.db_author
+        else:
+            is_assigned = False
+
+        return ticket_or_response.guild.support_role in [role.id for role in self.author.roles] \
+            or self.author.id == ticket_or_response.author.id \
+            or self.author.permissions_in(self.channel).administrator \
+            or self.author.id in CONFIG['bot_admins'] \
+            or is_assigned
 
     def is_prime(self):
         member = self.author
