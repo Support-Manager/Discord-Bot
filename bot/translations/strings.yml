@@ -336,6 +336,14 @@ i'll log my actions in [channel]:
   EN: "Command not found."
   DE: "Befehl nicht gefunden."
 
+'prime-feature':
+  EN: "prime-feature"
+  DE: "Premium-Feature"
+
+'optional':
+  EN: "optional"
+  DE: "optional"
+
 'please enable receiving dms and try again':
   EN: "Please enable receiving DMs and try again."
   DE: "Bitte erlaube das Empfangen von DMs und versuche es erneut."

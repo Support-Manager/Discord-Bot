@@ -13,12 +13,21 @@ with open(os.path.dirname(__file__) + '/../translations/help.yml', 'r', encoding
         print(exc)
 
 
+def is_prime_only(command: commands.Command) -> bool:
+    if 'prime_check' in [c.__name__ for c in command.checks]:
+        return True
+    else:
+        return False
+
+
 @commands.command(name='help')
-async def help_messages(ctx, command: str=None):
+async def help_messages(ctx, command_name: str=None):
     guild = Guild.from_discord_guild(ctx.guild)
     language = guild.language
 
-    if command is None:
+    footer_msg = f"*{ctx.translate('prime-feature')}; ¹{ctx.translate('optional')}"
+
+    if command_name is None:
         help_embed = discord.Embed(
             title=ctx.translate("commands"),
             url=CONFIG['commands_url'],
@@ -28,16 +37,21 @@ async def help_messages(ctx, command: str=None):
 
         help_embed.set_thumbnail(url=ctx.bot.user.avatar_url)
 
-        for command in help_translations:
+        for command_name in help_translations:
+            command = ctx.bot.get_command(command_name)
+            prime_only = is_prime_only(command)
+
             help_embed.add_field(
-                name=command,
-                value=help_translations[command][language].format(prefix=ctx.prefix)
+                name=command_name + ('*' if prime_only else ''),
+                value=help_translations[command_name][language].format(prefix=ctx.prefix)
             )
 
         if ctx.author.guild_permissions.administrator:
+            help_embed.set_footer(text=footer_msg)
+
             await ctx.send(embed=help_embed)
         else:
-            help_embed.set_footer(text=ctx.translate("requested on [guild]").format(ctx.guild.name))
+            help_embed.set_footer(text=f"{ctx.translate('requested on [guild]').format(ctx.guild.name)}; {footer_msg}")
 
             await ctx.author.send(embed=help_embed)
             await ctx.send(ctx.translate("help sent via dm"))
@@ -46,17 +60,21 @@ async def help_messages(ctx, command: str=None):
         valid_command = False
 
         for cmd in ctx.bot.commands:
-            if command == cmd.name or command in cmd.aliases:
-                command = cmd.name
+            if command_name == cmd.name or command_name in cmd.aliases:
+                command_name = cmd.name
                 valid_command = True
 
         if valid_command:
+            command = ctx.bot.get_command(command_name)
+            prime_only = is_prime_only(command)
+
             help_embed = discord.Embed(
-                title=command,
-                url=CONFIG["commands_url"] + f"#{command}",
-                description=help_translations[command][language].format(prefix=ctx.prefix),
+                title=command_name + ('*' if prime_only else ''),
+                url=CONFIG["commands_url"] + f"#{command_name}",
+                description=help_translations[command_name][language].format(prefix=ctx.prefix),
                 color=Defaults.COLOR
             )
+            help_embed.set_footer(text=footer_msg)
 
             await ctx.send(embed=help_embed)
 

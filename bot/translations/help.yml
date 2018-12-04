@@ -7,5 +7,117 @@ help:
     Du kannst auch `{prefix}help [Befehl]` eingeben, um die Hilfe für einen bestimmten Befehl zu erhalten.
 
 config:
-  EN: Content will follow.
-  DE: Inhalt wird folgen.
+  EN: |
+    Configure the bot on your server. Your options are:
+    `prefix`, `notifications`, `role`, `scope`, `language`, `category`, `voice`
+    Prime-only*:
+    `log`, `assigning`
+
+    You could either do `{prefix}config [option] [your configuration]`
+    or use the guided configuration by just doing `{prefix}config`.
+  DE: |
+    Konfiguriere den Bot auf deinem Server. Deine Optionen sind:
+    `prefix`, `notifications`, `role`, `scope`, `language`, `category`, `voice`
+    Nur mit Premium*:
+    `log`, `assigning`
+
+    Du kannst entweder `{prefix}config [Option] [deine Konfiguration]` machen
+    oder die begleitete Konfiguration nutzen, indem du einfach `{prefix}config` machst.
+
+ticket:
+  EN: |
+    Perform various actions on a ticket doing:
+    `{prefix}ticket …`
+    - `…create [title] [description¹] [scope¹]`
+    - `…show [ticket ID]`
+    - `…edit [ticket ID] [title¹] [description¹]`
+    - `…append [ticket ID] [info]`
+    - `…respond [ticket ID] [content]`
+    - `…assign [ticket ID] [user]`*
+    - `…claim [ticket ID]` (assigns to yourself)
+    - `…close [ticket ID] [reason¹]`
+    - `…reopen [ticket ID]`
+    - `…delete [ticket ID]`
+  DE: |
+    Führe verschiedenste Aktionen mit einem Ticket aus:
+    `{prefix}ticket …`
+    - `…create [Titel] [Beschreibung¹] [Reichweite¹]`
+    - `…show [Ticket ID]`
+    - `…edit [Ticket ID] [Titel¹] [Beschreibung¹]`
+    - `…append [Ticket ID] [Info]`
+    - `…respond [Ticket ID] [Inhalt]`
+    - `…assign [Ticket ID] [Nutzer]`*
+    - `…claim [Ticket ID]` (weist es dir selbst zu)
+    - `…close [Ticket ID] [Begründung¹]`
+    - `…reopen [Ticket ID]`
+    - `…delete [Ticket ID]`
+
+tickets:
+  EN: |
+    Perform actions on multiple tickets:
+    - `{prefix}tickets list [user¹]` or just `{prefix}tickets [user¹]`
+    - `{prefix}tickets close [ticket 1] [ticket 2] …`
+  DE: |
+    Führe Aktionen für mehrere Tickets aus:
+    - `{prefix}tickets list [Nutzer¹]` oder einfach `{prefix}tickets [Nutzer¹]`
+    - `{prefix}tickets close [Ticket 1] [Ticket 2] …`
+
+response:
+  EN: |
+    Perform actions on responses:
+    `{prefix}response …`
+    - `…create [ticket ID] [content]`
+    - `…show [response]`
+    - `…edit [response] [content]`
+    - `…append [response] [content]`
+    - `…delete [response]`
+  DE: |
+    Führe Aktionen mit Antworten aus:
+    `{prefix}response …`
+    - `…create [Ticket ID] [Inhalt]`
+    - `…show [Antwort]`
+    - `…edit [Antwort] [Inhalt]`
+    - `…append [Antwort] [Inhalt]`
+    - `…delete [Antwort]`
+
+outlaw:
+  EN: |
+    Use this to outlaw users who act against the rules:
+    - `{prefix}outlaw warn [user] [reason]`
+    - `{prefix}outlaw kick [user] [reason]`
+    - `{prefix}outlaw ban [user] [reason] [duration (days)¹]`
+  DE: |
+    Nutze dies, um Nutzer zu bestrafen, die sich nicht an Regeln halten:
+    - `{prefix}outlaw warn [Nutzer] [Grund]`
+    - `{prefix}outlaw kick [Nutzer] [Grund]`
+    - `{prefix}outlaw ban [Nutzer] [Grund] [Dauer (Tage)¹]`
+
+report:
+  EN: |
+    For users to report other users for their misbehaviour:
+    `{prefix}report [user] [reason]`
+  DE: |
+    Für Nutzer, um andere Nutzer wegen ihres Fehlverhaltens zu melden:
+    `{prefix}report [Nutzer] [Grund]`
+
+statistics:
+  EN: |
+    Inspect server and user statistics by doing:
+    `{prefix}stats [user¹]`
+    When you don't specify the user it will show the server stats.
+  DE: |
+    Inspiziere Server- und Nutzerstatistiken:
+    `{prefix}stats [Nutzer¹]`
+    Wenn du den Nutzer nicht angibst, zeigt es dir die Serverstatistiken.
+
+blacklist:
+  EN: |
+    Manage your server's blacklist:
+    `{prefix}blacklist add [user] [reason] [duration (days)¹]`
+    `{prefix}blacklist remove [user]`
+    `{prefix}blacklist show`
+  DE: |
+    Verwalte die schwarze Liste deines Servers:
+    - `{prefix}blacklist add [Nutzer] [Grund] [Dauer (Tage)¹]`
+    - `{prefix}blacklist remove [Nutzer]`
+    - `{prefix}blacklist show`

@@ -1,9 +1,7 @@
 from discord.ext import commands
 from bot.errors import Blacklisted
-from typing import Union
-from .models import Ticket, Response
 from .context import Context
-from .errors import MissingPermissions, RequiresPrime
+from .errors import RequiresPrime
 
 
 def check_blacklisted():
@@ -21,10 +19,10 @@ def check_blacklisted():
 
 
 def prime_feature():
-    async def predicate(ctx: Context):
+    async def prime_check(ctx: Context):
         if ctx.is_prime():
             return True
         else:
             raise RequiresPrime
 
-    return commands.check(predicate)
+    return commands.check(prime_check)
