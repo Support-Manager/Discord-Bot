@@ -10,7 +10,7 @@ from .on_error import on_error
 def setup(bot):
     bot.add_listener(setup_ready_handler(bot))
 
-    bot.add_listener(before_invoke)
+    bot.before_invoke(before_invoke)
     bot.add_listener(on_guild_join)
     bot.add_listener(on_member_join)
     bot.add_listener(on_command_error)

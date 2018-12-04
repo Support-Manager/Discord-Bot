@@ -21,7 +21,7 @@ async def response_error(ctx, error):
         await ctx.send(ctx.translate("responses can't be accessed via dm"))
 
 
-@response.command(name="create")
+@response.command(name="create", aliases=["add"])
 async def _create(ctx, t: Ticket, content: str):
     """ This is to create new responses/to answer tickets. """
 
