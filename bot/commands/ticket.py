@@ -163,7 +163,7 @@ async def _show(ctx, t: Ticket):
     if ctx.author.id == t.author.id:
         pass
 
-    elif t.scope_enum != enums.Scope.CHANNEL and ctx.channel != t.channel and not ctx.may_fully_access(t):
+    elif t.scope_enum == enums.Scope.CHANNEL and ctx.channel != t.channel and not ctx.may_fully_access(t):
         await ctx.send(ctx.translate('this is a channel ticket'))
         return None
 
