@@ -652,6 +652,82 @@ you're on cooldown for [sec] seconds:
   EN: "Unbanned `{0}`: `{1}`"
   DE: "`{0}` entbannt: `{1}`"
 
+# === info command ===
+
+'about the bot':
+  EN: "About the bot."
+  DE: "Über den Bot."
+
+# developer field
+
+'developer':
+  EN: "Developer"
+  DE: "Entwickler"
+
+'name':
+  EN: "Name"
+  DE: "Name"
+
+'I am also at':
+  EN: "I'm also at"
+  DE: "Ich bin auch auf"
+
+# development field
+
+'used for development':
+  EN: "Used for development"
+  DE: "Für die Entwicklung genutzt"
+
+'programming language':
+  EN: "Programming language"
+  DE: "Programmiersprache"
+
+'database':
+  EN: "Database"
+  DE: "Datenbank"
+
+# commands field
+
+'type [prefix]help for command overview':
+  EN: "Type `{0}help` to get an overview of the commands."
+  DE: "Gib `{0}help` ein, um eine Übersicht über die Befehle zu erhalten."
+
+'for detailed info visit [url]':
+  EN: "For detailed info on how to use them visit [commands]({0})."
+  DE: "Für detaillierte Infos darüber, wie man sie nutzt, besuche [Befehle]({0})."
+
+# stats field
+
+'some stats':
+  EN: "Some stats"
+  DE: "Ein paar Statistiken"
+
+'server count':
+  EN: "Server count"
+  DE: "Server Anzahl"
+
+'total users':
+  EN: "Total users"
+  DE: "Nutzer insgesamt"
+
+'total tickets':
+  EN: "Total tickets"
+  DE: "Tickets insgesamt"
+
+'total responses':
+  EN: "Total responses"
+  DE: "Antworten insgesamt"
+
+# sharding field
+
+'shard count':
+  EN: "Shard count"
+  DE: "Shard Anzahl"
+
+'this servers shard id':
+  EN: "This server's shard ID"
+  DE: "Die Shard-ID dieses Servers"
+
 # === mixed (utils) ===
 
 'created on':

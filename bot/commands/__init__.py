@@ -7,6 +7,7 @@ from .outlaw import outlaw
 from .statistics import statistics
 from .blacklist import blacklist
 from .report import report
+from .info import info
 
 
 def setup(bot):
@@ -19,3 +20,4 @@ def setup(bot):
     bot.add_command(statistics)
     bot.add_command(blacklist)
     bot.add_command(report)
+    bot.add_command(info)
