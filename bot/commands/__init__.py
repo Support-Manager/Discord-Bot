@@ -8,6 +8,7 @@ from .statistics import statistics
 from .blacklist import blacklist
 from .report import report
 from .info import info
+from .invite import invite
 
 
 def setup(bot):
@@ -21,3 +22,4 @@ def setup(bot):
     bot.add_command(blacklist)
     bot.add_command(report)
     bot.add_command(info)
+    bot.add_command(invite)

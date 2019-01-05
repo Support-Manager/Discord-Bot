@@ -1,5 +1,6 @@
 import logging
 import discord
+from discord.ext.commands import when_mentioned_or
 from .models import Guild, User, graph, Ticket, Response
 from .properties import CONFIG, Defaults
 from . import utils, errors
@@ -10,10 +11,10 @@ from .context import Context
 logger = logging.getLogger(__name__)
 
 
-async def dynamic_prefix(bot, msg):
+async def dynamic_prefix(b: Bot, msg):
     if isinstance(msg.channel, discord.DMChannel):
         return Defaults.PREFIX
 
     guild = Guild.from_discord_guild(msg.guild)
 
-    return guild.prefix
+    return when_mentioned_or(guild.prefix)(b, msg)

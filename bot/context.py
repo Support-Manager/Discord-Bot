@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
 from .models import Guild, User, Ticket, Response
-from .properties import CONFIG
+from .properties import CONFIG, Defaults
 from typing import Union
 
 
@@ -19,7 +19,9 @@ class Context(commands.Context):
         return self.db_guild.language
 
     def translate(self, text: str):
-        return self.bot.string_translations[text][self.language]
+        translations = self.bot.string_translations[text]
+
+        return translations.get(self.language, translations[Defaults.LANGUAGE])
 
     def may_fully_access(self, ticket_or_response: Union[Ticket, Response]):
         if isinstance(ticket_or_response, Ticket):  # check if user is assigned to the ticket

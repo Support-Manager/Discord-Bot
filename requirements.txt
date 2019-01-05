@@ -6,9 +6,8 @@ discord.py==1.0.0a1590+g860d6a9
 idna==2.6
 idna-ssl==1.1.0
 multidict==4.2.0
-neo4j-connection==0.3.0
+git+git://github.com/Support-Manager/neo4j-connection.git@dbd0018#egg=neo4j-connection
 py2neo==3.1.2
-PyYAML==3.12
 ruamel.yaml==0.15.37
 websockets==6.0
 yarl==1.1.1

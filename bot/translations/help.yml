@@ -121,3 +121,19 @@ blacklist:
     - `{prefix}blacklist add [Nutzer] [Grund] [Dauer (Tage)¹]`
     - `{prefix}blacklist remove [Nutzer]`
     - `{prefix}blacklist show`
+
+info:
+  EN: |
+    Some info about the bot:
+    `{prefix}info`
+  DE: |
+    Einige Infos über den Bot:
+    `{prefix}info`
+
+invite:
+  EN: |
+    Invite the bot to your server:
+    `{prefix}invite`
+  DE: |
+    Lade den Bot zu deinem Server ein:
+    `{prefix}invite`

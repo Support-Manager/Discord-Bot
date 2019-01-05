@@ -34,6 +34,10 @@ tickets can't be accessed via dm:
   EN: "New ticket:"
   DE: "Neues Ticket:"
 
+'created in [channel]':
+  EN: " (created in {0})"
+  DE: " (erstellt in {0})"
+
 '[user] created ticket [ticket]':
   EN: "`{0}` created ticket `#{1}`."
   DE: "`{0}` hat Ticket `#{1}` erstellt."
@@ -321,8 +325,8 @@ i'll log my actions in [channel]:
   DE: "Befehle"
 
 'an overview of all features of the bot':
-  EN: "An overview of all features of the bot."
-  DE: "Eine Übersicht aller Features dieses Bots."
+  EN: "An overview of all features of the bot.\nFor detailed information visit:\n{0}"
+  DE: "Eine Übersicht aller Features dieses Bots.\nFür detaillierte Informationen, besuche:\n{0}"
 
 'requested on [guild]':
   EN: "Requested on \"{0}\"."
@@ -728,6 +732,16 @@ you're on cooldown for [sec] seconds:
   EN: "This server's shard ID"
   DE: "Die Shard-ID dieses Servers"
 
+# === invite command ===
+
+'invite me':
+  EN: "Invite me to your server!"
+  DE: "Lade mich zu deinem Server ein!"
+
+'start getting your server managed now':
+  EN: "Start getting your server managed now!"
+  DE: "Fange jetzt an, deinen Server ge-managed zu bekommen!"
+
 # === mixed (utils) ===
 
 'created on':
@@ -766,9 +780,15 @@ you're on cooldown for [sec] seconds:
   EN: "Canceled."
   DE: "Abgebrochen."
 
-'this is a prime feature':  # TODO: ↓↓↓ Make this more concrete ↓↓↓
-  EN: "This is a prime feature."
-  DE: "Dies ist ein Premium-Feature."
+'this is a prime feature':
+  EN: |
+    This is a prime feature.
+    Support the development of this bot and get some neat extra features:
+    {0}
+  DE: |
+    Dies ist ein Premium-Feature.
+    Unterstütze die Entwicklung dieses Bots und bekomme ein paar coole extra Funktionen:
+    {0}
 
 'failed to contact responsible user [user] for ticket [ticket]':
   EN: "Failed to contact the responsible user `{0}` for ticket `#{1}` via DM:"

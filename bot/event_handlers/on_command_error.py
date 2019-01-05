@@ -1,4 +1,4 @@
-from bot import errors
+from bot import errors, CONFIG
 from inspect import Parameter
 from discord.ext import commands
 import discord
@@ -42,7 +42,7 @@ async def on_command_error(ctx, error):
         await ctx.send(msg)
 
     elif isinstance(error, errors.RequiresPrime):
-        await ctx.send(ctx.translate("this is a prime feature"))
+        await ctx.send(ctx.translate("this is a prime feature").format(CONFIG['prime_url']))
 
     elif isinstance(error, discord.ext.commands.CommandNotFound):
         pass

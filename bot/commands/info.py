@@ -15,7 +15,7 @@ async def info(ctx):
 
     info_emb.set_author(
         name="Linus Bartsch | LiBa01#8817",
-        url=CONFIG["impress"],
+        url=CONFIG["imprint"],
         icon_url="https://avatars0.githubusercontent.com/u/30984789"  # GitHub avatar
     )
 
@@ -44,7 +44,7 @@ async def info(ctx):
 
     info_emb.add_field(
         name=ctx.translate("commands"),
-        value=f"{ctx.translate('type [prefix]help for command overview').format(ctx.prefix)}\n"
+        value=f"{ctx.translate('type [prefix]help for command overview').format(ctx.db_guild.prefix)}\n"
               f"{ctx.translate('for detailed info visit [url]').format(CONFIG['commands_url'])}",
         inline=False
     )

@@ -8,7 +8,7 @@ from .context import Context
 logger = logging.getLogger(__name__)
 
 
-class Bot(commands.Bot):
+class Bot(commands.AutoShardedBot):
     def __init__(self, *args, **kwargs):
         super(Bot, self).__init__(*args, **kwargs)
 

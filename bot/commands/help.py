@@ -20,6 +20,11 @@ def is_prime_only(command: commands.Command) -> bool:
         return False
 
 
+def get_translation(command_name: str, language: str):
+    cmd_translations = help_translations[command_name]
+    return cmd_translations.get(language, cmd_translations[Defaults.LANGUAGE])
+
+
 @commands.command(name='help')
 async def help_messages(ctx, command_name: str=None):
     guild = Guild.from_discord_guild(ctx.guild)
@@ -31,7 +36,7 @@ async def help_messages(ctx, command_name: str=None):
         help_embed = discord.Embed(
             title=ctx.translate("commands"),
             url=CONFIG['commands_url'],
-            description=ctx.translate("an overview of all features of the bot"),
+            description=ctx.translate("an overview of all features of the bot").format(CONFIG['commands_url']),
             color=Defaults.COLOR
         )
 
@@ -43,7 +48,8 @@ async def help_messages(ctx, command_name: str=None):
 
             help_embed.add_field(
                 name=command_name + ('*' if prime_only else ''),
-                value=help_translations[command_name][language].format(prefix=ctx.prefix)
+                value=get_translation(command_name, language).format(prefix=ctx.prefix),
+                inline=False
             )
 
         if ctx.author.guild_permissions.administrator:
@@ -71,7 +77,7 @@ async def help_messages(ctx, command_name: str=None):
             help_embed = discord.Embed(
                 title=command_name + ('*' if prime_only else ''),
                 url=CONFIG["commands_url"] + f"#{command_name}",
-                description=help_translations[command_name][language].format(prefix=ctx.prefix),
+                description=get_translation(command_name, language).format(prefix=ctx.prefix),
                 color=Defaults.COLOR
             )
             help_embed.set_footer(text=footer_msg)

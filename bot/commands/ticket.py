@@ -82,6 +82,8 @@ async def _create(ctx, title: str, description: str="", scope: Scope=None):
 
         graph.create(t)
 
+        send_invokation_channel = False
+
         # create text channel (and category if not exist yet) for channel ticket
         if t.scope_enum == enums.Scope.CHANNEL:
             supporter = discord.utils.get(guild.discord.roles, id=guild.support_role)
@@ -131,6 +133,7 @@ async def _create(ctx, title: str, description: str="", scope: Scope=None):
             format_id = t.id
 
         else:
+            send_invokation_channel = True
             format_id = t.id
 
         msg = ctx.translate("ticket created").format(format_id)
@@ -150,7 +153,11 @@ async def _create(ctx, title: str, description: str="", scope: Scope=None):
         await ctx.send(msg)
 
         if t.guild.channel != ctx.channel.id:
-            await notify_ticket_authority(ctx, t, ctx.translate("new ticket"), send_embed=True)
+            new_ticket_msg = ctx.translate("new ticket")
+            if send_invokation_channel:
+                new_ticket_msg += ctx.translate("created in [channel]").format(ctx.channel.mention)
+
+            await notify_ticket_authority(ctx, t, new_ticket_msg, send_embed=True)
 
         await t.guild.log(ctx.translate("[user] created ticket [ticket]").format(ctx.author, t.id))
 

@@ -34,8 +34,8 @@ async def statistics(ctx, user: User=None):
         global_created_tickets = len(user.tickets)
         local_created_tickets = len(get_local(user.tickets))
 
-        has_reported = len(user.has_reported)
-        reported_by = len(user.reported_by)
+        has_reported = len(get_local(user.issued_reports))
+        reported_by = len(get_local(user.reports))
 
         global_created_responses = len(user.responses)
         local_created_responses = len(get_local(user.responses))
