@@ -52,7 +52,12 @@ async def help_messages(ctx, command_name: str=None):
                 inline=False
             )
 
-        if ctx.author.guild_permissions.administrator:
+        if isinstance(ctx.channel, discord.DMChannel):
+            help_embed.set_footer(text=footer_msg)
+
+            await ctx.send
+
+        elif ctx.author.guild_permissions.administrator:
             help_embed.set_footer(text=footer_msg)
 
             await ctx.send(embed=help_embed)
