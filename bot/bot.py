@@ -27,6 +27,8 @@ class Bot(commands.AutoShardedBot):
     async def _update_stats(self):
         """This function runs every 30 minutes to automatically update the server count."""
 
+        await self.is_ready()
+
         while True:
             logger.info('attempting to post server count')
             try:
