@@ -55,7 +55,7 @@ async def help_messages(ctx, command_name: str=None):
         if not isinstance(ctx.author, discord.Member):
             help_embed.set_footer(text=footer_msg)
 
-            await ctx.send
+            await ctx.send(embed=help_embed)
 
         elif ctx.author.guild_permissions.administrator:
             help_embed.set_footer(text=footer_msg)
