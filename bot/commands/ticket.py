@@ -71,14 +71,16 @@ async def _create(ctx, title: str, description: str="", scope: Scope=None):
         t.id = highest_id + 1
         t.uuid = uuid.uuid4().hex
 
+        responsible_user = None
+
         if t.guild.auto_assigning:
             support_role: discord.Role = t.guild.discord.get_role(t.guild.support_role)
-            responsible_user = random.choice(support_role.members)
-            responsible_user = User.from_discord_user(responsible_user, ctx=ctx)
 
-            t.assigned_to.add(responsible_user)
-        else:
-            responsible_user = None
+            if support_role is not None:
+                responsible_user = random.choice(support_role.members)
+                responsible_user = User.from_discord_user(responsible_user, ctx=ctx)
+
+                t.assigned_to.add(responsible_user)
 
         graph.create(t)
 
