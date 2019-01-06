@@ -47,5 +47,8 @@ async def on_command_error(ctx, error):
     elif isinstance(error, discord.ext.commands.CommandNotFound):
         pass
 
+    elif isinstance(error, discord.ext.commands.NoPrivateMessage):
+        pass
+
     else:
         raise error
