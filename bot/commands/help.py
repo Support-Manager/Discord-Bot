@@ -52,7 +52,7 @@ async def help_messages(ctx, command_name: str=None):
                 inline=False
             )
 
-        if isinstance(ctx.channel, discord.DMChannel):
+        if not isinstance(ctx.author, discord.Member):
             help_embed.set_footer(text=footer_msg)
 
             await ctx.send
