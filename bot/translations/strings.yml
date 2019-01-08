@@ -742,6 +742,16 @@ you're on cooldown for [sec] seconds:
   EN: "Start getting your server managed now!"
   DE: "Fange jetzt an, deinen Server ge-managed zu bekommen!"
 
+# === vote command ===
+
+'vote for this bot':
+  EN: "Vote for this bot now!"
+  DE: "Stimme jetzt für diesen Bot!"
+
+'vote for this bot on dbl':
+  EN: "Vote for this bot on discordbots.org to help it spread!\nYou can vote every 24 hours."
+  DE: "Stimme für diesen Bot auf discordbots.org, um ihm zu helfen sich zu verbreiten.\nDu kannst alle 24 Stunden abstimmen."
+
 # === mixed (utils) ===
 
 'created on':

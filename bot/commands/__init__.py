@@ -9,6 +9,7 @@ from .blacklist import blacklist
 from .report import report
 from .info import info
 from .invite import invite
+from .vote import vote
 
 
 def setup(bot):
@@ -23,3 +24,4 @@ def setup(bot):
     bot.add_command(report)
     bot.add_command(info)
     bot.add_command(invite)
+    bot.add_command(vote)

@@ -4,6 +4,8 @@
   "invite_url": "https://support-manager.org/invite",
   "prime_url": "https://support-manager.org/prime",
   "imprint": "https://support-manager.org/imprint",
+  "vote_url": "https://discordbots.org/bot/360801859461447700/vote",
+  "dbl_logo": "https://cdn-images-1.medium.com/max/92/1*2YWvvw43fMwqxzp_0x0rRQ@2x.png",
   "bot_admins": [269959141508775937],
   "prime_roles": [507995816473133076, 508626030467219476],
   "home_guild": 507986974779506707
