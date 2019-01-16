@@ -99,7 +99,7 @@ async def statistics(ctx, user: User=None):
         )
 
         class Stats:
-            def __init__(self, name: str, relationships: iter, utc_key: 'function'):
+            def __init__(self, name: str, relationships: iter, utc_key: callable):
                 self.name = name
                 self.relationships = relationships
                 self.get_timestamp = utc_key

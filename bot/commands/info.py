@@ -61,7 +61,7 @@ async def info(ctx):
     info_emb.add_field(
         name="Sharding",
         value=f"{ctx.translate('shard count')}: **{ctx.bot.shard_count}**\n"
-              f"{ctx.translate('this servers shard id')}: **{ctx.bot.shard_id}**",
+              f"{ctx.translate('this servers shard id')}: **{ctx.guild.shard_id}**",
         inline=False
     )
 
