@@ -418,6 +418,10 @@ responses can't be accessed via dm:
   EN: "User kicked. :white_check_mark:"
   DE: "Nutzer gekickt. :white_check_mark:"
 
+'this user is not on this server':
+  EN: "This user is not on this server (anymore)."
+  DE: "Dieser Nutzer ist nicht (mehr) auf diesem Server."
+
 '[user] just banned you':
   EN: "`{0}` just banned you from `{1}`{2}:\n```{3}```"  # '{2}' is for the duration (like " for 2 days")
   DE: "`{0}` hat dich gerade{2} aus `{1}` gebannt:\n```{3}```"
@@ -749,8 +753,8 @@ you're on cooldown for [sec] seconds:
   DE: "Stimme jetzt für diesen Bot!"
 
 'vote for this bot on dbl':
-  EN: "Vote for this bot on discordbots.org to help it spread!\nYou can vote every 24 hours."
-  DE: "Stimme für diesen Bot auf discordbots.org, um ihm zu helfen sich zu verbreiten.\nDu kannst alle 24 Stunden abstimmen."
+  EN: "Vote for this bot on discordbots.org to help it spread!\nYou can vote every 12 hours."
+  DE: "Stimme für diesen Bot auf discordbots.org, um ihm zu helfen sich zu verbreiten.\nDu kannst alle 12 Stunden abstimmen."
 
 # === mixed (utils) ===
 

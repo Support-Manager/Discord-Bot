@@ -58,13 +58,17 @@ async def kick(ctx, user: User, reason: str):
     if user.id == ctx.guild.owner_id:
         raise InvalidAction("Guild owner cannot be kicked.")
 
+    member: discord.Member = ctx.guild.get_member(user.id)
+
+    if member is None:
+        await ctx.send(ctx.translate("this user is not on this server"))
+        return
+
     db_kick = KickMixin()
     prepare_outlaw(db_kick, escaped(reason), user, ctx)
     graph.create(db_kick)
 
     conf_msg = ctx.translate("user kicked")
-
-    member: discord.Member = ctx.guild.get_member(user.id)
 
     try:
         await member.send(ctx.translate("[user] just kicked you").format(
@@ -100,21 +104,19 @@ async def ban(ctx, user: User, reason: str, days: int=None):
 
     conf_msg = ctx.translate("user banned").format(for_days)
 
-    member: discord.Member = ctx.guild.get_member(user.id)
-
     try:
-        await member.send(ctx.translate("[user] just banned you").format(
+        await user.discord.send(ctx.translate("[user] just banned you").format(
             str(ctx.author), ctx.guild.name, for_days, escaped(reason)
         ))
     except discord.Forbidden:
         warning_note = ctx.translate("but user doesn't allow direct messages")
         conf_msg = f"{conf_msg}\n{warning_note}"
 
-    await member.ban(reason=reason, delete_message_days=1)
+    await ctx.guild.ban(user.discord, reason=reason, delete_message_days=1)
 
-    UnbanTimer(ctx, days, member, reason=ctx.translate("ban time expired"))
+    UnbanTimer(ctx, days, user.discord, reason=ctx.translate("ban time expired"))
 
     await ctx.send(conf_msg)
     await ctx.db_guild.log(ctx.translate("[user] banned [user][for days] because of [reason]").format(
-        str(ctx.author), str(member), for_days, db_ban.reason
+        str(ctx.author), str(user.discord), for_days, db_ban.reason
     ))

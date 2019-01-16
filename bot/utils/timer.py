@@ -1,5 +1,4 @@
 import asyncio
-from bot.models import Guild
 
 
 class Timer:
@@ -19,13 +18,13 @@ class Timer:
 
 
 class UnbanTimer(Timer):
-    def __init__(self, ctx, days, member, reason=None):
+    def __init__(self, ctx, days, user, reason=None):
         timeout = days * (60*60*24)  # calculates days into seconds
 
-        async def callback(c, m, *, r):
-            await m.unban(reason=r)
+        async def callback(c, u, *, r):
+            await c.guild.unban(u, reason=r)
 
-            g = Guild.from_discord_guild(m.guild)
-            await g.log(c.translate("unbanned [member] [reason]").format(str(m), reason))
+            g = ctx.db_guild
+            await g.log(c.translate("unbanned [member] [reason]").format(str(u), reason))
 
-        super().__init__(timeout, callback, ctx, member, r=reason)
+        super().__init__(timeout, callback, ctx, user, r=reason)
