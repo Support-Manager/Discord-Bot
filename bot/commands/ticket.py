@@ -317,7 +317,7 @@ async def _claim(ctx, t: Ticket):
     """ This is to assign a ticket to yourself. """
 
     ticket_assign = ctx.bot.get_command("ticket assign")
-    await ctx.invoke(ticket_assign, t, ctx.author)
+    await ctx.invoke(ticket_assign, t, ctx.db_author)
 
 
 @ticket.command(name='close')
