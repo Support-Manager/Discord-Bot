@@ -14,7 +14,9 @@ from typing import Union, Optional
 logger = logging.getLogger(__name__)
 
 
-graph = Graph(password=CONFIG['neo4j_password'])  # represents database connection
+graph = Graph(host=CONFIG['neo4j_host'],
+              user=CONFIG['neo4j_user'],
+              password=CONFIG['neo4j_password'])  # represents database connection
 
 
 class Scope(commands.Converter):

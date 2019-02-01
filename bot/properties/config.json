@@ -8,5 +8,6 @@
   "dbl_logo": "https://cdn-images-1.medium.com/max/92/1*2YWvvw43fMwqxzp_0x0rRQ@2x.png",
   "bot_admins": [269959141508775937],
   "prime_roles": [507995816473133076, 508626030467219476],
-  "home_guild": 507986974779506707
+  "home_guild": 507986974779506707,
+  "neo4j_host": "localhost"
 }
