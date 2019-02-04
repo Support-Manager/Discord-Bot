@@ -50,8 +50,7 @@ async def info(ctx):
 
     info_emb.add_field(
         name=ctx.translate("some stats"),
-        value=f"{ctx.translate('server count')}: **{len(ctx.bot.guilds)}**\n"
-              f"{ctx.translate('total users')}: **{len(ctx.bot.users)}**\n"
+        value=f"{ctx.translate('active users')}: **{graph.run('MATCH (u:User)<--() RETURN count(u)').evaluate()}**\n"
               f"{ctx.translate('total tickets')}: **{graph.run('MATCH (t:Ticket) RETURN count(t)').evaluate()}**\n"
               f"{ctx.translate('total responses')}: **{graph.run('MATCH (r:Response) RETURN count(r)').evaluate()}**",
         inline=False

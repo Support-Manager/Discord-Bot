@@ -714,9 +714,9 @@ you're on cooldown for [sec] seconds:
   EN: "Server count"
   DE: "Server Anzahl"
 
-'total users':
-  EN: "Total users"
-  DE: "Nutzer insgesamt"
+'active users':
+  EN: "Active users"
+  DE: "Aktive Nutzer"
 
 'total tickets':
   EN: "Total tickets"
