@@ -23,4 +23,4 @@ async def on_member_update(before: Member, after: Member):
     db_user.prime = is_prime  # update value
     db_user.push()
 
-    logger.info(f"added prime member: {db_user.id}")
+    logger.info(f"{'added' if is_prime else 'removed'} prime member: {db_user.id}")
