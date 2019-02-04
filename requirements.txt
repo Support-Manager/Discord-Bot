@@ -11,4 +11,3 @@ py2neo==4.2.0
 ruamel.yaml==0.15.37
 websockets==6.0
 yarl==1.1.1
-dblpy==0.1.6
