@@ -5,6 +5,7 @@ from .on_guild_join import on_guild_join
 from .on_member_join import on_member_join
 from .on_command_error import on_command_error
 from .on_error import on_error
+from .on_member_update import on_member_update
 
 
 def setup(bot):
@@ -15,3 +16,4 @@ def setup(bot):
     bot.add_listener(on_member_join)
     bot.add_listener(on_command_error)
     bot.add_listener(on_error)
+    bot.add_listener(on_member_update)

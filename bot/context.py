@@ -1,4 +1,3 @@
-import discord
 from discord.ext import commands
 from .models import Guild, User, Ticket, Response
 from .properties import CONFIG, Defaults
@@ -36,11 +35,4 @@ class Context(commands.Context):
             or is_assigned
 
     def is_prime(self):
-        discord_guild: discord.Guild = self.bot.get_guild(CONFIG['home_guild'])
-        member = discord_guild.get_member(self.author.id)
-        prime_roles = [discord_guild.get_role(r_id) for r_id in CONFIG['prime_roles']]
-
-        if member is not None:
-            return any(role in member.roles for role in prime_roles)  # checks if member has any prime role
-        else:
-            return False
+        return self.db_author.prime
