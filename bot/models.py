@@ -378,7 +378,7 @@ class User(commands.Converter, UserMixin):
             return result
 
     @classmethod
-    def from_discord_user(cls, user: discord.User, ctx=None):
+    def from_discord_user(cls, user: Union[discord.User, discord.Member], ctx=None):
         u = cls(user, ctx=ctx)
 
         try:
