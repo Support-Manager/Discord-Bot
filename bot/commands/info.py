@@ -37,8 +37,7 @@ async def info(ctx):
         name=ctx.translate("used for development"),
         value=f"{ctx.translate('programming language')}: **[Python](https://python.org) 3.6**\n"
               f"Library: **discord.py** v1.0.0 (beta)\n"
-              f"{ctx.translate('database')}: **[Neo4j](https://neo4j.com) Community** v3.5.0  (library: py2neo v3.1.2)",
-              # TODO: upgrade py2neo lib to v4.0.0
+              f"{ctx.translate('database')}: **[Neo4j](https://neo4j.com) Community** v3.5.0  (library: py2neo v4.2.0)",
         inline=False
     )
 
