@@ -24,7 +24,7 @@ async def tickets(ctx):
 
 
 @tickets.command(name="list")
-async def _list(ctx, user: User=None):
+async def _list(ctx, user: User = None):
     """ Shows a list of tickets on the server/of a specific user. """
 
     guild = ctx.db_guild
@@ -44,7 +44,7 @@ async def _list(ctx, user: User=None):
             icon_url=user.discord.avatar_url
         )
 
-        ticket_list = user.get_tickets()
+        ticket_list = [t for t in user.get_tickets() if t.guild.id == ctx.guild.id]
 
     else:
         tickets_emb.description = ctx.translate("all open tickets of this guild")

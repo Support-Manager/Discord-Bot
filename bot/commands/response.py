@@ -3,6 +3,7 @@ from bot.models import graph, Ticket, User, Response
 from bot import enums, checks
 import time
 from discord.ext import commands
+import discord
 import uuid
 
 
@@ -36,6 +37,12 @@ async def _create(ctx, t: Ticket, content: str):
     elif t.state_enum == enums.State.CLOSED:
         await ctx.send(ctx.translate("this ticket is closed"))
         return None
+
+    if t.scope_enum == enums.Scope.PRIVATE:
+        try:
+            await ctx.message.delete()
+        except discord.Forbidden:
+            pass
 
     utc = time.time()
     

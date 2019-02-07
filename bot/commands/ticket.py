@@ -96,9 +96,14 @@ async def _create(ctx, title: str, description: str="", scope: Scope=None):
                 guild.discord.default_role:
                     discord.PermissionOverwrite(read_messages=False),
                 guild.discord.me:
-                    discord.PermissionOverwrite(manage_messages=True, add_reactions=True, manage_channels=True),
+                    discord.PermissionOverwrite(read_messages=True,
+                                                send_messages=True,
+                                                manage_messages=True,
+                                                add_reactions=True,
+                                                manage_channels=True),
                 supporter:
-                    discord.PermissionOverwrite(read_messages=True, send_messages=True)
+                    discord.PermissionOverwrite(read_messages=True,
+                                                send_messages=True)
             }
 
             if guild.ticket_category is None:

@@ -89,7 +89,7 @@ async def kick(ctx, user: User, reason: str):
 @outlaw.command()
 @commands.has_permissions(ban_members=True)
 @commands.bot_has_permissions(ban_members=True)
-async def ban(ctx, user: User, reason: str, days: int=None):
+async def ban(ctx, user: User, reason: str, days: int = None):
     if user.id == ctx.guild.owner_id:
         raise InvalidAction("Guild owner cannot be banned.")
 
@@ -99,6 +99,7 @@ async def ban(ctx, user: User, reason: str, days: int=None):
 
     if days is not None:
         for_days = ctx.translate("for [days] days").format(days)
+        UnbanTimer(ctx, days, user.discord, reason=ctx.translate("ban time expired"))
     else:
         for_days = ""
 
@@ -113,8 +114,6 @@ async def ban(ctx, user: User, reason: str, days: int=None):
         conf_msg = f"{conf_msg}\n{warning_note}"
 
     await ctx.guild.ban(user.discord, reason=reason, delete_message_days=1)
-
-    UnbanTimer(ctx, days, user.discord, reason=ctx.translate("ban time expired"))
 
     await ctx.send(conf_msg)
     await ctx.db_guild.log(ctx.translate("[user] banned [user][for days] because of [reason]").format(
