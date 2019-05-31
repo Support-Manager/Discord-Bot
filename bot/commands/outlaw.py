@@ -9,13 +9,13 @@ from neo4j_connection import WarningMixin, KickMixin, BanMixin
 import uuid
 
 
-def prepare_outlaw(ol, reason, user, ctx, **properties):
+async def prepare_outlaw(ol, reason, user, ctx, **properties):
     setattr(ol, "uuid", uuid.uuid4().hex)
     setattr(ol, "utc", time.time())
     setattr(ol, "reason", escaped(reason))
     getattr(ol, "applies_to").add(user)
-    getattr(ol, "executed_by").add(ctx.db_author)
-    getattr(ol, "executed_on").add(ctx.db_guild)
+    getattr(ol, "executed_by").add(await ctx.db_author)
+    getattr(ol, "executed_on").add(await ctx.db_guild)
 
     for p in properties:
         setattr(ol, p, properties[p])
@@ -30,7 +30,7 @@ async def outlaw(ctx):
 @commands.has_permissions(kick_members=True)
 async def warn(ctx, user: User, reason: str):
     db_warning = WarningMixin()
-    prepare_outlaw(db_warning, escaped(reason), user, ctx)
+    await prepare_outlaw(db_warning, escaped(reason), user, ctx)
     graph.create(db_warning)
 
     conf_msg = ctx.translate("user warned")
@@ -46,7 +46,7 @@ async def warn(ctx, user: User, reason: str):
         conf_msg = f"{conf_msg}\n{warning_note}"
 
     await ctx.send(conf_msg)
-    await ctx.db_guild.log(ctx.translate("[user] warned [user] because of [reason]").format(
+    await (await ctx.db_guild).log(ctx.translate("[user] warned [user] because of [reason]").format(
         str(ctx.author), str(member), db_warning.reason
     ))
 
@@ -65,7 +65,7 @@ async def kick(ctx, user: User, reason: str):
         return
 
     db_kick = KickMixin()
-    prepare_outlaw(db_kick, escaped(reason), user, ctx)
+    await prepare_outlaw(db_kick, escaped(reason), user, ctx)
     graph.create(db_kick)
 
     conf_msg = ctx.translate("user kicked")
@@ -81,7 +81,7 @@ async def kick(ctx, user: User, reason: str):
     await member.kick(reason=reason)
 
     await ctx.send(conf_msg)
-    await ctx.db_guild.log(ctx.translate("[user] kicked [user] because of [reason]").format(
+    await (await ctx.db_guild).log(ctx.translate("[user] kicked [user] because of [reason]").format(
         str(ctx.author), str(member), db_kick.reason
     ))
 
@@ -94,7 +94,7 @@ async def ban(ctx, user: User, reason: str, days: int = None):
         raise InvalidAction("Guild owner cannot be banned.")
 
     db_ban = BanMixin()
-    prepare_outlaw(db_ban, escaped(reason), user, ctx, days=days)
+    await prepare_outlaw(db_ban, escaped(reason), user, ctx, days=days)
     graph.create(db_ban)
 
     if days is not None:
@@ -116,6 +116,6 @@ async def ban(ctx, user: User, reason: str, days: int = None):
     await ctx.guild.ban(user.discord, reason=reason, delete_message_days=1)
 
     await ctx.send(conf_msg)
-    await ctx.db_guild.log(ctx.translate("[user] banned [user][for days] because of [reason]").format(
+    await (await ctx.db_guild).log(ctx.translate("[user] banned [user][for days] because of [reason]").format(
         str(ctx.author), str(user.discord), for_days, db_ban.reason
     ))

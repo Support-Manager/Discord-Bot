@@ -125,7 +125,7 @@ async def config_error(ctx, error):
 async def _prefix(ctx, pfx: str = ""):
     """ This is to change the guild's cmd prefix. """
 
-    guild = ctx.db_guild
+    guild = await ctx.db_guild
 
     if len(pfx) > enums.PrefixLength.MAX:
         await ctx.send(
@@ -146,7 +146,7 @@ async def _prefix(ctx, pfx: str = ""):
 async def _notifications(ctx, channel: Union[discord.TextChannel, str]):
     """ This is to set the guild's notification channel. """
 
-    guild = ctx.db_guild
+    guild = await ctx.db_guild
 
     if to_be_removed(channel):
         guild.channel = None
@@ -162,7 +162,7 @@ async def _notifications(ctx, channel: Union[discord.TextChannel, str]):
 async def _role(ctx, role: Union[discord.Role, str]):
     """ This is to set the guild's support role. """
 
-    guild = ctx.db_guild
+    guild = await ctx.db_guild
 
     if to_be_removed(role):
         guild.support_role = None
@@ -176,7 +176,7 @@ async def _role(ctx, role: Union[discord.Role, str]):
 
 @config.command(name='scope')
 async def _default_scope(ctx, scope: Scope):
-    guild = ctx.db_guild
+    guild = await ctx.db_guild
 
     guild.default_scope = scope
 
@@ -187,7 +187,7 @@ async def _default_scope(ctx, scope: Scope):
 
 @config.command(name='language', aliases=['lang'])
 async def _language(ctx, language: Language):
-    guild = ctx.db_guild
+    guild = await ctx.db_guild
 
     guild.language = language
 
@@ -198,7 +198,7 @@ async def _language(ctx, language: Language):
 
 @config.command(name='category')
 async def _category(ctx, ticket_category: Union[discord.CategoryChannel, str]):
-    guild = ctx.db_guild
+    guild = await ctx.db_guild
 
     if to_be_removed(ticket_category):
         guild.ticket_category = None
@@ -214,7 +214,7 @@ async def _category(ctx, ticket_category: Union[discord.CategoryChannel, str]):
 async def _voice(ctx, voice_category: Union[discord.CategoryChannel, str]):
     """ This is to set the guilds voice support channel. """
 
-    guild = ctx.db_guild
+    guild = await ctx.db_guild
 
     if to_be_removed(voice_category):
         guild.voice_category = None
@@ -241,7 +241,7 @@ async def _voice(ctx, voice_category: Union[discord.CategoryChannel, str]):
 async def _log(ctx, log_channel: Union[discord.TextChannel, str]):
     """ This is to set the guilds log channel. """
 
-    guild = ctx.db_guild
+    guild = await ctx.db_guild
 
     if to_be_removed(log_channel):
         guild.log_channel = None
@@ -258,7 +258,7 @@ async def _log(ctx, log_channel: Union[discord.TextChannel, str]):
 async def _assigning(ctx, enable: bool):
     """ This is to enable/disable auto-assigning for tickets. """
 
-    guild = ctx.db_guild
+    guild = await ctx.db_guild
 
     guild.auto_assigning = enable
     await guild.async_push()

@@ -24,7 +24,7 @@ class UnbanTimer(Timer):
         async def callback(c, u, *, r):
             await c.guild.unban(u, reason=r)
 
-            g = ctx.db_guild
+            g = await ctx.db_guild
             await g.log(c.translate("unbanned [member] [reason]").format(str(u), reason))
 
         super().__init__(timeout, callback, ctx, user, r=reason)

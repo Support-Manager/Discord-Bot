@@ -26,11 +26,11 @@ async def response_error(ctx, error):
 async def _create(ctx, t: Ticket, content: str):
     """ This is to create new responses/to answer tickets. """
 
-    if t.scope_enum == enums.Scope.CHANNEL and ctx.channel != t.channel and not ctx.may_fully_access(t):
+    if t.scope_enum == enums.Scope.CHANNEL and ctx.channel != t.channel and not await ctx.may_fully_access(t):
         await ctx.send(ctx.translate("the related ticket is channel scope"))
         return None
 
-    elif t.scope_enum == enums.Scope.PRIVATE and not ctx.may_fully_access(t):
+    elif t.scope_enum == enums.Scope.PRIVATE and not await ctx.may_fully_access(t):
         await ctx.send(ctx.translate("this is a private ticket"))
         return None
 
@@ -51,7 +51,7 @@ async def _create(ctx, t: Ticket, content: str):
     author = await User.async_from_discord_user(ctx.author)
     resp.created_by.add(author, properties={'UTC': utc})
 
-    resp.located_on.add(ctx.db_guild)
+    resp.located_on.add(await ctx.db_guild)
     
     resp.refers_to.add(t)
 
@@ -89,11 +89,11 @@ async def _show(ctx, resp: Response):
 
     t = resp.ticket
 
-    if t.scope_enum == enums.Scope.CHANNEL and ctx.channel != t.channel and not ctx.may_fully_access(t):
+    if t.scope_enum == enums.Scope.CHANNEL and ctx.channel != t.channel and not await ctx.may_fully_access(t):
         await ctx.send(ctx.translate("the related ticket is channel scope"))
         return None
 
-    elif t.scope_enum == enums.Scope.PRIVATE and not ctx.may_fully_access(t):
+    elif t.scope_enum == enums.Scope.PRIVATE and not await ctx.may_fully_access(t):
         await ctx.send(ctx.translate("the related ticket is private"))
         return None
 
@@ -137,7 +137,7 @@ async def _delete(ctx, resp: Response):
     utc = time.time()
     ticket = resp.ticket
 
-    if not (ctx.author.id == resp.author.id or ctx.may_fully_access(ticket)):
+    if not (ctx.author.id == resp.author.id or await ctx.may_fully_access(ticket)):
         await ctx.send(ctx.translate("you are not allowed to perform this action"))
         return None
 

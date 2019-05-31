@@ -6,8 +6,8 @@ from .errors import RequiresPrime
 
 def check_blacklisted():
     async def predicate(ctx):
-        author = ctx.db_author
-        guild = ctx.db_guild
+        author = await ctx.db_author
+        guild = await ctx.db_guild
         blacklist = guild.updated_blacklist
 
         if author.id in [u.id for u in blacklist]:
@@ -20,7 +20,7 @@ def check_blacklisted():
 
 def prime_feature():
     async def prime_check(ctx: Context):
-        if ctx.is_prime():
+        if await ctx.is_prime():
             return True
         else:
             raise RequiresPrime

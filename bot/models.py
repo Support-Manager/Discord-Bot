@@ -62,7 +62,7 @@ class Ticket(TicketMixin, commands.Converter):
                     argument = channel.name  # channel name == ticket id
 
         try:
-            t = await self.async_get(int(argument), ctx.db_guild, ctx)
+            t = await self.async_get(int(argument), await ctx.db_guild, ctx)
         except ValueError:
             t = None
 

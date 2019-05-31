@@ -27,7 +27,7 @@ async def tickets(ctx):
 async def _list(ctx, user: User = None):
     """ Shows a list of tickets on the server/of a specific user. """
 
-    guild = ctx.db_guild
+    guild = await ctx.db_guild
 
     tickets_emb = discord.Embed(
         title=ctx.translate("active support tickets"),

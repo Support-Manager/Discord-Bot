@@ -6,25 +6,26 @@ from typing import Union
 
 class Context(commands.Context):
     @property
-    def db_guild(self):
-        return Guild.from_discord_guild(self.guild, ctx=self)
+    async def db_guild(self):
+        return await Guild.async_from_discord_guild(self.guild, ctx=self)
 
     @property
-    def db_author(self):
-        return User.from_discord_user(self.author, ctx=self)
+    async def db_author(self):
+        return await User.async_from_discord_user(self.author, ctx=self)
 
     @property
     def language(self):
-        return self.db_guild.language
+        db_guild = Guild.from_discord_guild(self.guild, ctx=self)
+        return db_guild.language
 
     def translate(self, text: str):
         translations = self.bot.string_translations[text]
 
         return translations.get(self.language, translations[Defaults.LANGUAGE])
 
-    def may_fully_access(self, ticket_or_response: Union[Ticket, Response]):
+    async def may_fully_access(self, ticket_or_response: Union[Ticket, Response]):
         if isinstance(ticket_or_response, Ticket):  # check if user is assigned to the ticket
-            is_assigned = ticket_or_response.responsible_user == self.db_author
+            is_assigned = ticket_or_response.responsible_user == await self.db_author
         else:
             is_assigned = False
 
@@ -34,5 +35,5 @@ class Context(commands.Context):
             or self.author.id in CONFIG['bot_admins'] \
             or is_assigned
 
-    def is_prime(self):
-        return self.db_author.prime
+    async def is_prime(self):
+        return (await self.db_author).prime

@@ -8,7 +8,7 @@ from functools import wraps
 def requires_property_access(f: callable):
     @wraps(f)
     async def wrapper(ctx: Context, prop: Union[Ticket, Response], *args, **kwargs):
-        if ctx.may_fully_access(prop):
+        if await ctx.may_fully_access(prop):
             await f(ctx, prop, *args, **kwargs)
         else:
             raise MissingPermissions

@@ -31,7 +31,7 @@ async def ticket_error(ctx, error):
 async def _create(ctx, title: str, description: str="", scope: Scope=None):
     """ This is to create a support ticket. """
 
-    guild = ctx.db_guild
+    guild = await ctx.db_guild
 
     t = Ticket(ctx=ctx)
 
@@ -177,7 +177,7 @@ async def _show(ctx, t: Ticket):
     if ctx.author.id == t.author.id:
         pass
 
-    elif t.scope_enum == enums.Scope.CHANNEL and ctx.channel != t.channel and not ctx.may_fully_access(t):
+    elif t.scope_enum == enums.Scope.CHANNEL and ctx.channel != t.channel and not await ctx.may_fully_access(t):
         await ctx.send(ctx.translate('this is a channel ticket'))
         return None
 
@@ -287,7 +287,7 @@ async def _assign(ctx, t: Ticket, user: User):
 
     msg: discord.Message = await ctx.send(ctx.translate('ticket assigned'))
 
-    db_guild: Guild = ctx.db_guild
+    db_guild: Guild = await ctx.db_guild
 
     just_assigned_ticket = ctx.translate(
         "[user] just assigned ticket [ticket] to [user]"
@@ -322,7 +322,7 @@ async def _claim(ctx, t: Ticket):
     """ This is to assign a ticket to yourself. """
 
     ticket_assign = ctx.bot.get_command("ticket assign")
-    await ctx.invoke(ticket_assign, t, ctx.db_author)
+    await ctx.invoke(ticket_assign, t, await ctx.db_author)
 
 
 @ticket.command(name='close')

@@ -8,7 +8,7 @@ from copy import deepcopy
 
 @commands.group()
 async def blacklist(ctx):
-    if ctx.db_guild.support_role not in [r.id for r in ctx.author.roles]:
+    if (await ctx.db_guild).support_role not in [r.id for r in ctx.author.roles]:
         if not ctx.author.guild_permissions.administrator:
             raise errors.MissingPermissions
 
@@ -19,7 +19,7 @@ async def blacklist(ctx):
 @blacklist.command(name="add", aliases=["append"])
 async def _add(ctx, user: User, reason: str, days: int=None):
     user.blacklisted_on.add(
-        ctx.db_guild,
+        await ctx.db_guild,
         properties={'UTC': time.time(), 'reason': utils.escaped(reason), 'days': days, 'guild': ctx.guild.id}
     )
 
@@ -41,14 +41,14 @@ async def _add(ctx, user: User, reason: str, days: int=None):
         conf_msg = f"{conf_msg}\n{warning_note}"
 
     await ctx.send(conf_msg)
-    await ctx.db_guild.log(ctx.translate("[user] blacklisted [user] [reason]").format(
+    await (await ctx.db_guild).log(ctx.translate("[user] blacklisted [user] [reason]").format(
         str(ctx.author), str(member), utils.escaped(reason)
     ))
 
 
 @blacklist.command(name="remove")
 async def _remove(ctx, user: User):
-    guild = ctx.db_guild
+    guild = await ctx.db_guild
 
     if user.id not in [u.id for u in guild.updated_blacklist]:
         await ctx.send(ctx.translate("user not in blacklist"))
@@ -58,7 +58,7 @@ async def _remove(ctx, user: User):
         await guild.async_push()
 
         await ctx.send(ctx.translate("removed user from blacklist"))
-        await ctx.db_guild.log(ctx.translate("[user] removed [user] from blacklist").format(
+        await (await ctx.db_guild).log(ctx.translate("[user] removed [user] from blacklist").format(
             str(ctx.author), str(user.discord)
         ))
 
@@ -74,7 +74,7 @@ async def _show(ctx):
         icon_url=ctx.guild.icon_url
     )
 
-    sub_lists = utils.EmbedPaginator.generate_sub_lists(list(ctx.db_guild.updated_blacklist))
+    sub_lists = utils.EmbedPaginator.generate_sub_lists(list((await ctx.db_guild).updated_blacklist))
 
     if len(sub_lists) == 1 and len(sub_lists[0]) == 0:
         await ctx.send(ctx.translate("blacklist is empty"))
@@ -87,7 +87,7 @@ async def _show(ctx):
             discord_user = ctx.bot.get_user(user.id)
             page.add_field(
                 name=f"{str(discord_user)}",
-                value=ctx.db_guild.blacklist.get(user, 'reason'),
+                value=(await ctx.db_guild).blacklist.get(user, 'reason'),
                 inline=False
             )
         pages.append(page)

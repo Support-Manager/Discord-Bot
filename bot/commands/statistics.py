@@ -82,7 +82,7 @@ async def statistics(ctx, user: User=None):
         )
 
     else:
-        guild = ctx.db_guild
+        guild = await ctx.db_guild
 
         stats_emb.description = ctx.translate("statistics of this guild")
 

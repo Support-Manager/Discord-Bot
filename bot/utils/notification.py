@@ -32,7 +32,7 @@ async def notify_ticket_authority(ctx, ticket: Ticket, message: str, *,
 
     responsible_user = ticket.responsible_user
     if responsible_user is not None:
-        if responsible_user == ctx.db_author:
+        if responsible_user == await ctx.db_author:
             return  # don't need to notify the user about what he did by his self
 
         channel_id = ticket.guild.channel
