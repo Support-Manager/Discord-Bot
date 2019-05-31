@@ -1,6 +1,10 @@
 import discord
 from bot.models import Guild, Ticket
 from .embed_constructors import ticket_embed
+import asyncio
+
+
+loop = asyncio.get_event_loop()
 
 
 async def notify_supporters(bot, message, db_guild: Guild, embed: discord.Embed=None, *, mention_supporters: bool=True):
@@ -26,7 +30,7 @@ async def notify_ticket_authority(ctx, ticket: Ticket, message: str, *,
     """ Takes advanced care of the right notification for a ticket. """
 
     if send_embed:
-        embed = ticket_embed(ctx, ticket)
+        embed = await loop.run_in_executor(None, ticket_embed, ctx, ticket)
     else:
         embed = None
 

@@ -5,6 +5,10 @@ import time
 from discord.ext import commands
 import discord
 import uuid
+import asyncio
+
+
+loop = asyncio.get_event_loop()
 
 
 @commands.group()
@@ -77,7 +81,7 @@ async def _create(ctx, t: Ticket, content: str):
         "[user] just responded to your ticket [ticket]"
     ).format(ctx.author.name, ctx.author.discriminator, t.id)
 
-    await notify_author(ctx, resp_msg, t, embed=response_embed(ctx, resp))
+    await notify_author(ctx, resp_msg, t, embed=await loop.run_in_executor(None, response_embed, ctx, resp))
     await resp.guild.log(ctx.translate("[user] created response [response]").format(
         ctx.author, f"{resp.ticket.id}-{resp.id}"
     ))
@@ -97,7 +101,7 @@ async def _show(ctx, resp: Response):
         await ctx.send(ctx.translate("the related ticket is private"))
         return None
 
-    emb = response_embed(ctx, resp)
+    emb = await loop.run_in_executor(None, response_embed, ctx, resp)
 
     await ctx.send(embed=emb)
 

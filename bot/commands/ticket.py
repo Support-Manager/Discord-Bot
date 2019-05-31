@@ -6,6 +6,10 @@ from bot.models import graph, Scope, User, Guild
 import uuid
 import time
 import random
+import asyncio
+
+
+loop = asyncio.get_event_loop()
 
 
 @commands.group(name='ticket')
@@ -128,7 +132,7 @@ async def _create(ctx, title: str, description: str="", scope: Scope=None):
             await channel.edit(
                 topic=t.title
             )
-            await channel.send(embed=ticket_embed(ctx, t))
+            await channel.send(embed=await loop.run_in_executor(None, ticket_embed, ctx, t))
             format_id = channel.mention
 
         elif t.scope_enum == enums.Scope.PRIVATE:
@@ -186,7 +190,7 @@ async def _show(ctx, t: Ticket):
             ctx.send(ctx.translate('this is a private ticket'))
             return None
 
-    viewer = TicketViewer(ctx, t)
+    viewer = await loop.run_in_executor(None, TicketViewer, ctx, t)
     await viewer.run()
 
 
