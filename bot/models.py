@@ -159,7 +159,7 @@ class Ticket(TicketMixin, commands.Converter):
         graph.push(self)
 
     async def async_push(self):
-        await loop.run_in_executor(None, self.push, self)
+        await loop.run_in_executor(None, self.push)
 
     def get_responses(self):
         responses = []
@@ -248,7 +248,7 @@ class Response(commands.Converter, ResponseMixin):
         graph.push(self)
 
     async def async_push(self):
-        await loop.run_in_executor(None, self.push, self)
+        await loop.run_in_executor(None, self.push)
 
     @property
     def full_id(self):
@@ -330,7 +330,7 @@ class Guild(GuildMixin, commands.IDConverter):
         graph.push(self)
 
     async def async_push(self):
-        await loop.run_in_executor(None, self.push, self)
+        await loop.run_in_executor(None, self.push)
 
     def get_tickets(self):
         tickets = []
@@ -435,7 +435,7 @@ class User(commands.Converter, UserMixin):
         graph.push(self)
 
     async def async_push(self):
-        await loop.run_in_executor(None, self.push, self)
+        await loop.run_in_executor(None, self.push)
 
     def get_tickets(self):
         tickets = []
