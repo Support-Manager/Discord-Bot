@@ -15,6 +15,6 @@ async def dynamic_prefix(b: Bot, msg):
     if isinstance(msg.channel, discord.DMChannel):
         return Defaults.PREFIX
 
-    guild = Guild.from_discord_guild(msg.guild)
+    guild = await Guild.async_from_discord_guild(msg.guild)
 
     return when_mentioned_or(guild.prefix)(b, msg)

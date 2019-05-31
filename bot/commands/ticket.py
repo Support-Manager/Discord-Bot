@@ -51,7 +51,7 @@ async def _create(ctx, title: str, description: str="", scope: Scope=None):
         t.state = enums.State.OPEN.value
         t.updated = utc
 
-        author = User.from_discord_user(ctx.author)
+        author = await User.async_from_discord_user(ctx.author)
         t.created_by.add(author, properties={'UTC': utc})
 
         t.located_on.add(guild)
@@ -78,7 +78,7 @@ async def _create(ctx, title: str, description: str="", scope: Scope=None):
 
             if support_role is not None:
                 responsible_user = random.choice(support_role.members)
-                responsible_user = User.from_discord_user(responsible_user, ctx=ctx)
+                responsible_user = await User.async_from_discord_user(responsible_user, ctx=ctx)
 
                 t.assigned_to.add(responsible_user)
 
@@ -113,7 +113,7 @@ async def _create(ctx, title: str, description: str="", scope: Scope=None):
                     reason=ctx.translate("first channel-ticket has been created")
                 )
                 guild.ticket_category = category.id
-                guild.push()
+                await guild.async_push()
             else:
                 category = guild.discord.get_channel(guild.ticket_category)
 
@@ -232,7 +232,7 @@ async def _edit(ctx, t: Ticket, title: str="", description: str=None):
     if description is not None:
         t.description = escaped(description)
 
-    t.push()
+    await t.async_push()
 
     await ctx.send(ctx.translate("ticket edited"))
     await t.guild.log(ctx.translate("[user] edited ticket [ticket]").format(ctx.author, t.id))
@@ -283,7 +283,7 @@ async def _assign(ctx, t: Ticket, user: User):
 
     t.assigned_to.clear()
     t.assigned_to.add(user, properties={'UTC': utc})
-    t.push()
+    await t.async_push()
 
     msg: discord.Message = await ctx.send(ctx.translate('ticket assigned'))
 
@@ -338,12 +338,12 @@ async def _close(ctx, t: Ticket, response=None):
 
     t.state = enums.State.CLOSED.value
 
-    user = User.from_discord_user(ctx.author)
+    user = await User.async_from_discord_user(ctx.author)
     t.closed_by.add(user, properties={'UTC': utc})
 
     t.updated = utc
 
-    graph.push(t)
+    await t.async_push()
 
     conf_msg = ctx.translate('ticket closed')
     close_msg = ctx.translate('[user] just closed ticket [ticket]').format(ctx.author.mention, t.id)
@@ -382,12 +382,12 @@ async def _reopen(ctx, t: Ticket):
 
     t.state = enums.State.REOPENED.value
 
-    user = User.from_discord_user(ctx.author)
+    user = await User.async_from_discord_user(ctx.author)
     t.reopened_by.add(user, properties={'UTC': utc})
 
     t.updated = utc
 
-    graph.push(t)
+    await t.async_push()
 
     if t.scope_enum == enums.Scope.CHANNEL:
         category = t.guild.discord.get_channel(t.guild.ticket_category)
@@ -431,7 +431,7 @@ async def _delete(ctx, t: Ticket):
     await conf.confirm(ctx.translate("you are attempting to delete ticket [ticket]").format(t.id))
 
     if conf.confirmed:
-        author = User.from_discord_user(ctx.author)
+        author = await User.async_from_discord_user(ctx.author)
 
         t.state_enum = enums.State.DELETED
         t.deleted_by.add(author, properties={'UTC': utc})
@@ -441,7 +441,7 @@ async def _delete(ctx, t: Ticket):
             resp.deleted = True
             resp.deleted_by.add(author, properties={'UTC': utc})
 
-            resp.push()
+            await resp.async_push()
 
         await conf.display(ctx.translate("ticket deleted"))
 

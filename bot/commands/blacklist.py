@@ -23,7 +23,7 @@ async def _add(ctx, user: User, reason: str, days: int=None):
         properties={'UTC': time.time(), 'reason': utils.escaped(reason), 'days': days, 'guild': ctx.guild.id}
     )
 
-    user.push()
+    await user.async_push()
 
     if days is not None:
         for_days = ctx.translate("for [days] days").format(days)
@@ -55,7 +55,7 @@ async def _remove(ctx, user: User):
 
     else:
         guild.blacklist.remove(user)
-        guild.push()
+        await guild.async_push()
 
         await ctx.send(ctx.translate("removed user from blacklist"))
         await ctx.db_guild.log(ctx.translate("[user] removed [user] from blacklist").format(

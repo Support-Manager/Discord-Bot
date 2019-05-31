@@ -11,7 +11,7 @@ def setup_ready_handler(bot):
         logger.info(f"Logged in as: {bot.user.name}")
 
         for guild in bot.guilds:
-            Guild.from_discord_guild(guild)
+            await Guild.async_from_discord_guild(guild)
 
         await bot.change_presence(activity=discord.Game(name="/help"))
 

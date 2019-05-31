@@ -44,7 +44,7 @@ buckets = CustomCooldownMapping(cooldown)
 
 def setup_voice_state_update_handler(bot):
     async def on_voice_state_update(member, before, after):
-        guild = Guild.from_discord_guild(member.guild)
+        guild = await Guild.async_from_discord_guild(member.guild)
 
         translator = Translator(Bot._string_translations, guild.language_enum)
 

@@ -48,7 +48,7 @@ async def _create(ctx, t: Ticket, content: str):
     
     resp = Response()
     
-    author = User.from_discord_user(ctx.author)
+    author = await User.async_from_discord_user(ctx.author)
     resp.created_by.add(author, properties={'UTC': utc})
 
     resp.located_on.add(ctx.db_guild)
@@ -114,7 +114,7 @@ async def _edit(ctx, resp: Response, content: str):
 
         resp.content = escaped(content)
 
-        resp.push()
+        await resp.async_push()
 
         await ctx.send(ctx.translate("response edited"))
         await resp.guild.log(ctx.translate("[user] edited response [response]").format(
@@ -142,9 +142,9 @@ async def _delete(ctx, resp: Response):
         return None
 
     resp.deleted = True
-    resp.deleted_by.add(User.from_discord_user(ctx.author), properties={'UTC': utc})
+    resp.deleted_by.add(await User.async_from_discord_user(ctx.author), properties={'UTC': utc})
 
-    resp.push()
+    await resp.async_push()
 
     await ctx.send(ctx.translate("response deleted"))
     await resp.guild.log(ctx.translate("[user] deleted response [response]").format(

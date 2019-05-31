@@ -137,7 +137,7 @@ async def _prefix(ctx, pfx: str = ""):
 
     else:
         guild.prefix = pfx
-        graph.push(guild)
+        await guild.async_push()
 
         await ctx.send(ctx.translate("the new prefix is [pfx]").format(pfx))
 
@@ -154,7 +154,7 @@ async def _notifications(ctx, channel: Union[discord.TextChannel, str]):
         await ctx.send(ctx.translate("removed"))
     else:
         guild.channel = channel.id
-        guild.push()
+        await guild.async_push()
         await ctx.send(ctx.translate("i'll send ticket events in [channel]").format(channel.mention))
 
 
@@ -166,11 +166,11 @@ async def _role(ctx, role: Union[discord.Role, str]):
 
     if to_be_removed(role):
         guild.support_role = None
-        guild.push()
+        await guild.async_push()
         await ctx.send(ctx.translate("removed"))
     else:
         guild.support_role = role.id
-        guild.push()
+        await guild.async_push()
         await ctx.send(ctx.translate("i'll now notify [role] on ticket events").format(role.name))
 
 
@@ -180,7 +180,7 @@ async def _default_scope(ctx, scope: Scope):
 
     guild.default_scope = scope
 
-    guild.push()
+    await guild.async_push()
 
     await ctx.send(ctx.translate("all tickets will be default [scope]").format(scope))
 
@@ -191,7 +191,7 @@ async def _language(ctx, language: Language):
 
     guild.language = language
 
-    guild.push()
+    await guild.async_push()
 
     await ctx.send(ctx.translate("[language] is the default language on this server now").format(language))
 
@@ -202,11 +202,11 @@ async def _category(ctx, ticket_category: Union[discord.CategoryChannel, str]):
 
     if to_be_removed(ticket_category):
         guild.ticket_category = None
-        guild.push()
+        await guild.async_push()
         await ctx.send(ctx.translate("removed"))
     else:
         guild.ticket_category = ticket_category.id
-        guild.push()
+        await guild.async_push()
         await ctx.send(ctx.translate("all channel-tickets will be created in [category]").format(ticket_category.name))
 
 
@@ -218,11 +218,11 @@ async def _voice(ctx, voice_category: Union[discord.CategoryChannel, str]):
 
     if to_be_removed(voice_category):
         guild.voice_category = None
-        guild.push()
+        await guild.async_push()
         await ctx.send(ctx.translate("removed"))
     else:
         guild.voice_category = voice_category.id
-        guild.push()
+        await guild.async_push()
 
         await ctx.send(
             ctx.translate("i'll notify you when someone is waiting in [category]").format(voice_category.name)
@@ -245,11 +245,11 @@ async def _log(ctx, log_channel: Union[discord.TextChannel, str]):
 
     if to_be_removed(log_channel):
         guild.log_channel = None
-        guild.push()
+        await guild.async_push()
         await ctx.send(ctx.translate("removed"))
     else:
         guild.log_channel = log_channel.id
-        guild.push()
+        await guild.async_push()
         await ctx.send(ctx.translate("i'll log my actions in [channel]").format(log_channel.mention))
 
 
@@ -261,7 +261,7 @@ async def _assigning(ctx, enable: bool):
     guild = ctx.db_guild
 
     guild.auto_assigning = enable
-    guild.push()
+    await guild.async_push()
 
     if enable:
         await ctx.send(ctx.translate("auto-assigning enabled"))
