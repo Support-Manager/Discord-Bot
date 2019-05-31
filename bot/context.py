@@ -5,18 +5,31 @@ from typing import Union
 
 
 class Context(commands.Context):
+    def __init__(self, **attrs):
+        super().__init__(**attrs)
+
+        self._cache = dict()
+
     @property
     async def db_guild(self):
-        return await Guild.async_from_discord_guild(self.guild, ctx=self)
+        if self._cache.get('db_guild') is None:
+            self._cache['db_guild'] = await Guild.async_from_discord_guild(self.guild, ctx=self)
+
+        return self._cache['db_guild']
 
     @property
     async def db_author(self):
-        return await User.async_from_discord_user(self.author, ctx=self)
+        if self._cache.get('db_author') is None:
+            self._cache['db_author'] = await User.async_from_discord_user(self.author, ctx=self)
+
+        return self._cache['db_author']
 
     @property
     def language(self):
-        db_guild = Guild.from_discord_guild(self.guild, ctx=self)
-        return db_guild.language
+        if self._cache.get('db_guild') is None:
+            self._cache['db_guild'] = Guild.from_discord_guild(self.guild, ctx=self)
+
+        return self._cache['db_guild'].language
 
     def translate(self, text: str):
         translations = self.bot.string_translations[text]
