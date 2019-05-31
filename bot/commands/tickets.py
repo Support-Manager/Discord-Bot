@@ -44,7 +44,7 @@ async def _list(ctx, user: User = None):
             icon_url=user.discord.avatar_url
         )
 
-        ticket_list = [t for t in user.get_tickets() if t.guild.id == ctx.guild.id]
+        ticket_list = [t for t in user.get_tickets() if (await t.async_guild).id == ctx.guild.id]
 
     else:
         tickets_emb.description = ctx.translate("all open tickets of this guild")

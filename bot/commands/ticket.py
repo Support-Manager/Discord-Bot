@@ -61,7 +61,7 @@ async def _create(ctx, title: str, description: str="", scope: Scope=None):
         t.located_on.add(guild)
 
         if scope is None:
-            scope = t.guild.default_scope
+            scope = (await t.async_guild).default_scope
 
         t.scope = scope
 
@@ -77,8 +77,10 @@ async def _create(ctx, title: str, description: str="", scope: Scope=None):
 
         responsible_user = None
 
-        if t.guild.auto_assigning:
-            support_role: discord.Role = t.guild.discord.get_role(t.guild.support_role)
+        t_guild = await t.async_guild
+
+        if t_guild.auto_assigning:
+            support_role: discord.Role = t_guild.discord.get_role(t_guild.support_role)
 
             if support_role is not None:
                 responsible_user = random.choice(support_role.members)
@@ -163,14 +165,14 @@ async def _create(ctx, title: str, description: str="", scope: Scope=None):
 
         await ctx.send(msg)
 
-        if t.guild.channel != ctx.channel.id:
+        if t_guild.channel != ctx.channel.id:
             new_ticket_msg = ctx.translate("new ticket")
             if send_invokation_channel:
                 new_ticket_msg += ctx.translate("created in [channel]").format(ctx.channel.mention)
 
             await notify_ticket_authority(ctx, t, new_ticket_msg, send_embed=True)
 
-        await t.guild.log(ctx.translate("[user] created ticket [ticket]").format(ctx.author, t.id))
+        await t_guild.log(ctx.translate("[user] created ticket [ticket]").format(ctx.author, t.id))
 
 
 @ticket.command(name="show")
@@ -178,7 +180,7 @@ async def _show(ctx, t: Ticket):
     """ This is to see a specific support ticket. """
 
     # checking scopes (permissions)
-    if ctx.author.id == t.author.id:
+    if ctx.author.id == (await t.async_author).id:
         pass
 
     elif t.scope_enum == enums.Scope.CHANNEL and ctx.channel != t.channel and not await ctx.may_fully_access(t):
@@ -186,7 +188,7 @@ async def _show(ctx, t: Ticket):
         return None
 
     elif t.scope_enum == enums.Scope.PRIVATE:
-        if t.guild.support_role not in [role.id for role in ctx.author.roles]:
+        if (await t.async_guild).support_role not in [role.id for role in ctx.author.roles]:
             ctx.send(ctx.translate('this is a private ticket'))
             return None
 
@@ -215,7 +217,7 @@ async def _show_error(ctx, error):
 
 @ticket.command(name="edit", aliases=["change", "update"])
 async def _edit(ctx, t: Ticket, title: str="", description: str=None):
-    if ctx.author.id != t.author.id:
+    if ctx.author.id != (await t.async_author).id:
         ctx.send(ctx.translate("you are not allowed to perform this action"))
         return
 
@@ -239,7 +241,7 @@ async def _edit(ctx, t: Ticket, title: str="", description: str=None):
     await t.async_push()
 
     await ctx.send(ctx.translate("ticket edited"))
-    await t.guild.log(ctx.translate("[user] edited ticket [ticket]").format(ctx.author, t.id))
+    await (await t.async_guild).log(ctx.translate("[user] edited ticket [ticket]").format(ctx.author, t.id))
 
 
 @ticket.command(name="append", aliases=["addinfo"])
@@ -362,7 +364,9 @@ async def _close(ctx, t: Ticket, response=None):
 
     await ctx.send(conf_msg)
 
-    if t.guild.channel != ctx.channel.id:
+    t_guild = await t.async_guild
+
+    if t_guild.channel != ctx.channel.id:
         await notify_ticket_authority(ctx, t, close_msg, send_embed=True)
 
     if t.scope_enum == enums.Scope.CHANNEL:
@@ -370,7 +374,7 @@ async def _close(ctx, t: Ticket, response=None):
         if channel is not None:
             await channel.delete(reason=ctx.translate("ticket has been closed"))
 
-    await t.guild.log(ctx.translate("[user] closed ticket [ticket]").format(ctx.author, t.id))
+    await t_guild.log(ctx.translate("[user] closed ticket [ticket]").format(ctx.author, t.id))
 
 
 @ticket.command(name='reopen')
@@ -393,12 +397,14 @@ async def _reopen(ctx, t: Ticket):
 
     await t.async_push()
 
-    if t.scope_enum == enums.Scope.CHANNEL:
-        category = t.guild.discord.get_channel(t.guild.ticket_category)
+    t_guild = await t.async_guild
 
-        channel = await t.guild.discord.create_text_channel(
+    if t.scope_enum == enums.Scope.CHANNEL:
+        category = t_guild.discord.get_channel(t_guild.ticket_category)
+
+        channel = await t_guild.discord.create_text_channel(
             str(t.id),
-            overwrites={t.author.discord: discord.PermissionOverwrite(read_messages=True, send_messages=True)},
+            overwrites={(await t.async_author).discord: discord.PermissionOverwrite(read_messages=True, send_messages=True)},
             category=category,
             reason=ctx.translate("channel-ticket has been reopened")
         )
@@ -409,12 +415,12 @@ async def _reopen(ctx, t: Ticket):
 
     await ctx.send(ctx.translate("ticket reopened"))
 
-    if t.guild.channel != ctx.channel.id:
+    if t_guild.channel != ctx.channel.id:
         await notify_ticket_authority(
             ctx, t, ctx.translate("[user] just reopened a ticket").format(ctx.author.mention), send_embed=True
         )
 
-    await t.guild.log(ctx.translate("[user] reopened ticket [ticket]").format(ctx.author, t.id))
+    await t_guild.log(ctx.translate("[user] reopened ticket [ticket]").format(ctx.author, t.id))
 
 
 @_close.error
@@ -441,7 +447,7 @@ async def _delete(ctx, t: Ticket):
         t.deleted_by.add(author, properties={'UTC': utc})
         t.push()
 
-        for resp in t.get_responses():
+        for resp in await loop.run_in_executor(None, t.get_responses):
             resp.deleted = True
             resp.deleted_by.add(author, properties={'UTC': utc})
 
@@ -454,7 +460,7 @@ async def _delete(ctx, t: Ticket):
             if channel is not None:
                 await channel.delete(reason=ctx.translate("ticket has been deleted"))
 
-        await t.guild.log(ctx.translate("[user] deleted ticket [ticket]").format(ctx.author, t.id))
+        await (await t.async_guild).log(ctx.translate("[user] deleted ticket [ticket]").format(ctx.author, t.id))
 
     else:
         await conf.display((ctx.translate("canceled")))

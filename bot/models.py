@@ -131,6 +131,10 @@ class Ticket(TicketMixin, commands.Converter):
         return g
 
     @property
+    async def async_guild(self) -> Union['Guild', GuildMixin]:
+        return await loop.run_in_executor(None, getattr, self, 'guild')
+
+    @property
     def author(self) -> Union['User', UserMixin]:
         a = list(self.created_by)[0]
 
@@ -138,6 +142,10 @@ class Ticket(TicketMixin, commands.Converter):
             a = User.get(self._creation_ctx, a.id)
 
         return a
+
+    @property
+    async def async_author(self) -> Union['User', UserMixin]:
+        return await loop.run_in_executor(None, getattr, self, 'author')
 
     @property
     def channel(self) -> Optional[discord.TextChannel]:
@@ -227,6 +235,10 @@ class Response(commands.Converter, ResponseMixin):
         return g
 
     @property
+    async def async_guild(self):
+        return await loop.run_in_executor(None, getattr, self, 'guild')
+
+    @property
     def author(self):
         a = list(self.created_by)[0]
 
@@ -234,6 +246,10 @@ class Response(commands.Converter, ResponseMixin):
             a = User.get(self._creation_ctx, a.id)
 
         return a
+
+    @property
+    async def async_author(self):
+        return await loop.run_in_executor(None, getattr, self, 'author')
 
     @property
     def ticket(self):
