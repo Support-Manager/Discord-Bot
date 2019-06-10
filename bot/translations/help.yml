@@ -5,7 +5,10 @@ help:
   DE: |
     Eine Liste aller Befehle, die du mit diesem Bot verwenden kannst.
     Du kannst auch `{prefix}help [Befehl]` eingeben, um die Hilfe für einen bestimmten Befehl zu erhalten.
-
+  NO: |
+    En liste over alle kommandoer som du kan bruke med denne boten.
+    Du kan også taste `{prefix}help [kommado]` for å få hjelp med en spesifikk kommando.
+    
 config:
   EN: |
     Configure the bot on your server. Your options are:
@@ -23,6 +26,14 @@ config:
 
     Du kannst entweder `{prefix}config [Option] [deine Konfiguration]` machen
     oder die begleitete Konfiguration nutzen, indem du einfach `{prefix}config` machst.
+  NO: |
+    Konfigurer boten på din server. Dine valg er:
+    `prefix`, `notifications`, `role`, `scope`, `language`, `category`, `voice`
+    Bare Prime*:
+    `log`, `assigning`
+
+    Du kan enten gjøre `{prefix}config [valg] [din konfigurasjon]`
+    eller bruke guided en guided konfigurasjon bare med å skrive `{prefix}config`.
 
 ticket:
   EN: |
@@ -51,6 +62,19 @@ ticket:
     - `…close [Ticket ID] [Begründung¹]`
     - `…reopen [Ticket ID]`
     - `…delete [Ticket ID]`
+  NO: |
+    Utfør diverse handlinger på en ticket ved å gjøre:
+    `{prefix}ticket …`
+    - `…create [tittel] [beskrivelse¹] [scope¹]`
+    - `…show [ticket ID]`
+    - `…edit [ticket ID] [tittel¹] [beskrivelse¹]`
+    - `…append [ticket ID] [info]`
+    - `…respond [ticket ID] [innhold]`
+    - `…assign [ticket ID] [bruker]`*
+    - `…claim [ticket ID]` (tildel til deg selv)
+    - `…close [ticket ID] [grunn¹]`
+    - `…reopen [ticket ID]`
+    - `…delete [ticket ID]`
 
 tickets:
   EN: |
@@ -61,6 +85,10 @@ tickets:
     Führe Aktionen für mehrere Tickets aus:
     - `{prefix}tickets list [Nutzer¹]` oder einfach `{prefix}tickets [Nutzer¹]`
     - `{prefix}tickets close [Ticket 1] [Ticket 2] …`
+  NO: |
+    Utfør handlinger på flere tickets:
+    - `{prefix}tickets list [bruker¹]` elelr bare `{prefix}tickets [bruker¹]`
+    - `{prefix}tickets close [ticket 1] [ticket 2] …`
 
 response:
   EN: |
@@ -79,6 +107,14 @@ response:
     - `…edit [Antwort] [Inhalt]`
     - `…append [Antwort] [Inhalt]`
     - `…delete [Antwort]`
+  NO: |
+    Utfør handlinger med response:
+    `{prefix}response …`
+    - `…create [Ticket ID] [innhold]`
+    - `…show [tilbakemelding]`
+    - `…edit [tilbakemelding] [innhold]`
+    - `…append [tilbakemelding] [innhold]`
+    - `…delete [tilbakemelding]`
 
 outlaw:
   EN: |
@@ -91,6 +127,11 @@ outlaw:
     - `{prefix}outlaw warn [Nutzer] [Grund]`
     - `{prefix}outlaw kick [Nutzer] [Grund]`
     - `{prefix}outlaw ban [Nutzer] [Grund] [Dauer (Tage)¹]`
+  NO: |
+    Bruk denne for å disiplinere brukere som ikke følger reglene:
+    - `{prefix}outlaw warn [bruker] [grunn]`
+    - `{prefix}outlaw kick [bruker] [grunn]`
+    - `{prefix}outlaw ban [bruker] [grunn] [varighet (dager)¹]`
 
 report:
   EN: |
@@ -99,6 +140,9 @@ report:
   DE: |
     Für Nutzer, um andere Nutzer wegen ihres Fehlverhaltens zu melden:
     `{prefix}report [Nutzer] [Grund]`
+  NO: |
+    Slik kan brukere rapportere andre brukere for dårlig oppførsel:
+    `{prefix}report [bruker] [grunn]`
 
 statistics:
   EN: |
@@ -109,6 +153,10 @@ statistics:
     Inspiziere Server- und Nutzerstatistiken:
     `{prefix}stats [Nutzer¹]`
     Wenn du den Nutzer nicht angibst, zeigt es dir die Serverstatistiken.
+  NO: |
+    Inspiser server- og bruker statistikk ved å gjøre:
+    `{prefix}stats [bruker¹]`
+    Når du ikke skriver inn bruker vil den vise server statistikk.
 
 blacklist:
   EN: |
@@ -121,6 +169,11 @@ blacklist:
     - `{prefix}blacklist add [Nutzer] [Grund] [Dauer (Tage)¹]`
     - `{prefix}blacklist remove [Nutzer]`
     - `{prefix}blacklist show`
+  NO: |
+    Administrere din servers svarteliste:
+    `{prefix}blacklist add [bruker] [grunn] [varighet (dager)¹]`
+    `{prefix}blacklist remove [bruker]`
+    `{prefix}blacklist show`
 
 info:
   EN: |
@@ -129,6 +182,9 @@ info:
   DE: |
     Einige Infos über den Bot:
     `{prefix}info`
+  NO: |
+    Litt info om boten:
+    `{prefix}info`
 
 invite:
   EN: |
@@ -136,4 +192,7 @@ invite:
     `{prefix}invite`
   DE: |
     Lade den Bot zu deinem Server ein:
+    `{prefix}invite`
+  NO: |
+    Inviter boten til din server:
     `{prefix}invite`
