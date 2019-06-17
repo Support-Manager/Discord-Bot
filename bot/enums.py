@@ -22,6 +22,9 @@ class Language(Enum):
     DEUTSCH = "DE"
     DE = "DE"
 
+    NORWEGIAN = "NO"
+    NO = "NO"
+
 
 class TitleLength(IntEnum):
     MIN = 5

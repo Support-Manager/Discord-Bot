@@ -3,6 +3,7 @@
 tickets can't be accessed via dm:
   EN: "Tickets can't be accessed via DM."
   DE: "Auf Tickets kann nicht per DM zugegriffen werden."
+  NO: "Saker kan ikke bli vist via Direkte Melding."
 
 # === ticket creation ===
 
@@ -13,786 +14,968 @@ tickets can't be accessed via dm:
   DE: |
     Titel zu lang: (max. `{0}` Zeichen | `{1}` gegeben)
     Versuche den Titel kurz zu halten und auf den Punkt zu bringen! Du solltest die Beschreibung für die Details nutzen.
+  NO: |
+    Tittelen er for lang: (maks. `{0}` bokstaver | `{1}` brukt)
+    Try to keep the title short and on-point! You should use the description to get into detail.
 
 'title too short':
   EN: "Title too short: (min. `{0}` characters | `{1}` given)"
   DE: "Titel zu kurz: (min. `{0}` Zeichen | `{1}` gegeben)"
+  NO: "Tittel er for kort: (min. `{0}` bokstaver | `{1}` brukt)"
 
 'your ticket has been created':
   EN: "Your ticket (`#{0}` on `{1}`) has been created. I'll inform you here about updates."
   DE: "Dein Ticket (`#{0}` auf `{1}`) wurde erstellt. Ich werde dich hier über Neuigkeiten informieren."
+  NO: "Din sak (`#{0}` på `{1}`) har blitt laget. Jeg skal informere deg her om oppdateringer."
 
 'ticket created':
   EN: "Ticket created. :white_check_mark:\nID: {0}"
   DE: "Ticket erstellt. :white_check_mark:\nID: {0}"
+  NO: "Sak laget. :white_check_mark:\nID: {0}"
 
 'please allow receiving dms':
   EN: "Please allow receiving DMs to get informed about updates!"
   DE: "Bitte aktiviere das Empfangen von Direkt-Nachrichten, um über Neuigkeiten informiert zu werden!"
+  NO: "Vennligst godta mottak av direktemeldinger for å bli informert om oppdateringer!"
 
 'new ticket':
   EN: "New ticket:"
   DE: "Neues Ticket:"
+  NO: "Ny sak:"
 
 'created in [channel]':
   EN: " (created in {0})"
   DE: " (erstellt in {0})"
+  NO: " (laget i {0})"
 
 '[user] created ticket [ticket]':
   EN: "`{0}` created ticket `#{1}`."
   DE: "`{0}` hat Ticket `#{1}` erstellt."
+  NO: "`{0}` laget sak `#{1}`."
 
 'ticket auto-assigned to [user]':
   EN: "The ticket has been auto-assigned to `{0}`."
   DE: "Das Ticket wurde automatisch `{0}` zugewiesen."
+  NO: "Saken har blitt automatisk tildelt til `{0}`."
 
 # channel-ticket creation
 
 'support tickets':
   EN: "support tickets"
   DE: "Support-Tickets"
+  NO: "support saker"
 
 'first channel-ticket has been created':
   EN: "First channel-ticket has been created."
   DE: "Erstes Kanal-Ticket wurde erstellt."
+  NO: "Første kanal-sak har blitt laget."
 
 'new channel-ticket has been created':
   EN: "New channel-ticket has been created."
   DE: "Neues Kanal-Ticket wurde erstellt."
+  NO: "Ny kanal-sak har blitt laget."
 
 # === ticket show command ===
 
 'this is a channel ticket':
   EN: "This is a channel ticket. You aren't allowed to access it here."
   DE: "Dies ist ein Kanal-Ticket. Du darfst hier nicht darauf zugreifen."
+  NO: "Dette er en kanal sak. Du kan ikke se på saken her."
 
 'this is a private ticket':
   EN: "This is a private ticket. :lock: You need to be supporter, admin or ticket author to access it."
   DE: "Dieses Ticket ist privat. :lock: Du musst ein Supporter, Admin oder Ticket-Autor sein, um darauf zuzugreifen."
+  NO: "Dette er en privat sak. :lock: Du må være en supportmedarbeider, admin eller sak forfatter for tilgang til den."
 
 'which ticket do you wanna see':
   EN: "Which ticket do you wanna see?:"
   DE: "Welches Ticket willst du sehen?:"
+  NO: "Hvilken sak vil du se?:"
 
 # === ticket edit command ===
 
 'ticket edited':
   EN: "Ticket edited. :white_check_mark:"
   DE: "Ticket bearbeitet. :white_check_mark:"
+  NO: "Sak editert. :white_check_mark:"
 
 '[user] edited ticket [ticket]':
   EN: "`{0}` edited ticket `#{1}`."
   DE: "`{0}` hat Ticket `#{1}` bearbeitet."
+  NO: "`{0}` editert sak `#{1}`."
 
 # === ticket assign command ===
 
 'this ticket is already assigned to this user':
   EN: "This ticket is already assigned to this user."
   DE: "Dieses Ticket ist bereits diesem Nutzer zugewiesen."
+  NO: "Denne saken er allerede tildelt til denne brukeren."
 
 'this ticket is already assigned to [user]':
   EN: "This ticket is already assigned to user `{0}`.\nDo you really want to reassign it?"
   DE: "Dieses Ticket ist bereits Nutzer `{0}` zugewiesen.\nWillst du es wirklich neu zuweisen?"
+  NO: "Denne saken er allerede tildelt til bruker `{0}`.\nVil du virkelig tildele den pånytt?"
 
 'ticket assigned':
   EN: "Ticket assigned. :white_check_mark:"
   DE: "Ticket zugewiesen. :white_check_mark:"
+  NO: "Sak tildelt. :white_check_mark:"
 
 '[user] just assigned ticket [ticket] to [user]':
   EN: "`{0}` just assigned ticket `#{1}` to `{2}`."
   DE: "`{0}` hat Ticket `#{1}` gerade `{2}` zugewiesen."
+  NO: "`{0}` tildelte akkurat sak `#{1}` to `{2}`."
 
 '[user] just assigned ticket [ticket] on [guild] to you':
   EN: "`{0}` just assigned ticket `#{1}` (on `{2}`) to you."
   DE: "`{0}` hat dir gerade Ticket `#{1}` (auf `{2}`) zugewiesen."
+  NO: "`{0}` tildelte akkurat sak `#{1}` (på `{2}`) til deg."
 
 'failed to contact user':
   EN: "Failed to contact the corresponding user."
   DE: "Der entsprechende Nutzer konnte nicht kontaktiert werden."
+  NO: "Bruker kunne ikke kontaktes."
 
 # === ticket close command ===
 
 'this ticket is already closed':
   EN: "This ticket is already closed."
   DE: "Dieses Ticket ist schon geschlossen."
+  NO: "Denne saken er allere stengt."
 
 'ticket closed':
   EN: "Ticket closed. :white_check_mark:"
   DE: "Ticket geschlossen. :white_check_mark:"
+  NO: "Saken stengt. :white_check_mark:"
 
 '[user] just closed ticket [ticket]':
   EN: "{0} just closed ticket #{1}"
   DE: "{0} hat gerade Ticket #{1} geschlossen"
+  NO: "{0} lukket akkurat saken #{1}"
 
 ticket author doesn't allow dms:
   EN: " (But the ticket author doesn't allow DMs.)"
   DE: " (Aber der Ticket-Autor erlaubt keine Direkt-Nachrichten.)"
+  NO: " (Sak forfatteren tillater ikke direkte meldinger.)"
 
 'ticket has been closed':
   EN: "The ticket has been closed."
   DE: "Das Ticket wurde geschlossen."
+  NO: "Saken har blitt lukket."
 
 '[user] closed ticket [ticket]':
   EN: "`{0}` closed ticket `#{1}`."
   DE: "`{0}` hat Ticket `#{1}` geschlossen."
+  NO: "`{0}` stengte sak `#{1}`."
 
 # === ticket reopen command ===
 
 'this ticket is not closed':
   EN: "This ticket is not closed."
   DE: "Dieses Ticket ist nicht geschlossen."
+  NO: "This ticket is not closed."
 
 'ticket reopened':
   EN: "Ticket reopened. :white_check_mark:"
   DE: "Ticket neu geöffnet. :white_check_mark:"
+  NO: "Sak Re-åpnet. :white_check_mark:"
 
 '[user] just reopened a ticket':
   EN: "{0} just reopened a ticket:"
   DE: "{0} hat gerade ein Ticket neu geöffnet:"
+  NO: "{0} Re-åpnet akkurat en sak:"
 
 'you have to be supporter or ticket author for this':
   EN: "You have to be supporter or the ticket author for this."
   DE: "Du musst dafür Supporter oder Ticket-Autor sein."
+  NO: "Du må være en support-medarbeider eller sak forfatter for dette."
 
 'channel-ticket has been reopened':
   EN: "The channel-ticket has been reopened."
   DE: "Das Kanal-Ticket wurde neu geöffnet."
+  NO: "Kanal-saken er blitt re-åpnet."
 
 '[user] reopened ticket [ticket]':
   EN: "`{0}` reopened ticket `#{1}`."
   DE: "`{0}` hat Ticket `#{1}` neu geöffnet."
+  NO: "`{0}` re-åpnet sak `#{1}`."
 
 # == ticket delete ===
 
 'you are attempting to delete ticket [ticket]':
   EN: "You are attempting to permanently delete ticket #{0}. This action is irreversible.\n Do you want to continue?"
   DE: "Du versuchst Ticket #{0} endgültig zu löschen. Dieser Schritt ist unumkehrbar.\n Möchtest du fortfahren?"
+  NO: "Di prøver nå og permanent slette sak #{0}. Dette kan ikke gjøres om. \n Vilø du fortsette?"
 
 'ticket deleted':
   EN: "Ticket deleted. :white_check_mark:"
   DE: "Ticket gelöscht. :white_check_mark:"
+  NO: "Sak slettet. :white_check_mark:"
 
 'ticket has been deleted':
   EN: "The ticket has been deleted."
   DE: "Das Ticket wurde gelöscht."
+  NO: "Saken har blitt slettet."
 
 '[user] deleted ticket [ticket]':
   EN: "`{0}` deleted ticket `#{1}`."
   DE: "`{0}` hat Ticket `#{1}` gelöscht."
+  NO: "`{0}` slettet sak `#{1}`."
 
 # === tickets command ===
 
 active support tickets:
   EN: "Active support tickets"
   DE: "Aktive Support-Tickets"
+  NO: "Aktive support saker"
 
 'all open tickets of the given user':
   EN: "All open tickets of the given user."
   DE: "Alle offenen Tickets des gegebenen Benutzers."
+  NO: "Alle åpne saker til den gitte brukeren."
 
 'all open tickets of this guild':
   EN: "All open tickets of this guild."
   DE: "Alle offenen Tickets dieses Servers."
+  NO: "Alle åpne saker til denne guilden."
 
 'there are no active support tickets':
   EN: "There are no active support tickets."
   DE: "Es sind keine aktiven Support-Tickets vorhanden."
+  NO: "Det er ingen aktive support saker."
 
 'to see all properties of a ticket use the ticket show command':
   EN: "To see all properties of a ticket use the 'ticket show' command."
   DE: "Um alle Eigenschaften eines Tickets zu sehen, nutze den 'ticket show' Befehl."
+  NO: "For å se alle To see all egenskaper av en sak, bruk 'ticket show' kommandoen."
 
 # === guided configuration ===
 
 'guided configuration':
   EN: "Guided configuration"
   DE: "Begleitete Konfiguration"
+  NO: "Guidet konfigurasjon"
 
 'this will guid you through all configurations':
   EN: "This will guide you through all configurations for your server."
   DE: "Dies wird dich durch alle Konfigurationen für deinen Server führen."
+  NO: "Dette vil guide deg gjennom all konfigurasjon for din server."
 
 'configuration dialog closed':
   EN: "Configuration dialog closed."
   DE: "Konfiguration beendet."
+  NO: "Konfigurajonsdialog lukket."
 
 'type the new prefix':
   EN: "Type the new prefix:"
   DE: "Gib den neuen Präfix ein:"
+  NO: "Skriv den nye prefiksen:"
 
 'which channel do you wanna use as notification channel':
   EN: "Which channel do you wanna use as notification channel?:"
   DE: "Welchen Kanal möchtest du als Benachrichtigungskanal nutzen?:"
+  NO: "Hvilken kanal vil du bruke som notifikasjonskanal?:"
 
 'which category do you wanna use for voice support':
   EN: "Which category do you wanna use for voice support?:"
   DE: "Welche Kategorie möchtest du für Sprach-Support nutzen?:"
+  NO: "Hvilken kategori vil du bruke for voice support?:"
 
 'which role do you wanna use as support role':
   EN: "Which role do you wanna use as support role?:"
   DE: "Welche Rolle möchtest du als Support-Rolle nutzen?:"
+  NO: "Hvilken rolle vil du bruke som support rolle?:"
 
 'choose a scope as default':
   EN: "Choose a scope as default!"
   DE: "Wähle eine Reichweite als Standard!"
+  NO: "Velg et scope som default!"
 
 'choose the language of the server':
   EN: "Choose the language of the server!"
   DE: "Wähle die Sprache des Servers!"
+  NO: "Velg språket du vil bruke på serveren!"
 
 'which category do you wanna use for channel-tickets':
   EN: "Which category do you wanna use for channel-tickets?:"
   DE: "Welche Kategorie möchtest du für Kanal-Tickets nutzen?:"
+  NO: "Hvilken kategori vil du bruke for kanal-saker?:"
 
 'which channel do you wanna use for logging':
   EN: "Which channel do you wanna use for logging?:"
   DE: "Welchen Kanal möchtest du zum protokollieren nutzen?:"
+  NO: "Hvilken kanal vil du bruke for logging?:"
 
 'do you want to enable auto-assigning':
   EN: "Do you want to enable auto-assigning?"
   DE: "Willst du Auto-Zuweisung aktivieren?"
+  NO: "Vil du aktivere automatisk tildeling?"
 
 'invalid input':
   EN: "Invalid input."
   DE: "Ungültige Eingabe."
+  NO: "Ugyldig input."
 
 'type [pfx]abort to close this dialog':
   EN: "\n(Type `{0}abort` to close this dialog.)"
   DE: "\n(Tippe `{0}abort`, um diesen Dialog zu beenden.)"
+  NO: "\n(Skriv `{0}abort` for å stenge denne dialogen.)"
 
 # === config commands ===
 
 'configuration is only available on servers':
   EN: "Configuration is only available on servers."
   DE: "Konfiguration ist nur auf Servern verfügbar."
+  NO: "Konfigurasjon er bare tilgjengelig på servere."
 
 prefix can't be longer than [max] characters:
   EN: "Prefix can't be longer than {0} characters."
   DE: "Präfix kann nicht länger als {0} Zeichen sein."
+  NO: "Prefix kan ikke være lenger en {0} bokstaver."
 
 'prefix must be at least [min] character':
   EN: "Prefix must be at least {0} character."
   DE: "Präfix muss mindestens {0} Zeichen lang sein."
+  NO: "Prefix må minimum være {0} bokstaver."
 
 'the new prefix is [pfx]':
   EN: "Okay, the new prefix is: `{0}`."
   DE: "Okay, der neue Präfix ist: `{0}`."
+  NO: "Ok, den nye prefixen er: `{0}`."
 
 i'll send ticket events in [channel]:
   EN: "Okay, I'll send ticket events in {0}. :white_check_mark:"
   DE: "Okay, ich werde Ticket-Ereignisse in {0} senden. :white_check_mark:"
+  NO: "Ok, Jeg skal sende sak oppdateringer i {0}. :white_check_mark:"
 
 i'll notify you when someone is waiting in [category]:
   EN: "Okay, I'll notify you when someone is waiting in `{0}`."
   DE: "Okay, ich werde dich benachrichtigen, wenn jemand in `{0}` wartet."
+  NO: "Ok, Jeg skal informere deg når noen venter i `{0}`."
 
 i'll now notify [role] on ticket events:
   EN: "Okay, I'll now notify `{0}` on ticket events :white_check_mark:"
   DE: "Okay, ich werde jetzt `{0}` bei Ticket-Ereignissen benachrichtigen."
+  NO: "Ok, Jeg skal informere `{0}` om sak oppdateringer :white_check_mark:"
 
 'all tickets will be default [scope]':
   EN: "Okay, all tickets will be default `{0}`."
   DE: "Okay, alle Tickets werden standardmäßig `{0}` sein."
+  NO: "Ok, alle saker vil være standard `{0}`."
 
 '[language] is the default language on this server now':
   EN: "Okay. `{0}` is the default language on this server now."
   DE: "Okay. `{0}` ist jetzt die Standardsprache auf diesem Server."
+  NO: "Ok. `{0}` er standard språket som er i bruk på serveren nå."
 
 'all channel-tickets will be created in [category]':
   EN: "Okay. All channel-tickets will be created in `{0}`."
   DE: "Okay. Alle Kanal-Tickets werden in `{0}` erstellt werden."
+  NO: "Ok. Alle kanal-saker vil bli laget i `{0}`."
 
 i'll log my actions in [channel]:
   EN: "Okay. I'll log my actions in {0}."
   DE: "Okay. Ich werde meine Aktionen in {0} protokollieren."
+  NO: "Ok. JEg skal logge alle mine handlinger i {0}."
 
 'auto-assigning enabled':
   EN: "Okay. I'll automatically assign new tickets to a random supporter."
   DE: "Okay. Ich werde neue Tickets automatisch einem zufälligen Supporter zuweisen."
+  NO: "Ok. Jeg skal automatisk tildele nye saker til tilfeldige supportmedarbeidere."
 
 'auto-assigning disabled':
   EN: "Okay. Auto-assigning disabled now."
   DE: "Okay. Auto-Zuweisung ist jetzt deaktiviert."
+  NO: "Ok. Automatisk tildeling er slått av."
 
 'removed':
   EN: "Removed. :white_check_mark:"
   DE: "Entfernt. :white_check_mark:"
+  NO: "Fjernet. :white_check_mark:"
 
 # === help command ===
 
 'commands':
   EN: "Commands"
   DE: "Befehle"
+  NO: "Kommandoer"
 
 'an overview of all features of the bot':
   EN: "An overview of all features of the bot.\nFor detailed information visit:\n{0}"
   DE: "Eine Übersicht aller Features dieses Bots.\nFür detaillierte Informationen, besuche:\n{0}"
+  NO: "En oversikt over alle funksjoner på boten.\nFor deltajert informatsjon besøk:\n{0}"
 
 'requested on [guild]':
   EN: "Requested on \"{0}\"."
   DE: "Angefordert auf \"{0}\"."
+  NO: "Forespurt på \"{0}\"."
 
 'help sent via dm':
   EN: "Help sent via DM. :white_check_mark:"
   DE: "Hilfe per DM gesendet. :white_check_mark:"
+  NO: "Hjelp sendt via Direkte Melding. :white_check_mark:"
 
 'command not found':
   EN: "Command not found."
   DE: "Befehl nicht gefunden."
+  NO: "Kommando ikke funnet."
 
 'prime-feature':
   EN: "prime-feature"
   DE: "Premium-Feature"
+  NO: "Prime-funksjon"
 
 'optional':
   EN: "optional"
   DE: "optional"
+  NO: "valgfri"
 
 'please enable receiving dms and try again':
   EN: "Please enable receiving DMs and try again."
   DE: "Bitte erlaube das Empfangen von DMs und versuche es erneut."
+  NO: "Vennligst slå på mottak av direkte meldinger og prøv igjen."
 
 # === response error ===
 
 responses can't be accessed via dm:
   EN: "Responses can't be accessed via DM."
   DE: "Auf Antworten kann nicht per DM zugegriffen werden."
+  NO: "Svar kan ikke åpnes via direkte melding."
 
 # === response command ===
 
 'this ticket is closed':
   EN: "This ticket is closed."
   DE: "Dieses Ticket ist geschlossen."
+  NO: "Denne saken er stengt."
 
 'response created':
   EN: "Response created. :white_check_mark:\nID: {0}"
   DE: "Antwort erstellt. :white_check_mark:\nID: {0}"
+  NO: "Svar laget. :white_check_mark:\nID: {0}"
 
 '[user] created response [response]':
   EN: "`{0}` created response `{1}`."
   DE: "`{0}` hat Antwort `{1}` erstellt."
+  NO: "`{0}` laget et svar `{1}`."
 
 '[user] just responded to your ticket [ticket]':
   EN: "{0}#{1} just responded to your ticket #{2}."
   DE: "`{0}#{1}` hat gerade auf dein ticket #{2} geantwortet."
+  NO: "{0}#{1} svarte akkurat på din sak #{2}."
 
 'the related ticket is channel scope':
   EN: "The related ticket is a channel ticket. You aren't allowed to access it here."
   DE: "Das verknüpfte Ticket ist ein Kanal-Ticket. Du darfst hier nicht darauf zugreifen."
+  NO: "Den relaterte saken er en kanal-sak. Du har ikke tilgang til saken her."
 
 'the related ticket is private':
   EN: "The related ticket is private. You need to be supporter, admin or ticket author to access it."
   DE: "Das verknüpfte Ticket ist privat.Du musst Supporter, Admin oder Ticket-Autor sein, um darauf zuzugreifen."
+  NO: "Den relaterte saken er privat. Du må være en supportmedarbeider, admin eller sak forfatter for tilgang til den."
 
 'response edited':
   EN: "Response edited. :white_check_mark:"
   DE: "Antwort bearbeitet. :white_check_mark:"
+  NO: "Svar endret. :white_check_mark:"
 
 '[user] edited response [response]':
   EN: "`{0}` edited response `{1}`."
   DE: "`{0}` hat Antwort `{1}` bearbeitet."
+  NO: "`{0}` endret svar `{1}`."
 
 'response deleted':
   EN: "Response deleted. :white_check_mark:"
   DE: "Antwort gelöscht. :white_check_mark:"
+  NO: "Svar slettet. :white_check_mark:"
 
 '[user] deleted response [response]':
   EN: "`{0}` deleted response `{1}`."
   DE: "`{0}` hat Antwort `{1}` gelöscht."
+  NO: "`{0}` slettet svar `{1}`."
 
 # === outlaw command ===
 
 '[user] just warned you':
   EN: "`{0}` just warned you (on `{1}`):\n```{2}```"
   DE: "`{0}` hat dich gerade verwarnt (auf `{1}`):\n```{2}```"
+  NO: "`{0}` advarte deg akkurat (på `{1}`):\n```{2}```"
 
 'user warned':
   EN: "User warned. :white_check_mark:"
   DE: "Nutzer verwarnt. :white_check_mark:"
+  NO: "Bruker advart. :white_check_mark:"
 
 '[user] just kicked you':
   EN: "`{0}` just kicked you out of `{1}`:\n```{2}```"
   DE: "`{0}` hat dich gerade aus `{1}` gekickt:\n```{2}```"
+  NO: "`{0}` sparket deg akkurat ut av `{1}`:\n```{2}```"
 
 'user kicked':
   EN: "User kicked. :white_check_mark:"
   DE: "Nutzer gekickt. :white_check_mark:"
+  NO: "Bruker sparket ut. :white_check_mark:"
 
 'this user is not on this server':
   EN: "This user is not on this server (anymore)."
   DE: "Dieser Nutzer ist nicht (mehr) auf diesem Server."
+  NO: "Denne brukeren er ikke på serveren (mer)."
 
 '[user] just banned you':
   EN: "`{0}` just banned you from `{1}`{2}:\n```{3}```"  # '{2}' is for the duration (like " for 2 days")
   DE: "`{0}` hat dich gerade{2} aus `{1}` gebannt:\n```{3}```"
+  NO: "`{0}` bannet deg fra `{1}`{2}:\n```{3}```"  # '{2}' er varighet (for eksempel" 2 dager")
 
 'user banned':
   EN: "User banned{0}. :white_check_mark:"
   DE: "Nutzer gebannt{0}. :white_check_mark:"
+  NO: "Bruker bannet{0}. :white_check_mark:"
 
 'for [days] days':
   EN: " for {0} days"
   DE: " für {0} Tage"
+  NO: " i {0} dager"
 
 'ban time expired':
   EN: "The ban time for this user has expired."
   DE: "Die Sperrzeit für diesen Nutzer ist abgelaufen."
+  NO: "Ban tiden for denne brukeren er gått ut."
 
 but user doesn't allow direct messages:
   EN: ":warning: But the user doesn't allow direct messages."
   DE: ":warning: Aber der Nutzer erlaubt keine direkt Nachrichten."
+  NO: ":warning: Brukeren godtar ikke direkte meldinger."
 
 # log
 
 '[user] warned [user] because of [reason]':
   EN: "`{0}` warned `{1}` because of `{2}`."
   DE: "`{0}` warnte `{1}` wegen `{2}`."
+  NO: "`{0}` advarte `{1}` fordi `{2}`."
 
 '[user] kicked [user] because of [reason]':
   EN: "`{0}` kicked `{1}` because of `{2}`."
   DE: "`{0}` kickte `{1}` wegen `{2}`."
+  NO: "`{0}` kicka `{1}` fordi `{2}`."
 
 '[user] banned [user][for days] because of [reason]':
   EN: "`{0}` banned `{1}`{2} because of `{3}`."
   DE: "`{0}` bannte `{1}`{2} wegen `{3}`."
+  NO: "`{0}` banna `{1}`{2} fordi `{3}`."
 
 # === blacklist command ===
 
 'user blacklisted':
   EN: "User blacklisted{0}. :white_check_mark:"
   DE: "Nutzer in die schwarze Liste eingetragen{0}. :white_check_mark:"
+  NO: "Bruker svartelista{0}. :white_check_mark:"
 
 '[user] just blacklisted you':
   EN: "`{0}` just blacklisted you on `{1}`:\n```{2}```"
   DE: "`{0}` hat dich gerade in die schwarze Liste auf `{1}` eingetragen:\n```{2}```"
+  NO: "`{0}` svartelista deg akkurat på `{1}`:\n```{2}```"
 
 'user not in blacklist':
   EN: "User not in blacklist."
   DE: "Nutzer ist nicht auf der schwarzen Liste."
+  NO: "Bruker er ikke i svartelisten."
 
 'removed user from blacklist':
   EN: "Removed user from blacklist. :white_check_mark:"
   DE: "Nutzer von der schwarzen Liste entfernt. :white_check_mark:"
+  NO: "Fjernet bruker fra svartelisten. :white_check_mark:"
 
 'blacklist is empty':
   EN: "The blacklist is empty."
   DE: "Die schwarze Liste ist leer."
+  NO: "Svartelisten er tom."
 
 'you are blacklisted':
   EN: "You are blacklisted on this server. :flag_black: "
   DE: "Du bist in diesem Server auf der schwarzen Liste. :flag_black: "
+  NO: "Du er svartelista på denne serveren. :flag_black: "
 
 # log
 
 '[user] blacklisted [user] [reason]':
   EN: "`{0}` blacklisted `{1}`: `{2}`"
   DE: "`{0}` trug `{1}` in die schwarze Liste ein: `{2}`"
+  NO: "`{0}` blacklista `{1}`: `{2}`"
 
 '[user] removed [user] from blacklist':
   EN: "`{0}` removed `{1}` from blacklist."
   DE: "`{0}` entfernte `{1}` von der schwarzen Liste."
+  NO: "`{0}` fjerna `{1}` fra svartelisten."
 
 # === statistics command ===
 'statistics':
   EN: "Statistics"
   DE: "Statistiken"
+  NO: "Statistikk"
 
 # user stats
 
 'statistics of the given user':
   EN: "Statistics of the given user."
   DE: "Statistiken des angegebenen Nutzers."
+  NO: "Statistikk for brukeren."
 
 'warned':
   EN: "Warned"
   DE: "Gewarnt"
+  NO: "Advart"
 
 'kicked':
   EN: "Kicked"
   DE: "Gekickt"
+  NO: "Kicket"
 
 'banned':
   EN: "Banned"
   DE: "Gebannt"
+  NO: "Bannet"
 
 'tickets':
   EN: "Tickets"
   DE: "Tickets"
+  NO: "Saker"
 
 'responses':
   EN: "Responses"
   DE: "Antworten"
+  NO: "Svar"
 
 'global':
   EN: "Global"
   DE: "Global"
+  NO: "Global"
 
 'local':
   EN: "Local"
   DE: "Lokal"
+  NO: "Lokal"
 
 'reports':
   EN: "Reports"
   DE: "Meldungen"
+  NO: "Rapporter"
 
 'has reported':
   EN: "Has reported"
   DE: "Hat gemeldet"
+  NO: "Har rapportert"
 
 'was reported':
   EN: "Was reported"
   DE: "Wurde gemeldet"
+  NO: "Ble rapportert"
 
 'shared guilds':
   EN: "Shared guilds"
   DE: "Gemeinsame Server"
+  NO: "Delt guilder"
 
 # guild stats
 
 'statistics of this guild':
   EN: "Statistics of this guild."
   DE: "Statistiken dieses Servers."
+  NO: "Statistikk for denne guilden."
 
 'members':
   EN: "Members"
   DE: "Mitglieder"
+  NO: "Medlemmer"
 
 'member joins':
   EN: "Member joins*"
   DE: "Mitglieds-Beitritte*"
+  NO: "Medlem joiner*"
 
 'recorded since the bot is member':
   EN: "*Only recorded since the bot is a member of this guild."
   DE: "*Erst aufgezeichnet, seit der Bot Mitglied dieses Servers ist."
+  NO: "*Kun registrert siden bot er medlem av denne guilden."
 
 'total':
   EN: "Total"
   DE: "Insgesamt"
+  NO: "Total"
 
 'last 30 days':
   EN: "Last 30 days"
   DE: "Letzte 30 Tage"
+  NO: "Siste 30 dager"
 
 'average per day':
   EN: "Average per day"
   DE: "Durchschnittlich am Tag"
+  NO: "Gjennomsnitt per dag"
 
 'online':
   EN: "Online"
   DE: "Online"
+  NO: "Online"
 
 # === report command ===
 'you already reported this user':
   EN: "You already reported this user. :x:"
   DE: "Du hast diesen Nutzer bereits gemeldet. :x:"
+  NO: "Du har allerede rapportert denne brukeren. :x:"
 
 'you cannot report yourself':
   EN: "You cannot report yourself. But nice try :wink:"
   DE: "Du kannst dich nicht selbst melden. Aber netter Versuch :wink:"
+  NO: "Du kan ikke rapportere deg selv, men godt forsøk :wink:"
 
 'user reported':
   EN: "User reported. :white_check_mark:"
   DE: "Nutzer gemeldet. :white_check_mark:"
+  NO: "Bruker rapportert. :white_check_mark:"
 
 'user has been reported three times now':
   EN: "\n:eye_in_speech_bubble: This user has been reported three times now. It may be time to take action."
   DE: "\n:eye_in_speech_bubble: Dieser Nutzer wurde nun schon drei mal gemeldet. Es könnte an der Zeit sein zu handeln."
+  NO: "\n:eye_in_speech_bubble: Denne brukeret har blitt rapportert 3 ganger nå. Det er kanskje på tide å gjøre noe."
 
 '[user] reported [user] because of [reason]':
   EN: "`{0}` reported `{1}`:\n```{2}```"
   DE: "`{0}` hat `{1}` gemeldet:\n```{2}```"
+  NO: "`{0}` rapporterte `{1}` for:\n```{2}```"
 
 '[user] has been reported because of [reason]':
   EN: "`{0}` has been reported because of `{1}`."
   DE: "`{0}` wurde wegen `{1}` gemeldet."
+  NO: "`{0}` har blitt rapportert for `{1}`."
 
 # === conversion errors ===
 
 '[object] could not be found':
   EN: "`{}` could not be found."
   DE: "`{}` konnte nicht gefunden werden."
+  NO: "`{}` kunne ikke bli funnet."
 
 'parameter needs to be specified':
   EN: "Wrong command usage: A missing parameter needs to be specified."
   DE: "Falsche Benutzung des Befehls: Ein fehlender Parameter muss angegeben werden."
+  NO: "Feil kommando bruk: Et manglende parameter er nødt til å bli spesifisert."
 
 # === voice support service ===
 
 '[user] is waiting for support in [channel]':
   EN: "{0} is waiting for support in `{1}`."
   DE: "{0} wartet in `{1}` auf Hilfe."
+  NO: "{0} venter på support i `{1}`."
 
 'the supporters have been notified':
   EN: "The supporters have been notified. They'll join you as fast as possible. Please be patient."
   DE: "Die Supporter wurden benachrichtigt. Sie werden dir so schnell wie möglich beitreten. Bitte habe Geduld."
+  NO: "Support-teamet har fått melding. De joiner deg så snart de har mulighet, vennligst vent."
 
 'available support room':
   EN: "available support room"
   DE: "verfügbarer Support-Raum"
+  NO: "Tilgjengelig support-rom"
 
 'occupied support room':
   EN: "occupied support room"
   DE: "belegter Support-Raum"
+  NO: "Opptatt support-rom"
 
 'providing available voice support room':
   EN: "Providing available voice support room."
   DE: "Stelle verfügbaren Sprach-Support-Raum zur verfügung."
+  NO: "Gir tilgjengelig voice support-rom."
 
 'support room got occupied':
   EN: "This support room got occupied."
   DE: "Dieser Support-Raum ist belegt worden."
+  NO: "Dette support-rommet ble opptatt."
 
 'support room is not needed anymore':
   EN: "This support room isn't needed anymore."
   DE: "Dieser Support-Raum wird nicht mehr gebraucht."
+  NO: "Dette support rommet er det ikke behov for lenger."
 
 you're on cooldown for [sec] seconds:
   EN: "Keep calm! You're on cooldown for `{0}` seconds. :snowflake: "
   DE: "Bleib ruhig! Du bist für `{0}` Sekunden auf Cooldown. :snowflake: "
+  NO: "Ro ned! Du har fått en pause i `{0}` sekunder. :snowflake: "
 
 # === log ===
 
 'not enough permissions to perform action':
   EN: "A command failed: Not enough permissions to perform an action."
   DE: "Ein Befehl ist fehlgeschlagen: Nicht genügend Berechtigungen, um eine Aktion zu tätigen."
+  NO: "En kommando feilet: Ikke nok tilgang for å utføre handlingen."
 
 'unbanned [member] [reason]':
   EN: "Unbanned `{0}`: `{1}`"
   DE: "`{0}` entbannt: `{1}`"
+  NO: "Unbannet `{0}`: `{1}`"
 
 # === info command ===
 
 'about the bot':
   EN: "About the bot."
   DE: "Über den Bot."
+  NO: "Om boten."
 
 # developer field
 
 'developer':
   EN: "Developer"
   DE: "Entwickler"
+  NO: "Utvikler"
 
 'name':
   EN: "Name"
   DE: "Name"
+  NO: "Navn"
 
 'I am also at':
   EN: "I'm also at"
   DE: "Ich bin auch auf"
+  NO: "Jeg er også på"
 
 # development field
 
 'used for development':
   EN: "Used for development"
   DE: "Für die Entwicklung genutzt"
+  NO: "Brukt for utvikling"
 
 'programming language':
   EN: "Programming language"
   DE: "Programmiersprache"
+  NO: "Programmerings språk"
 
 'database':
   EN: "Database"
   DE: "Datenbank"
+  NO: "Database"
 
 # commands field
 
 'type [prefix]help for command overview':
   EN: "Type `{0}help` to get an overview of the commands."
   DE: "Gib `{0}help` ein, um eine Übersicht über die Befehle zu erhalten."
+  NO: "Skriv `{0}help` for en oversikt over kommandoer."
 
 'for detailed info visit [url]':
   EN: "For detailed info on how to use them visit [commands]({0})."
   DE: "Für detaillierte Infos darüber, wie man sie nutzt, besuche [Befehle]({0})."
+  NO: "For detaljert info om bruk, besøk [commands]({0})."
 
 # stats field
 
 'some stats':
   EN: "Some stats"
   DE: "Ein paar Statistiken"
+  NO: "Litt statistikk"
 
 'server count':
   EN: "Server count"
   DE: "Server Anzahl"
+  NO: "Server antall"
 
 'active users':
   EN: "Active users"
   DE: "Aktive Nutzer"
+  NO: "Aktive brukere"
 
 'total tickets':
   EN: "Total tickets"
   DE: "Tickets insgesamt"
+  NO: "Totale saker"
 
 'total responses':
   EN: "Total responses"
   DE: "Antworten insgesamt"
+  NO: "Total svar"
 
 # sharding field
 
 'shard count':
   EN: "Shard count"
   DE: "Shard Anzahl"
+  NO: "Shard antall"
 
 'this servers shard id':
   EN: "This server's shard ID"
   DE: "Die Shard-ID dieses Servers"
+  NO: "Denne serveren's shard ID"
 
 # === invite command ===
 
 'invite me':
   EN: "Invite me to your server!"
   DE: "Lade mich zu deinem Server ein!"
+  NO: "Inviter meg til din server!"
 
 'start getting your server managed now':
   EN: "Start getting your server managed now!"
   DE: "Fange jetzt an, deinen Server ge-managed zu bekommen!"
-
+  NO: "Få din server 'managed' nå!"
+  
 # === vote command ===
 
 'vote for this bot':
   EN: "Vote for this bot now!"
   DE: "Stimme jetzt für diesen Bot!"
+  NO: "Stem på denne boten nå!"
 
 'vote for this bot on dbl':
   EN: "Vote for this bot on discordbots.org to help it spread!\nYou can vote every 12 hours."
   DE: "Stimme für diesen Bot auf discordbots.org, um ihm zu helfen sich zu verbreiten.\nDu kannst alle 12 Stunden abstimmen."
+  NO: "Stem på denne boten på discordbots.org for å spre den videre!\nDu kan stemme hver 12. time."
 
 # === mixed (utils) ===
 
 'created on':
   EN: "Created on"
   DE: "Erstellt am"
+  NO: "Opprettet på"
 
 'updated on':
   EN: "Updated on"
   DE: "Aktualisiert am"
+  NO: "Oppdatert på"
 
 'refers to ticket':
   EN: "Refers to ticket"
   DE: "Gehört zu Ticket"
+  NO: "Referer til sak"
 
 'use :x: to close the dialog':
   EN: "Use :x: to close the dialog."
   DE: "Nutze :x:, um dieses Fenster zu schließen."
+  NO: "Bruk :x: for å stenge dialogen."
 
 'you are not allowed to perform this action':
   EN: "You are not allowed to perform this action. :no_entry:"
   DE: "Du bist nicht dazu berechtigt, diese Aktion durchzuführen. :no_entry:"
+  NO: "Du har ikke log til å utføre denne handlingen. :no_entry:"
 
 'need required permissions [permissions]':
   EN: "Error! Need required permissions: `{0}`."
   DE: "Fehler! Brauche erforderliche Berechtigungen: `{0}`."
+  NO: "Error! Trenger nødvendig tilganger: `{0}`."
 
 'invalid action':
   EN: "This action is invalid. :no_entry_sign: "
   DE: "Diese Aktion ist nicht zulässig. :no_entry_sign: "
+  NO: "Denne handlingen er ugyldig. :no_entry_sign: "
 
 'page':
  EN: "Page"
  DE: "Seite"
+ NO: "Side"
 
 'canceled':
   EN: "Canceled."
   DE: "Abgebrochen."
+  NO: "Kansellert."
 
 'this is a prime feature':
   EN: |
@@ -803,7 +986,12 @@ you're on cooldown for [sec] seconds:
     Dies ist ein Premium-Feature.
     Unterstütze die Entwicklung dieses Bots und bekomme ein paar coole extra Funktionen:
     {0}
+  NO: |
+    Dette er en prime funksjon.
+    Støtt utviklingen av denne boten og få noen fine ekstrafunksjoner:
+    {0}
 
 'failed to contact responsible user [user] for ticket [ticket]':
   EN: "Failed to contact the responsible user `{0}` for ticket `#{1}` via DM:"
   DE: "Der verantwortliche Nutzer `{0}` für das Ticket `#{1}` konnte per DM nicht kontaktiert werden:"
+  NO: "Kunne ikke kontakte brukeren `{0}` for sak `#{1}` via Direkte Melding:"
