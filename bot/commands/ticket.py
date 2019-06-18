@@ -218,7 +218,7 @@ async def _show_error(ctx, error):
 @ticket.command(name="edit", aliases=["change", "update"])
 async def _edit(ctx, t: Ticket, title: str="", description: str=None):
     if ctx.author.id != (await t.async_author).id:
-        ctx.send(ctx.translate("you are not allowed to perform this action"))
+        await ctx.send(ctx.translate("you are not allowed to perform this action"))
         return
 
     if title != "":
