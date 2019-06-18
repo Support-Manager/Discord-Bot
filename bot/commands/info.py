@@ -36,7 +36,7 @@ async def info(ctx):
     info_emb.add_field(
         name=ctx.translate("used for development"),
         value=f"{ctx.translate('programming language')}: **[Python](https://python.org) 3.6**\n"
-              f"Library: **discord.py** v1.0.0 (beta)\n"
+              f"Library: **discord.py** v1.0.0\n"
               f"{ctx.translate('database')}: **[Neo4j](https://neo4j.com) Community** v3.5.0  (library: py2neo v4.2.0)",
         inline=False
     )
