@@ -9,9 +9,13 @@ from .properties import Defaults, CONFIG
 from . import enums
 import time
 from typing import Union, Optional
+import asyncio
 
 
 logger = logging.getLogger(__name__)
+
+
+loop = asyncio.get_event_loop()
 
 
 graph = Graph(host=CONFIG['neo4j_host'],
@@ -58,7 +62,7 @@ class Ticket(TicketMixin, commands.Converter):
                     argument = channel.name  # channel name == ticket id
 
         try:
-            t = self.get(int(argument), ctx.db_guild, ctx=ctx)
+            t = await self.async_get(int(argument), await ctx.db_guild, ctx)
         except ValueError:
             t = None
 
@@ -69,9 +73,10 @@ class Ticket(TicketMixin, commands.Converter):
 
     @classmethod
     def get(cls, id: int, guild: GuildMixin, ctx=None):
-        uuid = graph.run(
-            "MATCH (t:Ticket {id: %i})-[:TICKET_LOCATED_ON]->(g:Guild {id: %i}) RETURN t.uuid" % (id, guild.id)
-        ).evaluate()
+        uuid = graph.evaluate(
+            "MATCH (t:Ticket {id: $ticketId})-[:TICKET_LOCATED_ON]->(g:Guild {id: $guildId}) RETURN t.uuid",
+            {"ticketId": id, "guildId": guild.id}
+        )
 
         if uuid is not None:
             t = cls(ctx=ctx)
@@ -89,6 +94,10 @@ class Ticket(TicketMixin, commands.Converter):
                 t = None
 
         return t
+
+    @classmethod
+    async def async_get(cls, id: int, guild: GuildMixin, ctx=None):
+        return await loop.run_in_executor(None, cls.get, id, guild, ctx)
 
     @property
     def scope_enum(self):
@@ -122,6 +131,10 @@ class Ticket(TicketMixin, commands.Converter):
         return g
 
     @property
+    async def async_guild(self) -> Union['Guild', GuildMixin]:
+        return await loop.run_in_executor(None, getattr, self, 'guild')
+
+    @property
     def author(self) -> Union['User', UserMixin]:
         a = list(self.created_by)[0]
 
@@ -129,6 +142,10 @@ class Ticket(TicketMixin, commands.Converter):
             a = User.get(self._creation_ctx, a.id)
 
         return a
+
+    @property
+    async def async_author(self) -> Union['User', UserMixin]:
+        return await loop.run_in_executor(None, getattr, self, 'author')
 
     @property
     def channel(self) -> Optional[discord.TextChannel]:
@@ -149,6 +166,9 @@ class Ticket(TicketMixin, commands.Converter):
     def push(self):
         graph.push(self)
 
+    async def async_push(self):
+        await loop.run_in_executor(None, self.push)
+
     def get_responses(self):
         responses = []
         for r in self.responses:
@@ -167,8 +187,8 @@ class Response(commands.Converter, ResponseMixin):
     async def convert(self, ctx, argument):
         try:
             t_id, r_id = argument.split('-')
-            t = Ticket.get(int(t_id), ctx.guild, ctx=ctx)
-            r = self.get(int(r_id), t, ctx=ctx)
+            t = await Ticket.async_get(int(t_id), ctx.guild, ctx)
+            r = await self.async_get(int(r_id), t, ctx)
         except ValueError:
             r = None
 
@@ -179,9 +199,10 @@ class Response(commands.Converter, ResponseMixin):
 
     @classmethod
     def get(cls, id: int, ticket: Ticket or TicketMixin, ctx=None):
-        uuid = graph.run(
-            "MATCH (r:Response {id: %i})-[:REFERS_TO]->(t:Ticket {uuid: '%s'}) RETURN r.uuid" % (id, ticket.uuid)
-        ).evaluate()
+        uuid = graph.evaluate(
+            "MATCH (r:Response {id: $responseId})-[:REFERS_TO]->(t:Ticket {uuid: $ticketId}) RETURN r.uuid",
+            {"responseId": id, "ticketId": ticket.uuid}
+        )
 
         if uuid is not None:
             r = cls(ctx=ctx)
@@ -200,6 +221,10 @@ class Response(commands.Converter, ResponseMixin):
 
         return r
 
+    @classmethod
+    async def async_get(cls, id: int, ticket: Ticket or TicketMixin, ctx=None):
+        return await loop.run_in_executor(None, cls.get, id, ticket, ctx)
+
     @property
     def guild(self):
         g = list(self.located_on)[0]
@@ -210,6 +235,10 @@ class Response(commands.Converter, ResponseMixin):
         return g
 
     @property
+    async def async_guild(self):
+        return await loop.run_in_executor(None, getattr, self, 'guild')
+
+    @property
     def author(self):
         a = list(self.created_by)[0]
 
@@ -217,6 +246,10 @@ class Response(commands.Converter, ResponseMixin):
             a = User.get(self._creation_ctx, a.id)
 
         return a
+
+    @property
+    async def async_author(self):
+        return await loop.run_in_executor(None, getattr, self, 'author')
 
     @property
     def ticket(self):
@@ -229,6 +262,9 @@ class Response(commands.Converter, ResponseMixin):
 
     def push(self):
         graph.push(self)
+
+    async def async_push(self):
+        await loop.run_in_executor(None, self.push)
 
     @property
     def full_id(self):
@@ -261,7 +297,7 @@ class Guild(GuildMixin, commands.IDConverter):
             discord_guild = None
 
         if discord_guild is not None:
-            result = self.from_discord_guild(discord_guild, ctx=ctx)  # converts discord.Guild into this class
+            result = await self.async_from_discord_guild(discord_guild, ctx)  # converts discord.Guild into this class
 
         if result is None:
             raise commands.BadArgument('Guild "{}" not found'.format(argument))
@@ -287,6 +323,10 @@ class Guild(GuildMixin, commands.IDConverter):
         return g
 
     @classmethod
+    async def async_from_discord_guild(cls, guild: discord.Guild, ctx=None):
+        return await loop.run_in_executor(None, cls.from_discord_guild, guild, ctx)
+
+    @classmethod
     def get(cls, ctx, id: int):
         guild = ctx.bot.get_guild(id)
         return cls.from_discord_guild(guild, ctx=ctx)
@@ -304,6 +344,9 @@ class Guild(GuildMixin, commands.IDConverter):
 
     def push(self):
         graph.push(self)
+
+    async def async_push(self):
+        await loop.run_in_executor(None, self.push)
 
     def get_tickets(self):
         tickets = []
@@ -370,7 +413,7 @@ class User(commands.Converter, UserMixin):
 
         discord_user = await commands.UserConverter().convert(ctx, argument)
         if discord_user:
-            result = self.from_discord_user(discord_user, ctx=ctx)  # converts discord.User into this class
+            result = await self.async_from_discord_user(discord_user, ctx)  # converts discord.User into this class
 
         if result is None:
             raise commands.BadArgument('User "{}" not found'.format(argument))
@@ -392,6 +435,10 @@ class User(commands.Converter, UserMixin):
         return u
 
     @classmethod
+    async def async_from_discord_user(cls, user: Union[discord.User, discord.Member], ctx=None):
+        return await loop.run_in_executor(None, cls.from_discord_user, user, ctx)
+
+    @classmethod
     def get(cls, ctx, id: int):
         discord_user = ctx.bot.get_user(id)
         return cls.from_discord_user(discord_user, ctx=ctx)
@@ -402,6 +449,9 @@ class User(commands.Converter, UserMixin):
 
     def push(self):
         graph.push(self)
+
+    async def async_push(self):
+        await loop.run_in_executor(None, self.push)
 
     def get_tickets(self):
         tickets = []

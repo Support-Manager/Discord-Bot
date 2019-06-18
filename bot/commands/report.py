@@ -8,7 +8,7 @@ import uuid
 
 @commands.command()
 async def report(ctx, user: User, reason: str):
-    db_author: User = ctx.db_author
+    db_author: User = await ctx.db_author
 
     if user in [r.affected_user for r in db_author.issued_reports]:
         await ctx.send(ctx.translate("you already reported this user"))
@@ -17,7 +17,7 @@ async def report(ctx, user: User, reason: str):
         return
 
     else:
-        db_guild = ctx.db_guild
+        db_guild = await ctx.db_guild
 
         report_node = ReportMixin()
         report_node.reason = escaped(reason)

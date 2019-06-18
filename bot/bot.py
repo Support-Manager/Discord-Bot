@@ -14,6 +14,7 @@ logger = logging.getLogger(__name__)
 class Bot(commands.AutoShardedBot):
     def __init__(self, *args, **kwargs):
         super(Bot, self).__init__(*args, **kwargs)
+        asyncio.set_event_loop(self.loop)
 
         self.dbl_session = aiohttp.ClientSession(loop=self.loop, headers={'Authorization': CONFIG['dbl_api_token']})
         self.loop.create_task(self._update_stats())

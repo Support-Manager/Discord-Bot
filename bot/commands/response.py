@@ -5,6 +5,10 @@ import time
 from discord.ext import commands
 import discord
 import uuid
+import asyncio
+
+
+loop = asyncio.get_event_loop()
 
 
 @commands.group()
@@ -26,11 +30,11 @@ async def response_error(ctx, error):
 async def _create(ctx, t: Ticket, content: str):
     """ This is to create new responses/to answer tickets. """
 
-    if t.scope_enum == enums.Scope.CHANNEL and ctx.channel != t.channel and not ctx.may_fully_access(t):
+    if t.scope_enum == enums.Scope.CHANNEL and ctx.channel != t.channel and not await ctx.may_fully_access(t):
         await ctx.send(ctx.translate("the related ticket is channel scope"))
         return None
 
-    elif t.scope_enum == enums.Scope.PRIVATE and not ctx.may_fully_access(t):
+    elif t.scope_enum == enums.Scope.PRIVATE and not await ctx.may_fully_access(t):
         await ctx.send(ctx.translate("this is a private ticket"))
         return None
 
@@ -48,10 +52,10 @@ async def _create(ctx, t: Ticket, content: str):
     
     resp = Response()
     
-    author = User.from_discord_user(ctx.author)
+    author = await User.async_from_discord_user(ctx.author)
     resp.created_by.add(author, properties={'UTC': utc})
 
-    resp.located_on.add(ctx.db_guild)
+    resp.located_on.add(await ctx.db_guild)
     
     resp.refers_to.add(t)
 
@@ -77,7 +81,7 @@ async def _create(ctx, t: Ticket, content: str):
         "[user] just responded to your ticket [ticket]"
     ).format(ctx.author.name, ctx.author.discriminator, t.id)
 
-    await notify_author(ctx, resp_msg, t, embed=response_embed(ctx, resp))
+    await notify_author(ctx, resp_msg, t, embed=await loop.run_in_executor(None, response_embed, ctx, resp))
     await resp.guild.log(ctx.translate("[user] created response [response]").format(
         ctx.author, f"{resp.ticket.id}-{resp.id}"
     ))
@@ -89,15 +93,15 @@ async def _show(ctx, resp: Response):
 
     t = resp.ticket
 
-    if t.scope_enum == enums.Scope.CHANNEL and ctx.channel != t.channel and not ctx.may_fully_access(t):
+    if t.scope_enum == enums.Scope.CHANNEL and ctx.channel != t.channel and not await ctx.may_fully_access(t):
         await ctx.send(ctx.translate("the related ticket is channel scope"))
         return None
 
-    elif t.scope_enum == enums.Scope.PRIVATE and not ctx.may_fully_access(t):
+    elif t.scope_enum == enums.Scope.PRIVATE and not await ctx.may_fully_access(t):
         await ctx.send(ctx.translate("the related ticket is private"))
         return None
 
-    emb = response_embed(ctx, resp)
+    emb = await loop.run_in_executor(None, response_embed, ctx, resp)
 
     await ctx.send(embed=emb)
 
@@ -114,7 +118,7 @@ async def _edit(ctx, resp: Response, content: str):
 
         resp.content = escaped(content)
 
-        resp.push()
+        await resp.async_push()
 
         await ctx.send(ctx.translate("response edited"))
         await resp.guild.log(ctx.translate("[user] edited response [response]").format(
@@ -137,14 +141,14 @@ async def _delete(ctx, resp: Response):
     utc = time.time()
     ticket = resp.ticket
 
-    if not (ctx.author.id == resp.author.id or ctx.may_fully_access(ticket)):
+    if not (ctx.author.id == resp.author.id or await ctx.may_fully_access(ticket)):
         await ctx.send(ctx.translate("you are not allowed to perform this action"))
         return None
 
     resp.deleted = True
-    resp.deleted_by.add(User.from_discord_user(ctx.author), properties={'UTC': utc})
+    resp.deleted_by.add(await User.async_from_discord_user(ctx.author), properties={'UTC': utc})
 
-    resp.push()
+    await resp.async_push()
 
     await ctx.send(ctx.translate("response deleted"))
     await resp.guild.log(ctx.translate("[user] deleted response [response]").format(

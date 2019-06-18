@@ -41,9 +41,11 @@ async def info(ctx):
         inline=False
     )
 
+    db_guild = await ctx.db_guild
+
     info_emb.add_field(
         name=ctx.translate("commands"),
-        value=f"{ctx.translate('type [prefix]help for command overview').format(ctx.db_guild.prefix)}\n"
+        value=f"{ctx.translate('type [prefix]help for command overview').format(db_guild.prefix)}\n"
               f"{ctx.translate('for detailed info visit [url]').format(CONFIG['commands_url'])}",
         inline=False
     )

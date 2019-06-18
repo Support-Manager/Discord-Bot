@@ -6,6 +6,10 @@ from bot.models import graph, Scope, User, Guild
 import uuid
 import time
 import random
+import asyncio
+
+
+loop = asyncio.get_event_loop()
 
 
 @commands.group(name='ticket')
@@ -31,7 +35,7 @@ async def ticket_error(ctx, error):
 async def _create(ctx, title: str, description: str="", scope: Scope=None):
     """ This is to create a support ticket. """
 
-    guild = ctx.db_guild
+    guild = await ctx.db_guild
 
     t = Ticket(ctx=ctx)
 
@@ -51,13 +55,13 @@ async def _create(ctx, title: str, description: str="", scope: Scope=None):
         t.state = enums.State.OPEN.value
         t.updated = utc
 
-        author = User.from_discord_user(ctx.author)
+        author = await User.async_from_discord_user(ctx.author)
         t.created_by.add(author, properties={'UTC': utc})
 
         t.located_on.add(guild)
 
         if scope is None:
-            scope = t.guild.default_scope
+            scope = (await t.async_guild).default_scope
 
         t.scope = scope
 
@@ -73,12 +77,14 @@ async def _create(ctx, title: str, description: str="", scope: Scope=None):
 
         responsible_user = None
 
-        if t.guild.auto_assigning:
-            support_role: discord.Role = t.guild.discord.get_role(t.guild.support_role)
+        t_guild = await t.async_guild
+
+        if t_guild.auto_assigning:
+            support_role: discord.Role = t_guild.discord.get_role(t_guild.support_role)
 
             if support_role is not None:
                 responsible_user = random.choice(support_role.members)
-                responsible_user = User.from_discord_user(responsible_user, ctx=ctx)
+                responsible_user = await User.async_from_discord_user(responsible_user, ctx=ctx)
 
                 t.assigned_to.add(responsible_user)
 
@@ -113,7 +119,7 @@ async def _create(ctx, title: str, description: str="", scope: Scope=None):
                     reason=ctx.translate("first channel-ticket has been created")
                 )
                 guild.ticket_category = category.id
-                guild.push()
+                await guild.async_push()
             else:
                 category = guild.discord.get_channel(guild.ticket_category)
 
@@ -128,7 +134,7 @@ async def _create(ctx, title: str, description: str="", scope: Scope=None):
             await channel.edit(
                 topic=t.title
             )
-            await channel.send(embed=ticket_embed(ctx, t))
+            await channel.send(embed=await loop.run_in_executor(None, ticket_embed, ctx, t))
             format_id = channel.mention
 
         elif t.scope_enum == enums.Scope.PRIVATE:
@@ -159,14 +165,14 @@ async def _create(ctx, title: str, description: str="", scope: Scope=None):
 
         await ctx.send(msg)
 
-        if t.guild.channel != ctx.channel.id:
+        if t_guild.channel != ctx.channel.id:
             new_ticket_msg = ctx.translate("new ticket")
             if send_invokation_channel:
                 new_ticket_msg += ctx.translate("created in [channel]").format(ctx.channel.mention)
 
             await notify_ticket_authority(ctx, t, new_ticket_msg, send_embed=True)
 
-        await t.guild.log(ctx.translate("[user] created ticket [ticket]").format(ctx.author, t.id))
+        await t_guild.log(ctx.translate("[user] created ticket [ticket]").format(ctx.author, t.id))
 
 
 @ticket.command(name="show")
@@ -174,19 +180,19 @@ async def _show(ctx, t: Ticket):
     """ This is to see a specific support ticket. """
 
     # checking scopes (permissions)
-    if ctx.author.id == t.author.id:
+    if ctx.author.id == (await t.async_author).id:
         pass
 
-    elif t.scope_enum == enums.Scope.CHANNEL and ctx.channel != t.channel and not ctx.may_fully_access(t):
+    elif t.scope_enum == enums.Scope.CHANNEL and ctx.channel != t.channel and not await ctx.may_fully_access(t):
         await ctx.send(ctx.translate('this is a channel ticket'))
         return None
 
     elif t.scope_enum == enums.Scope.PRIVATE:
-        if t.guild.support_role not in [role.id for role in ctx.author.roles]:
+        if (await t.async_guild).support_role not in [role.id for role in ctx.author.roles]:
             ctx.send(ctx.translate('this is a private ticket'))
             return None
 
-    viewer = TicketViewer(ctx, t)
+    viewer = await loop.run_in_executor(None, TicketViewer, ctx, t)
     await viewer.run()
 
 
@@ -211,7 +217,7 @@ async def _show_error(ctx, error):
 
 @ticket.command(name="edit", aliases=["change", "update"])
 async def _edit(ctx, t: Ticket, title: str="", description: str=None):
-    if ctx.author.id != t.author.id:
+    if ctx.author.id != (await t.async_author).id:
         ctx.send(ctx.translate("you are not allowed to perform this action"))
         return
 
@@ -232,10 +238,10 @@ async def _edit(ctx, t: Ticket, title: str="", description: str=None):
     if description is not None:
         t.description = escaped(description)
 
-    t.push()
+    await t.async_push()
 
     await ctx.send(ctx.translate("ticket edited"))
-    await t.guild.log(ctx.translate("[user] edited ticket [ticket]").format(ctx.author, t.id))
+    await (await t.async_guild).log(ctx.translate("[user] edited ticket [ticket]").format(ctx.author, t.id))
 
 
 @ticket.command(name="append", aliases=["addinfo"])
@@ -283,11 +289,11 @@ async def _assign(ctx, t: Ticket, user: User):
 
     t.assigned_to.clear()
     t.assigned_to.add(user, properties={'UTC': utc})
-    t.push()
+    await t.async_push()
 
     msg: discord.Message = await ctx.send(ctx.translate('ticket assigned'))
 
-    db_guild: Guild = ctx.db_guild
+    db_guild: Guild = await ctx.db_guild
 
     just_assigned_ticket = ctx.translate(
         "[user] just assigned ticket [ticket] to [user]"
@@ -322,7 +328,7 @@ async def _claim(ctx, t: Ticket):
     """ This is to assign a ticket to yourself. """
 
     ticket_assign = ctx.bot.get_command("ticket assign")
-    await ctx.invoke(ticket_assign, t, ctx.db_author)
+    await ctx.invoke(ticket_assign, t, await ctx.db_author)
 
 
 @ticket.command(name='close')
@@ -338,12 +344,12 @@ async def _close(ctx, t: Ticket, response=None):
 
     t.state = enums.State.CLOSED.value
 
-    user = User.from_discord_user(ctx.author)
+    user = await User.async_from_discord_user(ctx.author)
     t.closed_by.add(user, properties={'UTC': utc})
 
     t.updated = utc
 
-    graph.push(t)
+    await t.async_push()
 
     conf_msg = ctx.translate('ticket closed')
     close_msg = ctx.translate('[user] just closed ticket [ticket]').format(ctx.author.mention, t.id)
@@ -358,7 +364,9 @@ async def _close(ctx, t: Ticket, response=None):
 
     await ctx.send(conf_msg)
 
-    if t.guild.channel != ctx.channel.id:
+    t_guild = await t.async_guild
+
+    if t_guild.channel != ctx.channel.id:
         await notify_ticket_authority(ctx, t, close_msg, send_embed=True)
 
     if t.scope_enum == enums.Scope.CHANNEL:
@@ -366,7 +374,7 @@ async def _close(ctx, t: Ticket, response=None):
         if channel is not None:
             await channel.delete(reason=ctx.translate("ticket has been closed"))
 
-    await t.guild.log(ctx.translate("[user] closed ticket [ticket]").format(ctx.author, t.id))
+    await t_guild.log(ctx.translate("[user] closed ticket [ticket]").format(ctx.author, t.id))
 
 
 @ticket.command(name='reopen')
@@ -382,19 +390,21 @@ async def _reopen(ctx, t: Ticket):
 
     t.state = enums.State.REOPENED.value
 
-    user = User.from_discord_user(ctx.author)
+    user = await User.async_from_discord_user(ctx.author)
     t.reopened_by.add(user, properties={'UTC': utc})
 
     t.updated = utc
 
-    graph.push(t)
+    await t.async_push()
+
+    t_guild = await t.async_guild
 
     if t.scope_enum == enums.Scope.CHANNEL:
-        category = t.guild.discord.get_channel(t.guild.ticket_category)
+        category = t_guild.discord.get_channel(t_guild.ticket_category)
 
-        channel = await t.guild.discord.create_text_channel(
+        channel = await t_guild.discord.create_text_channel(
             str(t.id),
-            overwrites={t.author.discord: discord.PermissionOverwrite(read_messages=True, send_messages=True)},
+            overwrites={(await t.async_author).discord: discord.PermissionOverwrite(read_messages=True, send_messages=True)},
             category=category,
             reason=ctx.translate("channel-ticket has been reopened")
         )
@@ -405,12 +415,12 @@ async def _reopen(ctx, t: Ticket):
 
     await ctx.send(ctx.translate("ticket reopened"))
 
-    if t.guild.channel != ctx.channel.id:
+    if t_guild.channel != ctx.channel.id:
         await notify_ticket_authority(
             ctx, t, ctx.translate("[user] just reopened a ticket").format(ctx.author.mention), send_embed=True
         )
 
-    await t.guild.log(ctx.translate("[user] reopened ticket [ticket]").format(ctx.author, t.id))
+    await t_guild.log(ctx.translate("[user] reopened ticket [ticket]").format(ctx.author, t.id))
 
 
 @_close.error
@@ -431,17 +441,17 @@ async def _delete(ctx, t: Ticket):
     await conf.confirm(ctx.translate("you are attempting to delete ticket [ticket]").format(t.id))
 
     if conf.confirmed:
-        author = User.from_discord_user(ctx.author)
+        author = await User.async_from_discord_user(ctx.author)
 
         t.state_enum = enums.State.DELETED
         t.deleted_by.add(author, properties={'UTC': utc})
         t.push()
 
-        for resp in t.get_responses():
+        for resp in await loop.run_in_executor(None, t.get_responses):
             resp.deleted = True
             resp.deleted_by.add(author, properties={'UTC': utc})
 
-            resp.push()
+            await resp.async_push()
 
         await conf.display(ctx.translate("ticket deleted"))
 
@@ -450,7 +460,7 @@ async def _delete(ctx, t: Ticket):
             if channel is not None:
                 await channel.delete(reason=ctx.translate("ticket has been deleted"))
 
-        await t.guild.log(ctx.translate("[user] deleted ticket [ticket]").format(ctx.author, t.id))
+        await (await t.async_guild).log(ctx.translate("[user] deleted ticket [ticket]").format(ctx.author, t.id))
 
     else:
         await conf.display((ctx.translate("canceled")))

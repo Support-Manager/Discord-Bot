@@ -11,7 +11,7 @@ async def on_error(event, *args, **kwargs):
 
     if event == "on_voice_state_update":
         member = args[0]
-        guild = Guild.from_discord_guild(member.guild)
+        guild = await Guild.async_from_discord_guild(member.guild)
 
         translator = utils.Translator(Bot._string_translations, guild.language_enum)
 

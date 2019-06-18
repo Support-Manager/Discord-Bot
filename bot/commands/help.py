@@ -27,7 +27,7 @@ def get_translation(command_name: str, language: str):
 
 @commands.command(name='help')
 async def help_messages(ctx, command_name: str=None):
-    guild = Guild.from_discord_guild(ctx.guild)
+    guild = await Guild.async_from_discord_guild(ctx.guild)
     language = guild.language
 
     footer_msg = f"*{ctx.translate('prime-feature')}; ¹{ctx.translate('optional')}"
