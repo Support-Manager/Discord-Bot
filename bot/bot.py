@@ -16,8 +16,9 @@ class Bot(commands.AutoShardedBot):
         super(Bot, self).__init__(*args, **kwargs)
         asyncio.set_event_loop(self.loop)
 
-        self.dbl_session = aiohttp.ClientSession(loop=self.loop, headers={'Authorization': CONFIG['dbl_api_token']})
-        self.loop.create_task(self._update_stats())
+        if kwargs.get("post_stats"):
+            self.dbl_session = aiohttp.ClientSession(loop=self.loop, headers={'Authorization': os.getenv("DBL_API_TOKEN")})
+            self.loop.create_task(self._update_stats())
 
     with open(os.path.dirname(__file__) + '/translations/strings.yml', 'r', encoding='utf-8') as stream:
         try:

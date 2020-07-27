@@ -10,6 +10,7 @@ from . import enums
 import time
 from typing import Union, Optional
 import asyncio
+import os
 
 
 logger = logging.getLogger(__name__)
@@ -18,9 +19,9 @@ logger = logging.getLogger(__name__)
 loop = asyncio.get_event_loop()
 
 
-graph = Graph(host=CONFIG['neo4j_host'],
-              user=CONFIG['neo4j_user'],
-              password=CONFIG['neo4j_password'])  # represents database connection
+graph = Graph(host=os.getenv("NEO4J_HOST"),
+              user=os.getenv("NEO4J_USER", "neo4j"),
+              password=os.getenv("NEO4J_PASSWORD"))  # represents database connection
 
 
 class Scope(commands.Converter):
